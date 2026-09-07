@@ -1,0 +1,15 @@
+{
+  "scene": "reception",
+  "inventory": [],
+  "knowledge": [],
+  "flags": {},
+  "pizza": {
+    "temperature": 100,
+    "integrity": 100,
+    "quantity": 8,
+    "elapsed_minutes": 0,
+    "possession": "player"
+  },
+  "disguise": null,
+  "achievements": []
+}

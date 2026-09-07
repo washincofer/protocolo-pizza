@@ -1,0 +1,46 @@
+[
+  {
+    "id": "visitor_badge",
+    "name": "Crachá de Visitante",
+    "origin": "Recepção",
+    "purpose": "Acesso físico inicial"
+  },
+  {
+    "id": "vr_headset",
+    "name": "Óculos VR",
+    "origin": "Inovação",
+    "purpose": "TI"
+  },
+  {
+    "id": "executive_stamp",
+    "name": "Carimbo de Prioridade Executiva",
+    "origin": "Comunicação",
+    "purpose": "Suprimentos"
+  },
+  {
+    "id": "third_party_proof",
+    "name": "Comprovante de Prestador Terceirizado",
+    "origin": "Financeiro",
+    "purpose": "RH"
+  },
+  {
+    "id": "maintenance_vest",
+    "name": "Colete de Manutenção",
+    "origin": "Engenharia",
+    "purpose": "Vigilância",
+    "equippable": true
+  },
+  {
+    "id": "maintenance_order",
+    "name": "Ordem de Serviço",
+    "origin": "Engenharia",
+    "purpose": "Vigilância"
+  },
+  {
+    "id": "legal_dot",
+    "name": "Bolota do Jurídico",
+    "origin": "Documentação",
+    "purpose": "Jurídico / Diretoria",
+    "states": ["sem_aprovacao", "carimbada"]
+  }
+]

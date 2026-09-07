@@ -1,0 +1,21 @@
+{
+  "canonical_spine": [
+    "reception",
+    "innovation",
+    "it",
+    "communication",
+    "supplies",
+    "corporate_hall",
+    "security",
+    "hr",
+    "documentation",
+    "legal",
+    "executive_office"
+  ],
+  "hub": {
+    "id": "corporate_hall",
+    "branches": ["finance", "engineering"],
+    "free_order": true,
+    "backtracking": true
+  }
+}

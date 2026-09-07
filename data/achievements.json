@@ -1,0 +1,4 @@
+[
+  {"id":"did_not_start","name":"Nem iniciou o jogo","condition":"Primeiro clique encerra a entrega saindo do prédio."},
+  {"id":"process_bypassed","name":"Primeiro processo contornado","condition":"Superar TI corretamente."}
+]
