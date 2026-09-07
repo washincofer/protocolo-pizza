@@ -54,18 +54,27 @@ Recurso já reservado:
 
 **Comprovante de Prestador Terceirizado**, obtido no Financeiro.
 
-O RH deve representar um novo degrau de complexidade e não apenas aceitar o documento imediatamente.
+Regra canônica do setor: a entrada e o avanço pelas áreas do RH exigem encontrar um item/validação e localizar o ponto correto onde ele deve ser usado. A lógica de segurança é repetida nas subáreas principalmente como sátira: controles internos complexos que, na prática, servem para quase nada.
+
+Piadas canônicas já reservadas:
+
+- “Temos o sistema de ponto, mas tu tem que ter o controle paralelo.”
+- “Oferecemos flexibilidade de horário: chegando entre 9 e 10 e saindo às 18.”
+
+As subáreas exatas serão fechadas depois; cada área do jogo poderá ter de 1 a 3 subáreas conforme necessidade de ritmo, puzzle e humor.
 
 ## Chefe 5 — Jurídico
 
 Será o grande puzzle burocrático final.
 
-Direção atual:
+Os cinco requisitos canônicos são:
 
-- aproximadamente cinco requisitos acumulados durante a aventura;
-- um deles é a Bolota do Jurídico;
-- a Bolota é obtida em Documentação;
-- Jurídico carimba/aprova a Bolota;
-- a Bolota carimbada é exigida pela Diretoria.
+1. **Chamado**
+2. **Bolota do Jurídico**
+3. **Assinatura**
+4. **Protocolo**
+5. **Autorização externa à empresa**
 
-Os demais requisitos serão escolhidos após revisão de todos os objetos e informações já presentes na campanha.
+A Bolota é obtida em Documentação ainda sem validade final. O Jurídico só conclui o processo quando os cinco requisitos estão reunidos e então carimba/aprova a Bolota. A **Bolota do Jurídico — Aprovada** é exigida pela Diretoria para aceitar a entrega.
+
+Regra de design: os cinco requisitos devem vir de fontes e mecânicas diferentes, obrigando o jogador a combinar histórico de exploração, documentos, validações internas e uma dependência externa. O detalhamento de onde cada um é obtido será definido depois, sem alterar o conjunto canônico acima.
