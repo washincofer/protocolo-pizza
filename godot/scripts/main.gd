@@ -1,341 +1,441 @@
 extends Control
 
-const AreaCatalog = preload("res://scripts/area_catalog.gd")
+const HotspotCatalog = preload("res://scripts/hotspot_catalog.gd")
 
-var current_screen := "menu"
-var feedback_text := ""
-var title_font_size := 54
-var body_font_size := 20
+var selected_item := ""
+var feedback_text := "Clique nos elementos do cenário. Itens do inventário podem ser selecionados e usados nos hotspots."
+var image_origin := Vector2.ZERO
+var image_scale := 1.0
+var current_source_size := Vector2(1672, 941)
+var modal_layer: Control
 
 func _ready() -> void:
 	SceneRouter.area_changed.connect(_on_area_changed)
 	GameFlow.feedback.connect(_on_feedback)
 	GameFlow.finished.connect(_on_finished)
-	AchievementManager.achievement_unlocked.connect(_on_achievement_unlocked)
+	AchievementManager.achievement_unlocked.connect(_on_achievement)
 	show_menu()
 
 func _clear() -> void:
 	for child in get_children():
 		child.free()
+	modal_layer = null
 
-func _background(path: String) -> void:
-	var fallback := ColorRect.new()
-	fallback.color = Color("182535")
-	fallback.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(fallback)
+func _fit_image(area_id: String) -> void:
+	var path := HotspotCatalog.get_background(area_id)
 	var texture = load(path)
-	if texture:
-		var bg := TextureRect.new()
-		bg.texture = texture
-		bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		add_child(bg)
-	var shade := ColorRect.new()
-	shade.color = Color(0.02, 0.05, 0.08, 0.34)
-	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(shade)
+	if texture == null:
+		return
+	current_source_size = HotspotCatalog.get_source_size(area_id)
+	var view := get_viewport_rect().size
+	image_scale = minf(view.x / current_source_size.x, view.y / current_source_size.y)
+	var display := current_source_size * image_scale
+	image_origin = (view - display) * 0.5
+	var bg := TextureRect.new()
+	bg.texture = texture
+	bg.position = image_origin
+	bg.size = display
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_SCALE
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(bg)
 
-func _panel_style(alpha: float = 0.92) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.05, 0.09, 0.14, alpha)
-	style.border_color = Color(1.0, 0.78, 0.18, 0.55)
-	style.set_border_width_all(2)
-	style.corner_radius_top_left = 18
-	style.corner_radius_top_right = 18
-	style.corner_radius_bottom_left = 18
-	style.corner_radius_bottom_right = 18
-	style.content_margin_left = 22
-	style.content_margin_right = 22
-	style.content_margin_top = 18
-	style.content_margin_bottom = 18
-	return style
-
-func _button(text: String, callback: Callable, accent := false) -> Button:
+func _hotspot(rect_data: Array, label: String, callback: Callable) -> Button:
 	var b := Button.new()
-	b.text = text
-	b.custom_minimum_size = Vector2(360, 58)
-	b.add_theme_font_size_override("font_size", 24)
+	b.text = ""
+	b.tooltip_text = label
+	b.focus_mode = Control.FOCUS_NONE
+	b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	var x := float(rect_data[0])
+	var y := float(rect_data[1])
+	var w := float(rect_data[2])
+	var h := float(rect_data[3])
+	b.position = image_origin + Vector2(x, y) * image_scale
+	b.size = Vector2(w, h) * image_scale
 	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color("f4b942") if accent else Color("23415d")
-	normal.border_color = Color("ffffff44")
+	normal.bg_color = Color(1, 1, 1, 0.0)
+	normal.border_color = Color(1, 1, 1, 0.0)
 	normal.set_border_width_all(2)
-	normal.corner_radius_top_left = 12
-	normal.corner_radius_top_right = 12
-	normal.corner_radius_bottom_left = 12
-	normal.corner_radius_bottom_right = 12
 	b.add_theme_stylebox_override("normal", normal)
-	var hover := normal.duplicate()
-	hover.bg_color = normal.bg_color.lightened(0.12)
+	var hover := StyleBoxFlat.new()
+	hover.bg_color = Color(1.0, 0.82, 0.2, 0.08)
+	hover.border_color = Color(1.0, 0.82, 0.2, 0.95)
+	hover.set_border_width_all(3)
+	hover.corner_radius_top_left = 12
+	hover.corner_radius_top_right = 12
+	hover.corner_radius_bottom_left = 12
+	hover.corner_radius_bottom_right = 12
 	b.add_theme_stylebox_override("hover", hover)
-	if accent:
-		b.add_theme_color_override("font_color", Color("18222f"))
+	b.add_theme_stylebox_override("pressed", hover)
 	b.pressed.connect(callback)
+	add_child(b)
 	return b
 
-func _label(text: String, size: int = 20, color := Color.WHITE) -> Label:
-	var l := Label.new()
-	l.text = text
-	l.add_theme_font_size_override("font_size", size)
-	l.add_theme_color_override("font_color", color)
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	return l
+func _dark_panel() -> StyleBoxFlat:
+	var s := StyleBoxFlat.new()
+	s.bg_color = Color(0.03, 0.06, 0.09, 0.88)
+	s.border_color = Color(1.0, 0.78, 0.18, 0.65)
+	s.set_border_width_all(2)
+	s.corner_radius_top_left = 14
+	s.corner_radius_top_right = 14
+	s.corner_radius_bottom_left = 14
+	s.corner_radius_bottom_right = 14
+	return s
 
 func show_menu() -> void:
-	current_screen = "menu"
 	_clear()
-	_background("res://assets/scenarios/menu.png")
-	var margin := MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 80)
-	margin.add_theme_constant_override("margin_right", 80)
-	margin.add_theme_constant_override("margin_top", 70)
-	margin.add_theme_constant_override("margin_bottom", 70)
-	add_child(margin)
-	var outer := VBoxContainer.new()
-	outer.alignment = BoxContainer.ALIGNMENT_CENTER
-	margin.add_child(outer)
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(520, 0)
-	panel.add_theme_stylebox_override("panel", _panel_style(0.87))
-	outer.add_child(panel)
-	var box := VBoxContainer.new()
-	box.alignment = BoxContainer.ALIGNMENT_CENTER
-	box.add_theme_constant_override("separation", 14)
-	panel.add_child(box)
-	var title := _label("PROTOCOLO: PIZZA", title_font_size, Color("ffd34e"))
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(title)
-	var subtitle := _label("PAPO SAPÃO\nSua missão é simples. O processo não.", 21, Color("e6edf3"))
-	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(subtitle)
-	box.add_child(_button("▶  Novo Jogo", _start_new_game, true))
-	box.add_child(_button("▣  Save / Load", show_save_load))
-	box.add_child(_button("⚙  Opções", show_options))
-	var exit_button := _button("Sair", _quit_game)
-	box.add_child(exit_button)
-	var version := _label("Godot production base 0.1", 14, Color("aab8c4"))
-	version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(version)
+	selected_item = ""
+	_fit_image("menu")
+	_hotspot([900,315,390,120], "Novo Jogo", _new_game)
+	_hotspot([900,445,390,120], "Save / Load", _open_save_load)
+	_hotspot([900,570,390,120], "Opções", _open_options)
 
-func _start_new_game() -> void:
+func _new_game() -> void:
 	GameState.reset_run(true)
-	feedback_text = "Bem-vindo à PAPO SAPÃO. Entregue a pizza para Ronaldo Gilberto."
+	feedback_text = "Bem-vindo à PAPO SAPÃO. A missão é simples: entregar a pizza para Ronaldo Gilberto."
 	SceneRouter.route_to("reception")
+
+func show_game() -> void:
+	_clear()
+	var area := GameState.current_area
+	_fit_image(area)
+	for hs in HotspotCatalog.get_hotspots(area):
+		var data := Dictionary(hs)
+		_hotspot(Array(data["rect"]), str(data["label"]), _activate_hotspot.bind(str(data["action"])))
+	_build_hud()
+	if area == "directorate" and GameState.has_flag("director_question"):
+		_build_director_choices()
+
+func _activate_hotspot(action_id: String) -> void:
+	var area_before := GameState.current_area
+	GameFlow.perform(action_id, selected_item)
+	if action_id in ["rogerio","supplies_stan","security_sonia","legal_analysis"]:
+		selected_item = ""
+	if GameState.run_active and GameState.current_area == area_before:
+		show_game()
+
+func _build_hud() -> void:
+	var top := PanelContainer.new()
+	top.position = Vector2(12, 10)
+	top.size = Vector2(610, 58)
+	top.add_theme_stylebox_override("panel", _dark_panel())
+	add_child(top)
+	var top_row := HBoxContainer.new()
+	top_row.add_theme_constant_override("separation", 12)
+	top.add_child(top_row)
+	var area_label := Label.new()
+	area_label.text = HotspotCatalog.get_title(GameState.current_area)
+	area_label.add_theme_font_size_override("font_size", 22)
+	area_label.add_theme_color_override("font_color", Color("ffd34e"))
+	area_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	top_row.add_child(area_label)
+	var pizza := Label.new()
+	pizza.text = "🍕 %s%%  |  %s min" % [str(GameState.pizza.get("temperature", 100)), str(GameState.pizza.get("elapsed_minutes", 0))]
+	pizza.add_theme_font_size_override("font_size", 17)
+	top_row.add_child(pizza)
+
+	var pause := Button.new()
+	pause.text = "☰"
+	pause.position = Vector2(get_viewport_rect().size.x - 62, 10)
+	pause.size = Vector2(50, 50)
+	pause.add_theme_font_size_override("font_size", 24)
+	pause.pressed.connect(_open_pause)
+	add_child(pause)
+
+	var dialogue := PanelContainer.new()
+	dialogue.position = Vector2(170, get_viewport_rect().size.y - 126)
+	dialogue.size = Vector2(get_viewport_rect().size.x - 340, 106)
+	dialogue.add_theme_stylebox_override("panel", _dark_panel())
+	add_child(dialogue)
+	var d := Label.new()
+	d.text = feedback_text
+	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	d.add_theme_font_size_override("font_size", 18)
+	d.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	d.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	dialogue.add_child(d)
+
+	var inv := PanelContainer.new()
+	inv.position = Vector2(12, get_viewport_rect().size.y - 126)
+	inv.size = Vector2(150, 106)
+	inv.add_theme_stylebox_override("panel", _dark_panel())
+	add_child(inv)
+	var inv_box := VBoxContainer.new()
+	inv_box.add_theme_constant_override("separation", 4)
+	inv.add_child(inv_box)
+	var t := Label.new()
+	t.text = "Inventário"
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	t.add_theme_color_override("font_color", Color("ffd34e"))
+	inv_box.add_child(t)
+	if GameState.inventory.is_empty():
+		var empty := Label.new()
+		empty.text = "(vazio)"
+		empty.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		inv_box.add_child(empty)
+	else:
+		for item in GameState.inventory:
+			var b := Button.new()
+			b.text = _item_name(item)
+			b.tooltip_text = "Selecionado: use no cenário. Colete: clique novamente para vestir."
+			b.add_theme_font_size_override("font_size", 12)
+			if selected_item == item:
+				b.modulate = Color("ffd34e")
+			b.pressed.connect(_select_item.bind(item))
+			inv_box.add_child(b)
+
+func _select_item(item_id: String) -> void:
+	if selected_item == item_id and item_id == "maintenance_vest":
+		GameFlow.equip_item(item_id)
+		selected_item = ""
+	else:
+		selected_item = item_id
+		feedback_text = "Selecionado: %s. Agora clique no alvo do cenário." % _item_name(item_id)
 	show_game()
 
-func show_save_load() -> void:
-	current_screen = "save_load"
-	_clear()
-	_background("res://assets/scenarios/menu.png")
-	var panel := _center_panel("SAVE / LOAD")
-	var box = panel.get_node("Box")
-	for slot in range(1, 4):
-		var meta := SaveManager.get_slot_metadata(slot)
+func _item_name(item_id: String) -> String:
+	var names := {
+		"visitor_badge":"Crachá",
+		"vr_glasses":"Óculos VR",
+		"executive_priority_stamp":"Carimbo",
+		"third_party_proof":"Comprovante",
+		"fiscal_exception_protocol":"Protocolo",
+		"maintenance_vest":"Colete",
+		"work_order":"OS",
+		"third_party_form":"Ficha RH",
+		"rh_validation_signature":"Assinatura RH",
+		"legal_bolota_pending":"Bolota Pendente",
+		"legal_bolota_approved":"Bolota Aprovada"
+	}
+	return str(names.get(item_id, item_id))
+
+func _build_director_choices() -> void:
+	var panel := PanelContainer.new()
+	panel.position = Vector2(420, 150)
+	panel.size = Vector2(440, 240)
+	panel.add_theme_stylebox_override("panel", _dark_panel())
+	add_child(panel)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	panel.add_child(box)
+	var title := Label.new()
+	title.text = "Qual o nome do diretor?"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 22)
+	box.add_child(title)
+	for entry in [["Ronaldo Gilberto", true],["Rogério Wilco", false],["Stan Leilo", false]]:
+		var b := Button.new()
+		b.text = str(entry[0])
+		b.add_theme_font_size_override("font_size", 18)
+		b.pressed.connect(_director_choice.bind(bool(entry[1])))
+		box.add_child(b)
+
+func _director_choice(correct: bool) -> void:
+	GameFlow.perform("director_answer_correct" if correct else "director_answer_wrong")
+	if GameState.run_active:
+		show_game()
+
+func _open_pause() -> void:
+	_show_modal("PAUSA", [
+		["Salvar / Carregar", _open_save_load],
+		["Opções", _open_options],
+		["Voltar ao jogo", _close_modal],
+		["Menu principal", show_menu]
+	])
+
+func _show_modal(title_text: String, buttons: Array) -> void:
+	if modal_layer:
+		modal_layer.queue_free()
+	modal_layer = ColorRect.new()
+	modal_layer.color = Color(0,0,0,0.72)
+	modal_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(modal_layer)
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	modal_layer.add_child(center)
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(520, 0)
+	panel.add_theme_stylebox_override("panel", _dark_panel())
+	center.add_child(panel)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 10)
+	panel.add_child(box)
+	var title := Label.new()
+	title.text = title_text
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 30)
+	title.add_theme_color_override("font_color", Color("ffd34e"))
+	box.add_child(title)
+	for entry in buttons:
+		var b := Button.new()
+		b.text = str(entry[0])
+		b.custom_minimum_size = Vector2(420, 50)
+		b.add_theme_font_size_override("font_size", 19)
+		var callback: Callable = entry[1]
+		b.pressed.connect(callback)
+		box.add_child(b)
+
+func _close_modal() -> void:
+	if modal_layer:
+		modal_layer.queue_free()
+		modal_layer = null
+
+func _open_save_load() -> void:
+	if modal_layer:
+		modal_layer.queue_free()
+	modal_layer = ColorRect.new()
+	modal_layer.color = Color(0,0,0,0.76)
+	modal_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(modal_layer)
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	modal_layer.add_child(center)
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(760, 0)
+	panel.add_theme_stylebox_override("panel", _dark_panel())
+	center.add_child(panel)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 10)
+	panel.add_child(box)
+	var title := Label.new()
+	title.text = "SAVE / LOAD"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 30)
+	title.add_theme_color_override("font_color", Color("ffd34e"))
+	box.add_child(title)
+	for slot in range(1,4):
 		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 10)
+		row.add_theme_constant_override("separation", 8)
 		box.add_child(row)
-		var info_text := "Slot %d — vazio" % slot
-		if not meta.is_empty():
-			info_text = "Slot %d — %s — %s min" % [slot, str(meta.get("area", "?")), str(meta.get("minutes", 0))]
-		var info := _label(info_text, 18)
-		info.custom_minimum_size = Vector2(380, 54)
+		var meta := SaveManager.get_slot_metadata(slot)
+		var info := Label.new()
+		info.text = "Slot %d — vazio" % slot if meta.is_empty() else "Slot %d — %s — %s min" % [slot, str(meta.get("area","?")), str(meta.get("minutes",0))]
+		info.custom_minimum_size = Vector2(370, 46)
+		info.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		row.add_child(info)
-		var save_b := _button("Salvar", _save_slot.bind(slot))
-		save_b.custom_minimum_size = Vector2(150, 54)
-		save_b.disabled = not GameState.run_active
-		row.add_child(save_b)
-		var load_b := _button("Carregar", _load_slot.bind(slot), true)
-		load_b.custom_minimum_size = Vector2(160, 54)
-		load_b.disabled = not SaveManager.has_slot(slot)
-		row.add_child(load_b)
-	box.add_child(_button("← Voltar", show_menu))
+		var save := Button.new()
+		save.text = "Salvar"
+		save.disabled = not GameState.run_active
+		save.pressed.connect(_save_slot.bind(slot))
+		row.add_child(save)
+		var load := Button.new()
+		load.text = "Carregar"
+		load.disabled = not SaveManager.has_slot(slot)
+		load.pressed.connect(_load_slot.bind(slot))
+		row.add_child(load)
+	var back := Button.new()
+	back.text = "Voltar"
+	back.pressed.connect(_close_modal)
+	box.add_child(back)
 
 func _save_slot(slot: int) -> void:
 	if SaveManager.save_slot(slot):
 		feedback_text = "Partida salva no Slot %d." % slot
-	show_save_load()
+	_open_save_load()
 
 func _load_slot(slot: int) -> void:
 	if SaveManager.load_slot(slot):
-		feedback_text = "Partida carregada do Slot %d." % slot
-		current_screen = "game"
+		selected_item = ""
+		feedback_text = "Partida carregada."
+		_close_modal()
 		show_game()
 
-func show_options() -> void:
-	current_screen = "options"
-	_clear()
-	_background("res://assets/scenarios/menu.png")
-	var panel := _center_panel("OPÇÕES")
-	var box = panel.get_node("Box")
-	box.add_child(_label("Volume geral", 18))
-	var master := HSlider.new()
-	master.min_value = 0.0
-	master.max_value = 1.0
-	master.step = 0.05
-	master.value = float(SettingsManager.get_value("master_volume", 0.85))
-	master.custom_minimum_size = Vector2(560, 36)
-	master.value_changed.connect(_set_master)
-	box.add_child(master)
-	box.add_child(_label("Música", 18))
-	var music := HSlider.new()
-	music.min_value = 0.0
-	music.max_value = 1.0
-	music.step = 0.05
-	music.value = float(SettingsManager.get_value("music_volume", 0.75))
-	music.value_changed.connect(_set_music)
-	box.add_child(music)
-	box.add_child(_label("Efeitos", 18))
-	var sfx := HSlider.new()
-	sfx.min_value = 0.0
-	sfx.max_value = 1.0
-	sfx.step = 0.05
-	sfx.value = float(SettingsManager.get_value("sfx_volume", 0.85))
-	sfx.value_changed.connect(_set_sfx)
-	box.add_child(sfx)
-	var fullscreen := CheckButton.new()
-	fullscreen.text = "Tela cheia"
-	fullscreen.button_pressed = bool(SettingsManager.get_value("fullscreen", false))
-	fullscreen.add_theme_font_size_override("font_size", 20)
-	fullscreen.toggled.connect(_set_fullscreen)
-	box.add_child(fullscreen)
-	box.add_child(_button("← Voltar", show_menu))
-
-func _set_master(value: float) -> void:
-	SettingsManager.set_value("master_volume", value)
-
-func _set_music(value: float) -> void:
-	SettingsManager.set_value("music_volume", value)
-
-func _set_sfx(value: float) -> void:
-	SettingsManager.set_value("sfx_volume", value)
-
-func _set_fullscreen(value: bool) -> void:
-	SettingsManager.set_value("fullscreen", value)
-
-func _center_panel(title_text: String) -> PanelContainer:
-	var wrapper := CenterContainer.new()
-	wrapper.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(wrapper)
+func _open_options() -> void:
+	if modal_layer:
+		modal_layer.queue_free()
+	modal_layer = ColorRect.new()
+	modal_layer.color = Color(0,0,0,0.76)
+	modal_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(modal_layer)
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	modal_layer.add_child(center)
 	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(780, 0)
-	panel.add_theme_stylebox_override("panel", _panel_style())
-	wrapper.add_child(panel)
+	panel.custom_minimum_size = Vector2(620, 0)
+	panel.add_theme_stylebox_override("panel", _dark_panel())
+	center.add_child(panel)
 	var box := VBoxContainer.new()
-	box.name = "Box"
-	box.add_theme_constant_override("separation", 14)
+	box.add_theme_constant_override("separation", 10)
 	panel.add_child(box)
-	var title := _label(title_text, 40, Color("ffd34e"))
+	var title := Label.new()
+	title.text = "OPÇÕES"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 30)
+	title.add_theme_color_override("font_color", Color("ffd34e"))
 	box.add_child(title)
-	return panel
+	box.add_child(_slider_row("Volume geral", "master_volume"))
+	box.add_child(_slider_row("Música", "music_volume"))
+	box.add_child(_slider_row("Efeitos", "sfx_volume"))
+	var fs := CheckButton.new()
+	fs.text = "Tela cheia"
+	fs.button_pressed = bool(SettingsManager.get_value("fullscreen", false))
+	fs.toggled.connect(func(v): SettingsManager.set_value("fullscreen", v))
+	box.add_child(fs)
+	var back := Button.new()
+	back.text = "Voltar"
+	back.pressed.connect(_close_modal)
+	box.add_child(back)
 
-func show_game() -> void:
-	current_screen = "game"
-	_clear()
-	var area := AreaCatalog.get_area(GameState.current_area)
-	_background(str(area.get("background", "")))
-	var margin := MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 24)
-	margin.add_theme_constant_override("margin_right", 24)
-	margin.add_theme_constant_override("margin_top", 20)
-	margin.add_theme_constant_override("margin_bottom", 20)
-	add_child(margin)
-	var vertical := VBoxContainer.new()
-	vertical.add_theme_constant_override("separation", 12)
-	margin.add_child(vertical)
-	var top := HBoxContainer.new()
-	vertical.add_child(top)
-	var area_title := _label(str(area.get("title", "Área")), 34, Color("ffd34e"))
-	area_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	top.add_child(area_title)
-	var pizza_text := "🍕 %s%%  |  %s min  |  %s fatias" % [str(GameState.pizza.get("temperature", 100)), str(GameState.pizza.get("elapsed_minutes", 0)), str(GameState.pizza.get("quantity", 8))]
-	top.add_child(_label(pizza_text, 18))
-	var spacer := Control.new()
-	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	vertical.add_child(spacer)
-	var bottom := HBoxContainer.new()
-	bottom.add_theme_constant_override("separation", 12)
-	vertical.add_child(bottom)
-	var info_panel := PanelContainer.new()
-	info_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	info_panel.add_theme_stylebox_override("panel", _panel_style())
-	bottom.add_child(info_panel)
-	var info_box := VBoxContainer.new()
-	info_box.add_theme_constant_override("separation", 9)
-	info_panel.add_child(info_box)
-	info_box.add_child(_label(str(area.get("description", "")), body_font_size))
-	if feedback_text != "":
-		var feedback := _label(feedback_text, 17, Color("8ff0d0"))
-		info_box.add_child(feedback)
-	var inv_value := "vazio"
-	if not GameState.inventory.is_empty():
-		var parts: Array[String] = []
-		for item in GameState.inventory:
-			parts.append(str(item))
-		inv_value = ", ".join(parts)
-	var inv_text := "Inventário: " + inv_value
-	info_box.add_child(_label(inv_text, 15, Color("c6d2dc")))
-	var action_box := VBoxContainer.new()
-	action_box.custom_minimum_size = Vector2(420, 0)
-	action_box.add_theme_constant_override("separation", 8)
-	bottom.add_child(action_box)
-	for action in area.get("actions", []):
-		var action_id := str(action[0])
-		var action_label := str(action[1])
-		action_box.add_child(_button(action_label, _perform_action.bind(action_id), action_id in ["identify", "solve_ti", "solve_supplies", "present_os", "solve_rh", "approve_bolota", "say_director"]))
-	var quick := HBoxContainer.new()
-	quick.add_theme_constant_override("separation", 8)
-	action_box.add_child(quick)
-	var save_b := _button("Salvar", _quick_save)
-	save_b.custom_minimum_size = Vector2(130, 48)
-	quick.add_child(save_b)
-	var menu_b := _button("Menu", show_menu)
-	menu_b.custom_minimum_size = Vector2(130, 48)
-	quick.add_child(menu_b)
-
-func _quick_save() -> void:
-	if SaveManager.save_slot(1):
-		feedback_text = "Salvo rapidamente no Slot 1."
-		show_game()
-
-func _perform_action(action_id: String) -> void:
-	feedback_text = ""
-	GameFlow.perform(action_id)
+func _slider_row(label_text: String, key: String) -> Control:
+	var row := HBoxContainer.new()
+	var label := Label.new()
+	label.text = label_text
+	label.custom_minimum_size = Vector2(180, 36)
+	row.add_child(label)
+	var slider := HSlider.new()
+	slider.min_value = 0
+	slider.max_value = 1
+	slider.step = 0.05
+	slider.value = float(SettingsManager.get_value(key, 0.8))
+	slider.custom_minimum_size = Vector2(340,36)
+	slider.value_changed.connect(func(v): SettingsManager.set_value(key, v))
+	row.add_child(slider)
+	return row
 
 func _on_area_changed(_area_id: String) -> void:
-	if current_screen == "game":
-		call_deferred("show_game")
+	show_game()
 
-func _on_feedback(message: String) -> void:
-	feedback_text = message
-	if current_screen == "game":
-		call_deferred("show_game")
-
-func _on_achievement_unlocked(name: String) -> void:
-	feedback_text = "🏆 Conquista desbloqueada: " + name
-	if current_screen == "game":
-		call_deferred("show_game")
+func _on_feedback(text: String) -> void:
+	feedback_text = text
 
 func _on_finished(ending_name: String, message: String) -> void:
-	show_ending(ending_name, message)
-
-func show_ending(ending_name: String, message: String) -> void:
-	current_screen = "ending"
 	_clear()
-	_background("res://assets/scenarios/directorate.png")
-	var panel := _center_panel(ending_name)
-	var box = panel.get_node("Box")
-	var msg := _label(message, 22)
-	msg.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(msg)
-	if ending_name == "ENTREGA CONCLUÍDA":
-		var stamp := _label("NOVO PROTOCOLO INICIADO", 28, Color("8ff0d0"))
-		stamp.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		box.add_child(stamp)
-	box.add_child(_button("Novo Jogo", _start_new_game, true))
-	box.add_child(_button("Menu Principal", show_menu))
+	var bg_area := GameState.current_area if HotspotCatalog.BACKGROUNDS.has(GameState.current_area) else "menu"
+	_fit_image(bg_area)
+	var shade := ColorRect.new()
+	shade.color = Color(0,0,0,0.70)
+	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(shade)
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(center)
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(760, 0)
+	panel.add_theme_stylebox_override("panel", _dark_panel())
+	center.add_child(panel)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 16)
+	panel.add_child(box)
+	var title := Label.new()
+	title.text = ending_name
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 42)
+	title.add_theme_color_override("font_color", Color("ffd34e"))
+	box.add_child(title)
+	var body := Label.new()
+	body.text = message
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	body.add_theme_font_size_override("font_size", 20)
+	box.add_child(body)
+	var restart := Button.new()
+	restart.text = "Nova partida"
+	restart.pressed.connect(_new_game)
+	box.add_child(restart)
+	var menu := Button.new()
+	menu.text = "Menu principal"
+	menu.pressed.connect(show_menu)
+	box.add_child(menu)
 
-func _quit_game() -> void:
-	get_tree().quit()
+func _on_achievement(name: String) -> void:
+	feedback_text = "🏆 Conquista desbloqueada: %s" % name

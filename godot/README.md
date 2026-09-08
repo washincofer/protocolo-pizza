@@ -1,32 +1,21 @@
-# Projeto Godot — Production Base 0.1
+# PROTOCOLO: PIZZA — Godot 0.2
 
-Primeira migração funcional do protótipo aprovado para Godot 4.
+Esta versão corrige os dois pontos identificados no teste da 0.1:
 
-## Implementado nesta base
-
-- tela inicial com **Novo Jogo**, **Save / Load** e **Opções**;
-- 3 slots de save/load em `user://`;
-- opções persistentes de volume geral, música, efeitos e tela cheia;
-- autoloads separados: `GameState`, `AchievementManager`, `EndingManager`, `SettingsManager`, `SaveManager`, `SceneRouter` e `GameFlow`;
-- rota canônica jogável da Recepção à Diretoria;
-- Hall com Financeiro / Engenharia em qualquer ordem;
-- estado da pizza: temperatura, integridade, quantidade, tempo e posse;
-- catálogo persistente das 22 conquistas e dos finais;
-- integração prevista para os cenários conceituais como backgrounds;
-- fallback visual: se um background ainda não estiver no repositório, o projeto continua abrindo.
+1. **Menu fiel à arte aprovada** — a imagem do menu é a própria interface. Os botões visuais `Novo Jogo`, `Save/Load` e `Opções` possuem hotspots transparentes exatamente por cima.
+2. **Cenários realmente jogáveis** — a navegação deixou de ser uma lista de botões. As artes são cenas point-and-click com regiões clicáveis, hover, inventário selecionável, uso `item → alvo`, diálogo e transições.
 
 ## Como abrir
+Abra `project.godot` no Godot 4.x e execute o projeto.
 
-1. Instale Godot 4.3+.
-2. Importe `godot/project.godot`.
-3. Execute o projeto.
+## Controles
+- Clique nos objetos/NPCs destacados quando o mouse passa sobre eles.
+- Clique em um item no inventário e depois no alvo do cenário.
+- Para vestir o `Colete`, clique nele uma segunda vez no inventário.
+- Menu ☰ no canto superior direito abre Save/Load e Opções.
 
-## Importante sobre os cenários
+## Fluxo implementado
+Recepção → Inovação → TI → Comunicação → Suprimentos → Hall → Financeiro/Engenharia → Vigilância → RH → Documentação → Jurídico → Diretoria.
 
-Os PNGs da build estão sendo distribuídos junto do pacote ZIP de produção. O conector de escrita usado para atualizar o GitHub é textual, então os binários não foram gravados automaticamente no repositório nesta passagem.
-
-Além disso, alguns cenários conceituais foram gerados antes do nome definitivo **PAPO SAPÃO** e ainda trazem marcações provisórias como “Pizza Sempre Chega S.A.”. Eles servem para montagem e teste, mas precisam de correção de branding antes do lock visual final.
-
-## Próxima passagem
-
-A próxima etapa transforma as ações de interface em point-and-click real: hotspots físicos, caminhada do protagonista, subáreas, diálogos completos e todos os finais alternativos.
+## Observação de arte
+Alguns cenários antigos ainda exibem a marca visual anterior `Pizza Sempre Chega S.A.` dentro da própria ilustração. A lógica usa **PAPO SAPÃO**; a substituição visual desses textos continua no lock final de arte.
