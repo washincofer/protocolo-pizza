@@ -1,18 +1,29 @@
 ; Engine configuration file.
-; PROTOCOLO: PIZZA
-
+; PROTOCOLO: PIZZA — Godot production base 0.1
 config_version=5
 
 [application]
 config/name="PROTOCOLO: PIZZA"
+config/description="Aventura point-and-click corporativa na PAPO SAPÃO"
 run/main_scene="res://scenes/Main.tscn"
+
+[autoload]
+GameState="*res://scripts/game_state.gd"
+AchievementManager="*res://scripts/achievement_manager.gd"
+EndingManager="*res://scripts/ending_manager.gd"
+SettingsManager="*res://scripts/settings_manager.gd"
+SaveManager="*res://scripts/save_manager.gd"
+SceneRouter="*res://scripts/scene_router.gd"
+GameFlow="*res://scripts/game_flow.gd"
 
 [display]
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/size/window_width_override=1280
 window/size/window_height_override=720
+window/stretch/mode="canvas_items"
 
 [rendering]
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
