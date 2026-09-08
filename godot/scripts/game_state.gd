@@ -65,7 +65,7 @@ func equip_disguise(disguise_id: String) -> void:
 
 func tick(minutes: int = 5) -> void:
 	pizza["elapsed_minutes"] = int(pizza.get("elapsed_minutes", 0)) + minutes
-	var drop := max(1, int(ceil(float(minutes) * 0.6)))
+	var drop: int = max(1, int(ceil(float(minutes) * 0.6)))
 	pizza["temperature"] = clamp(int(pizza.get("temperature", 100)) - drop, 0, 100)
 	changed.emit()
 
