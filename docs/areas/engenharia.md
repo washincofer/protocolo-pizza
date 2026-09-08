@@ -60,6 +60,28 @@ Interação com planta do prédio:
 
 Bento tenta indicar uma sala, gira a planta e percebe que está olhando o documento errado.
 
+## Área Técnica — análise estrutural da pizza
+
+Na Área Técnica existe um NPC que nota a caixa de pizza e pede autorização para fazer uma análise estrutural.
+
+### Aceitar a análise
+
+O NPC examina a caixa e a pizza com seriedade exagerada e conclui que existe uma falha estrutural. A pizza é confiscada para avaliação técnica.
+
+Final absurdo:
+
+**FALHA ESTRUTURAL**
+
+Texto-base:
+
+> “A pizza não atendeu aos requisitos mínimos de engenharia.”
+
+A cena deve ser cartunesca e apropriada para crianças.
+
+### Recusar a análise
+
+O jogador responde que não autoriza a inspeção. O NPC aceita a resposta e o jogador segue normalmente, sem penalidade e sem efeito futuro.
+
 ## Diretriz
 
-A Engenharia não precisa de final alternativo obrigatório. O foco é exploração curta, humor visual e obtenção dos recursos que destravam o puzzle de Vigilância.
+A Engenharia continua sendo uma área de respiro, exploração e coleta de recursos. A análise estrutural da pizza é um risco opcional e não transforma a área em um novo chefe.
