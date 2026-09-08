@@ -48,76 +48,67 @@ Implementado no Protótipo Completo 1.0:
 6. [x] finais alternativos principais do catálogo;
 7. [x] 22 conquistas com persistência local no navegador;
 8. [x] galeria/lista de finais vistos com persistência local;
-9. [ ] save/load completo da campanha em andamento no HTML;
+9. [ ] save/load completo da campanha em andamento;
 10. [ ] playtest exaustivo de todas as rotas, finais e combinações de estados.
 
-### Decisão de marco
+## Fase 4 — densidade, cenários e polimento
 
-O **Protótipo Completo 1.0 está APROVADO** como base funcional da campanha.
+**EM ANDAMENTO**
 
-## Fase 4 — densidade e polimento
-
-**EM ANDAMENTO EM PARALELO COM A MIGRAÇÃO GODOT**
-
-### Cenários
-
-- [x] tela inicial / menu conceitual;
-- [x] Recepção;
-- [x] Inovação;
-- [x] TI;
-- [x] Comunicação;
-- [x] Suprimentos;
-- [x] Hall Corporativo;
-- [x] Financeiro;
-- [x] Engenharia;
-- [x] Vigilância;
-- [x] RH;
-- [x] Documentação;
-- [x] Jurídico;
-- [x] Diretoria;
-- [ ] corrigir branding provisório de cenários antigos para **PAPO SAPÃO**;
-- [ ] separar hotspots e subáreas finais sobre os cenários;
-- [ ] lock de arte após playtest visual.
-
-### Polimento restante
-
+- [x] inventário dos cenários principais;
+- [x] tela inicial ilustrada com Novo Jogo / Save-Load / Opções;
+- [x] cenários principais incorporados à build Godot distribuída em ZIP;
+- [ ] corrigir branding antigo “Pizza Sempre Chega S.A.” nas artes para **PAPO SAPÃO**;
 - [ ] revisar hotspots inúteis e easter eggs;
 - [ ] revisar diálogos repetidos;
-- [ ] adicionar respostas contextuais para itens em locais errados;
 - [ ] revisar ritmo entre chefes;
-- [ ] ajustar tempo de espera da Recepção;
-- [ ] balancear queda de temperatura;
-- [ ] balancear `MAX_DELIVERY_TIME`;
-- [ ] revisar pistas para evitar travamentos de compreensão;
-- [ ] revisar humor para público família;
+- [ ] balancear temperatura e tempo máximo;
 - [ ] revisar áudio, vinhetas e efeitos;
-- [ ] revisar feedback visual de itens, conhecimentos e processos contornados;
 - [ ] executar playtest de todos os finais e conquistas.
 
 ## Fase 5 — migração/produção em Godot
 
-**EM ANDAMENTO — PRODUCTION BASE 0.1**
+**EM ANDAMENTO — BUILD 0.2**
 
-1. [x] evoluir o projeto Godot inicial para base funcional;
-2. [x] implementar autoload `GameState`;
-3. [x] implementar `AchievementManager`;
-4. [x] implementar `EndingManager`;
-5. [x] implementar `SceneRouter`;
-6. [x] implementar `SaveManager` com 3 slots;
-7. [x] implementar `SettingsManager` e tela de Opções;
-8. [x] implementar `GameFlow` da rota canônica;
-9. [x] implementar menu com Novo Jogo, Save/Load e Opções;
-10. [x] mapear os cenários como backgrounds da build local;
-11. [ ] migrar subáreas e hotspots reais;
-12. [ ] migrar diálogos completos e escolhas do HTML aprovado;
-13. [ ] implementar todos os finais alternativos no Godot;
-14. [ ] ligar as 22 conquistas às condições completas no Godot;
-15. [ ] implementar inventário visual e uso item → alvo;
-16. [ ] implementar caminhada point-and-click do protagonista;
-17. [ ] corrigir branding visual e importar assets finais;
-18. [ ] implementar animações e áudio finais;
-19. [ ] executar testes de regressão de toda a árvore de finais e saves;
-20. [ ] preparar build de distribuição.
+### Base técnica
+
+- [x] projeto Godot 4.3+;
+- [x] autoload `GameState`;
+- [x] `AchievementManager`;
+- [x] `EndingManager`;
+- [x] `SceneRouter`;
+- [x] `SaveManager`;
+- [x] menu Novo Jogo / Save-Load / Opções;
+- [x] 3 slots de save/load;
+- [x] configuração de exportação compatível com Godot 4.3 / Web;
+- [x] rota canônica implementada.
+
+### Correção 0.2 — point-and-click real
+
+- [x] menu usa a própria arte aprovada, sem painel visual divergente;
+- [x] hotspots transparentes sobre Novo Jogo / Save-Load / Opções;
+- [x] cenas usam hotspots posicionados sobre NPCs, portas, objetos e subáreas;
+- [x] hover visual para indicar elementos clicáveis;
+- [x] inventário selecionável;
+- [x] mecânica **item → alvo** para Óculos VR, Carimbo, OS e Bolota;
+- [x] Colete equipável no protagonista;
+- [x] Hall com Financeiro / Engenharia por clique no cenário;
+- [x] RH dividido em validações clicáveis;
+- [x] Jurídico dividido em chamado, autorização e mesa de análise;
+- [x] escolha do nome do diretor antes do Gabinete;
+- [x] finais alternativos principais ligados a hotspots de risco.
+
+### Próximas passagens
+
+1. [ ] caminhada animada do protagonista entre hotspots;
+2. [ ] separar subáreas em cenas próprias quando necessário;
+3. [ ] migrar todos os diálogos completos do protótipo HTML;
+4. [ ] implementar todos os finais alternativos restantes;
+5. [ ] implementar catálogo/galeria de conquistas dentro do Godot;
+6. [ ] arte final com branding **PAPO SAPÃO** em todos os cenários;
+7. [ ] áudio e animações;
+8. [ ] regressão de toda a árvore de finais;
+9. [ ] build de distribuição.
 
 ## Regra de escopo
 
