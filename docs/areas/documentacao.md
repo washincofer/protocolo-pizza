@@ -50,10 +50,12 @@ Humores e interações canônicas:
 - **Assinatura** → RH
 - **Bolota do Jurídico** → Documentação
 
-Ainda ficam para detalhamento posterior:
+## Requisitos que ficam para o próprio puzzle do Jurídico
 
 - **Chamado**
 - **Autorização externa à empresa**
+
+Esses dois requisitos não devem ser obtidos na Documentação nem pré-distribuídos para outra área. O jogador só descobre e resolve ambos ao enfrentar o Jurídico — Chefe 5.
 
 ## Diretriz de tom
 
