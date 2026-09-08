@@ -48,20 +48,38 @@ Implementado no Protótipo Completo 1.0:
 6. [x] finais alternativos principais do catálogo;
 7. [x] 22 conquistas com persistência local no navegador;
 8. [x] galeria/lista de finais vistos com persistência local;
-9. [ ] save/load completo da campanha em andamento;
+9. [ ] save/load completo da campanha em andamento no HTML;
 10. [ ] playtest exaustivo de todas as rotas, finais e combinações de estados.
 
 ### Decisão de marco
 
 O **Protótipo Completo 1.0 está APROVADO** como base funcional da campanha.
 
-A aprovação não congela correções técnicas encontradas em testes futuros. Novos departamentos, finais ou conquistas continuam fora de escopo até o playtest integral, salvo necessidade real identificada durante testes.
-
 ## Fase 4 — densidade e polimento
 
-**FASE ATUAL RECOMENDADA**
+**EM ANDAMENTO EM PARALELO COM A MIGRAÇÃO GODOT**
 
-Após a aprovação funcional do protótipo:
+### Cenários
+
+- [x] tela inicial / menu conceitual;
+- [x] Recepção;
+- [x] Inovação;
+- [x] TI;
+- [x] Comunicação;
+- [x] Suprimentos;
+- [x] Hall Corporativo;
+- [x] Financeiro;
+- [x] Engenharia;
+- [x] Vigilância;
+- [x] RH;
+- [x] Documentação;
+- [x] Jurídico;
+- [x] Diretoria;
+- [ ] corrigir branding provisório de cenários antigos para **PAPO SAPÃO**;
+- [ ] separar hotspots e subáreas finais sobre os cenários;
+- [ ] lock de arte após playtest visual.
+
+### Polimento restante
 
 - [ ] revisar hotspots inúteis e easter eggs;
 - [ ] revisar diálogos repetidos;
@@ -74,24 +92,32 @@ Após a aprovação funcional do protótipo:
 - [ ] revisar humor para público família;
 - [ ] revisar áudio, vinhetas e efeitos;
 - [ ] revisar feedback visual de itens, conhecimentos e processos contornados;
-- [ ] executar playtest de todos os finais e conquistas;
-- [ ] decidir, somente após o playtest, se algum final/conquista adicional é realmente necessário.
+- [ ] executar playtest de todos os finais e conquistas.
 
 ## Fase 5 — migração/produção em Godot
 
-Quando o fluxo completo estiver validado em playtest suficiente:
+**EM ANDAMENTO — PRODUCTION BASE 0.1**
 
-1. [ ] criar projeto Godot definitivo;
-2. [ ] implementar autoload `GameState`;
-3. [ ] implementar `AchievementManager`;
-4. [ ] implementar `EndingManager`;
-5. [ ] implementar `SceneRouter`;
-6. [ ] implementar `SaveManager`;
-7. [ ] importar cenas e diálogos validados;
-8. [ ] substituir arte temporária por assets finais;
-9. [ ] implementar animações e áudio finais;
-10. [ ] executar testes de regressão de toda a árvore de finais;
-11. [ ] preparar build de distribuição.
+1. [x] evoluir o projeto Godot inicial para base funcional;
+2. [x] implementar autoload `GameState`;
+3. [x] implementar `AchievementManager`;
+4. [x] implementar `EndingManager`;
+5. [x] implementar `SceneRouter`;
+6. [x] implementar `SaveManager` com 3 slots;
+7. [x] implementar `SettingsManager` e tela de Opções;
+8. [x] implementar `GameFlow` da rota canônica;
+9. [x] implementar menu com Novo Jogo, Save/Load e Opções;
+10. [x] mapear os cenários como backgrounds da build local;
+11. [ ] migrar subáreas e hotspots reais;
+12. [ ] migrar diálogos completos e escolhas do HTML aprovado;
+13. [ ] implementar todos os finais alternativos no Godot;
+14. [ ] ligar as 22 conquistas às condições completas no Godot;
+15. [ ] implementar inventário visual e uso item → alvo;
+16. [ ] implementar caminhada point-and-click do protagonista;
+17. [ ] corrigir branding visual e importar assets finais;
+18. [ ] implementar animações e áudio finais;
+19. [ ] executar testes de regressão de toda a árvore de finais e saves;
+20. [ ] preparar build de distribuição.
 
 ## Regra de escopo
 
