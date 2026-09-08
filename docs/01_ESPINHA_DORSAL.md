@@ -34,12 +34,14 @@ FINAL CANÔNICO
 
 ## Status
 
-A rota principal está **definida como canônica do início ao fim**. O detalhamento posterior de subáreas, puzzles opcionais, finais alternativos e conquistas não altera esta espinha dorsal, salvo decisão canônica posterior explícita.
+A rota principal está **FECHADA E DEFINIDA COMO CANÔNICA DO INÍCIO AO FIM**.
+
+As áreas principais, chefes, recursos-chave, puzzles estruturais e final canônico já foram detalhados. Ajustes futuros de diálogos, ritmo, nomes secundários, hotspots, conquistas, implementação e finais alternativos não alteram esta espinha dorsal, salvo decisão canônica posterior explícita.
 
 ## Papel das áreas
 
 ### Recepção
-Tutorial orgânico: identificação, crachá, autorização, segurança e escolhas.
+Tutorial orgânico: identificação, crachá, autorização, segurança e escolhas. Também pode ensinar o nome correto do Diretor como conhecimento persistente.
 
 ### Inovação
 Ensina exploração e fornece Óculos VR.
@@ -57,19 +59,19 @@ Segundo chefe. Combina item, aplicação correta e informação.
 Primeiro hub verdadeiro. Introduz escolha de ordem e backtracking.
 
 ### Financeiro
-Fornece Comprovante de Prestador Terceirizado para RH.
+Fornece Comprovante de Prestador Terceirizado para RH e Protocolo de Exceção Fiscal para o Jurídico.
 
 ### Engenharia
-Fornece Colete de Manutenção + Ordem de Serviço para Vigilância.
+Fornece Colete de Manutenção + Ordem de Serviço para Vigilância. A Área Técnica também possui final absurdo opcional por análise estrutural da pizza.
 
 ### Vigilância
-Terceiro chefe. Ensina equipar item no protagonista e depois apresentar documento.
+Terceiro chefe. Exige Colete de Manutenção equipado + Ordem de Serviço apresentada.
 
 ### RH
-Quarto chefe. Sua identidade mecânica é a segurança interna excessiva: item correto + ponto correto de validação, muitas vezes sem finalidade prática. As subáreas ficam para detalhamento posterior.
+Quarto chefe. Sequência fechada: Comprovante de Prestador Terceirizado → Ficha de Validação → ponto digital → controle paralelo → Cadastro de Terceiros → Validador de Prestadores Externos → retorno à Helena Folha → Assinatura de Validação do RH.
 
 ### Documentação
-Área neutra que prepara o puzzle final e fornece a Bolota do Jurídico.
+Área neutra que prepara o puzzle final e fornece a **Bolota do Jurídico — Pendente de Aprovação**.
 
 ### Jurídico
 Quinto e maior chefe burocrático. Requisitos canônicos:
@@ -80,11 +82,35 @@ Quinto e maior chefe burocrático. Requisitos canônicos:
 4. Protocolo;
 5. Autorização externa à empresa.
 
-Ao concluir o processo, a Bolota recebe a aprovação/carimbo do Jurídico.
+Origens:
+
+- Protocolo → Financeiro;
+- Assinatura → RH;
+- Bolota → Documentação;
+- Chamado → puzzle interno do Jurídico;
+- Autorização externa → puzzle interno do Jurídico.
+
+Ao concluir o processo, a Bolota recebe aprovação e carimbo do Jurídico.
 
 ### Diretoria
-O contraste final é propositalmente simples. O entregador entra sem nova identificação, crachá ou conferência de documentos. A secretária apenas pergunta o **nome do diretor**. O jogador deve ter aprendido essa informação durante a campanha. Ao responder corretamente, é encaminhado à sala e entrega a pizza.
+Última área e contraste final. O entregador entra sem nova identificação, crachá ou conferência de documentos. A secretária apenas pergunta o **nome do diretor**. Ao responder corretamente, o jogador entra na Sala do Diretor e realiza a entrega.
+
+A condição global da pizza continua sendo avaliada na chegada: temperatura, integridade, quantidade, posse e tempo podem influenciar finais alternativos.
 
 ## Final canônico
 
-O entregador chega à sala do diretor e entrega a pizza corretamente. Logo em seguida, o diretor faz ou recebe um novo pedido de pizza, encerrando a história com humor e fechando o ciclo de **PROTOCOLO: PIZZA**.
+Com a pizza em condição válida, o Diretor recebe a entrega. Logo depois, o celular do entregador recebe um novo pedido para o mesmo prédio / último andar.
+
+Fechamento:
+
+**PROTOCOLO: PIZZA**
+
+**ENTREGA CONCLUÍDA**
+
+**NOVO PROTOCOLO INICIADO**
+
+A história termina em ciclo, reforçando a sátira de que o processo nunca realmente acaba.
+
+## Marco do projeto
+
+Com a aprovação da Diretoria e do final canônico, a **rota narrativa principal completa de PROTOCOLO: PIZZA está fechada**.
