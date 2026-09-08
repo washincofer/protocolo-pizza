@@ -1,52 +1,89 @@
-# Áreas e subáreas
+# Áreas e subáreas — estrutura fechada
 
-A densidade do jogo deve crescer principalmente através de subáreas, não pela criação excessiva de novos departamentos.
+A densidade do jogo cresce principalmente através de subáreas, interações, estados e backtracking, não pela criação excessiva de novos departamentos.
 
 ## Recepção / Térreo
 
-- Balcão da Recepção
-- Sala/Sofá de Espera
-- Identificação
-- Autorização
-- Posto de Segurança
-- Elevadores
-- Auditório de onboarding
+Estrutura:
+
+- Balcão da Recepção;
+- Sala de Espera;
+- Auditório;
+- Posto de Segurança;
+- Elevadores / escadas como zonas de interação.
+
+NPCs principais:
+
+- Eliana Marli;
+- Mauro Portela;
+- Lúcia Pauta.
+
+Função: tutorial orgânico de identificação, escolhas, exploração, tempo e consequências. Também pode registrar o nome correto do Diretor: **Ronaldo Gilberto**.
 
 ## Inovação
 
-- Hall dos Elevadores
-- Sala de Reunião
-- Banheiro
-- Área de Trabalho
+Estrutura:
 
-Item: Óculos VR.
+- área principal;
+- Sala de Reunião;
+- Banheiro como zona interativa.
 
-## TI
+NPCs:
 
-Núcleo atual:
+- Caio Brusch;
+- Bernardo Nolli.
 
-- área principal / Service Desk
-- Segurança da Informação
+Item: **Óculos VR**.
 
-Subáreas candidatas já aprovadas em direção:
+## TI — Chefe 1
 
-- Sala da Weekly
-- Sala de Manutenção da TI
-- Sala de Servidores / área técnica
+Estrutura:
+
+- área principal;
+- Sala de Servidores;
+- Sala de Sistemas;
+- Service Desk.
+
+NPCs:
+
+- Rogério Wilco;
+- Samir Maxo;
+- Jorge Stobarte.
+
+Puzzle: **Óculos VR → Rogério Wilco**.
 
 ## Comunicação
 
-- Hall da Marca
-- Estúdio de Conteúdo
-- Sala de Crise
-- Material promocional / gráfica
+Estrutura:
 
-## Suprimentos
+1. área principal;
+2. Estúdio de Conteúdo;
+3. Sala de Crise.
 
-- Recebimento
-- Almoxarifado
-- Compras
-- Sala de Stan Leilo
+NPCs:
+
+- Manny Calveira;
+- Abril Riani.
+
+Recursos:
+
+- Carimbo — Prioridade Executiva;
+- CC-0001.
+
+## Suprimentos — Chefe 2
+
+Estrutura:
+
+1. área principal;
+2. Almoxarifado;
+3. Sala de Compras.
+
+NPCs:
+
+- Stan Leilo;
+- Murray Estoque.
+
+Puzzle: Diretor + CC-0001 + Prioridade Executiva + compra emergencial + justificativa “Fome.”
 
 ## Hall Corporativo
 
@@ -54,61 +91,138 @@ Primeiro hub não linear.
 
 Ramificações:
 
-- Financeiro
-- Engenharia
+- Financeiro;
+- Engenharia;
+- avanço para Vigilância.
 
-O jogador pode visitar em qualquer ordem e pode subir sem coletar ambos os recursos, permitindo backtracking.
+Financeiro e Engenharia podem ser visitados em qualquer ordem. O jogador pode avançar antes de possuir todos os recursos futuros e depois retornar ao Hall para corrigir pendências.
 
 ## Financeiro
 
-Subáreas possíveis:
+Estrutura:
 
-- Reembolsos
-- Contas a Pagar
-- Cadastro de fornecedor
-- Arquivo
+1. área principal;
+2. Arquivo Financeiro.
 
-Piada canônica: anexos de reembolso são obrigatórios ou não dependendo de quem atende.
+NPCs:
+
+- Bruno Basco;
+- Fábio Tributo;
+- Beto Rô.
+
+Recursos:
+
+- Comprovante de Prestador Terceirizado → RH;
+- Protocolo de Exceção Fiscal → Jurídico.
 
 ## Engenharia
 
-Subáreas possíveis:
+Estrutura:
 
-- Bancada de Manutenção
-- Quadro de Plantas
-- Depósito de Ferramentas
-- Área Técnica
+1. área principal;
+2. Depósito / Área Técnica.
 
-Frase canônica: “Nem eu tenho coragem para entrar neste prédio construído por nós.”
+NPCs:
 
-## Vigilância
+- Bento Tróti;
+- Artur Viga.
 
-- Hall / Catracas
-- Posto de Vigilância
-- Sala de Monitoramento
-- Acesso Restrito
+Recursos:
 
-## RH
+- Colete de Manutenção;
+- Ordem de Serviço encontrada no bolso do colete.
 
-A detalhar.
+A Área Técnica possui risco opcional de análise estrutural da pizza.
+
+## Vigilância — Chefe 3
+
+Estrutura:
+
+1. Posto de Vigilância / área principal;
+2. Sala de Monitoramento;
+3. Acesso Restrito.
+
+NPCs:
+
+- Sônia Bondes;
+- Gabriel Naito.
+
+Puzzle: Colete de Manutenção equipado + Ordem de Serviço apresentada.
+
+## RH — Chefe 4
+
+Estrutura:
+
+1. Área principal — RH;
+2. Controle de Ponto;
+3. Cadastro de Terceiros.
+
+NPCs:
+
+- Helena Folha;
+- Paulo Pontes;
+- Caio Dastro.
+
+Fluxo:
+
+`Comprovante → Ficha → ponto digital → controle paralelo → Validador de Prestadores Externos → retorno à Helena → Assinatura de Validação do RH`
 
 ## Documentação
 
-Área neutra de preparação para Jurídico.
+Estrutura:
 
-Funções:
+1. Atendimento de Documentação;
+2. Arquivo / Reprografia.
 
-- arquivo;
-- atendimento;
-- impressão;
-- protocolo;
-- segunda via;
-- coleta da Bolota do Jurídico.
+NPCs:
 
-## Jurídico
+- Célia Viana;
+- Domingos Hurley.
 
-A detalhar após fechar RH e revisar todos os itens acumulados.
+Recurso:
+
+**Bolota do Jurídico — Pendente de Aprovação**.
+
+## Jurídico — Chefe 5
+
+Estrutura:
+
+1. Recepção / Secretaria do Jurídico;
+2. Sala de Análise Jurídica.
+
+NPCs:
+
+- Laura Firma;
+- Dr. Vítor Parecer.
+
+Requisitos:
+
+1. Chamado;
+2. Bolota;
+3. Assinatura;
+4. Protocolo;
+5. Autorização externa à empresa.
+
+Chamado e Autorização externa são resolvidos dentro do próprio Jurídico.
 
 ## Diretoria
 
-Área final. O diretor só aceita a pizza se a Bolota do Jurídico estiver aprovada/carimbada.
+Estrutura:
+
+1. Recepção da Diretoria;
+2. Sala do Diretor.
+
+NPCs:
+
+- Carla Agenda;
+- Ronaldo Gilberto.
+
+Regra final: nenhum documento é rechecado. Carla pergunta apenas o nome do Diretor. O jogador responde **Ronaldo Gilberto** e entra.
+
+A condição global da pizza é avaliada na Sala do Diretor.
+
+## Status
+
+**TODAS AS ÁREAS E SUBÁREAS PRINCIPAIS ESTÃO FECHADAS PARA A PRIMEIRA VERSÃO COMPLETA.**
+
+O detalhamento restante é de implementação, hotspots, arte, animação, áudio e balanceamento, sem alterar a rota principal.
