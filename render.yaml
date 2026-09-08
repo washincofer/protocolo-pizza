@@ -1,1 +1,7 @@
-
+services:
+  - type: web
+    runtime: static
+    name: protocolo-pizza
+    buildCommand: bash scripts/build-render.sh
+    staticPublishPath: ./godot/build/web
+    autoDeployTrigger: commit
