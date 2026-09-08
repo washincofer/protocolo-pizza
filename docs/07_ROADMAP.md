@@ -34,26 +34,34 @@
 
 ## Fase 3 — protótipo completo
 
-**PRÓXIMA FASE**
+**MARCO APROVADO — PROTÓTIPO COMPLETO 1.0**
 
-Objetivo: transformar o fluxo fechado em uma campanha jogável de ponta a ponta.
+O protótipo HTML integral foi gerado e aprovado em validação inicial pelo projeto.
 
-Ordem recomendada:
+Implementado no Protótipo Completo 1.0:
 
-1. [ ] consolidar protótipo HTML em uma versão integral da campanha;
-2. [ ] implementar `GameState` com inventário, conhecimentos e flags;
-3. [ ] implementar temperatura, integridade, quantidade, tempo e posse da pizza;
-4. [ ] implementar backtracking Hall ↔ Financeiro ↔ Engenharia;
-5. [ ] implementar bloqueios sem softlock em Vigilância, RH e Jurídico;
-6. [ ] implementar todos os finais alternativos fechados;
-7. [ ] implementar as 22 conquistas e persistência;
-8. [ ] implementar galeria/lista de finais vistos;
-9. [ ] implementar save/load;
-10. [ ] executar playtest integral.
+1. [x] campanha jogável da Recepção até a Diretoria;
+2. [x] estado global de inventário, conhecimentos e flags;
+3. [x] temperatura, integridade, quantidade, tempo e posse da pizza;
+4. [x] backtracking Hall ↔ Financeiro ↔ Engenharia;
+5. [x] bloqueios de progressão em Vigilância, RH e Jurídico;
+6. [x] finais alternativos principais do catálogo;
+7. [x] 22 conquistas com persistência local no navegador;
+8. [x] galeria/lista de finais vistos com persistência local;
+9. [ ] save/load completo da campanha em andamento;
+10. [ ] playtest exaustivo de todas as rotas, finais e combinações de estados.
+
+### Decisão de marco
+
+O **Protótipo Completo 1.0 está APROVADO** como base funcional da campanha.
+
+A aprovação não congela correções técnicas encontradas em testes futuros. Novos departamentos, finais ou conquistas continuam fora de escopo até o playtest integral, salvo necessidade real identificada durante testes.
 
 ## Fase 4 — densidade e polimento
 
-Após a campanha funcionar de ponta a ponta:
+**FASE ATUAL RECOMENDADA**
+
+Após a aprovação funcional do protótipo:
 
 - [ ] revisar hotspots inúteis e easter eggs;
 - [ ] revisar diálogos repetidos;
@@ -65,11 +73,13 @@ Após a campanha funcionar de ponta a ponta:
 - [ ] revisar pistas para evitar travamentos de compreensão;
 - [ ] revisar humor para público família;
 - [ ] revisar áudio, vinhetas e efeitos;
-- [ ] revisar feedback visual de itens, conhecimentos e processos contornados.
+- [ ] revisar feedback visual de itens, conhecimentos e processos contornados;
+- [ ] executar playtest de todos os finais e conquistas;
+- [ ] decidir, somente após o playtest, se algum final/conquista adicional é realmente necessário.
 
 ## Fase 5 — migração/produção em Godot
 
-Quando o fluxo completo estiver validado em playtest:
+Quando o fluxo completo estiver validado em playtest suficiente:
 
 1. [ ] criar projeto Godot definitivo;
 2. [ ] implementar autoload `GameState`;
