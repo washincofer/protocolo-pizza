@@ -11,15 +11,22 @@
 
 Sem subáreas adicionais e sem novo puzzle documental.
 
+## NPCs
+
+- **Carla Agenda** — secretária da Diretoria.
+- **Ronaldo Gilberto** — diretor da PAPO SAPÃO e destinatário da pizza.
+
 ## Regra canônica de acesso
 
 Ao chegar ao andar final, o entregador não precisa apresentar crachá, autorização, protocolo, comprovante, chamado, assinatura, Bolota ou qualquer outro documento.
 
-A secretária faz apenas uma pergunta:
+Carla Agenda faz apenas uma pergunta:
 
 **“Qual o nome do diretor?”**
 
-O jogador precisa responder corretamente.
+A resposta correta é:
+
+**Ronaldo Gilberto**
 
 ## Informação obrigatória
 
@@ -27,11 +34,11 @@ O nome correto do diretor deve ter sido apresentado anteriormente durante a camp
 
 Exemplo:
 
-> — Pizza para a Diretoria? Para o Sr. [NOME DO DIRETOR]?
+> — Pizza para a Diretoria? Para o Sr. Ronaldo Gilberto?
 
 Feedback:
 
-**INFORMAÇÃO ADQUIRIDA — Diretor: [Nome]**
+**INFORMAÇÃO ADQUIRIDA — Diretor: Ronaldo Gilberto**
 
 A informação funciona como conhecimento aprendido, não como item físico.
 
@@ -41,7 +48,7 @@ Estado sugerido:
 
 ## Recepção da Diretoria
 
-Ao informar o nome correto, a secretária simplesmente responde:
+Ao informar **Ronaldo Gilberto**, Carla simplesmente responde:
 
 > — Pode entrar.
 
@@ -69,7 +76,7 @@ Interações adicionais opcionais:
 
 ## Nome incorreto
 
-Um erro simples não causa Game Over. A secretária apenas informa que o nome está errado e permite nova tentativa.
+Um erro simples não causa Game Over. Carla apenas informa que o nome está errado e permite nova tentativa.
 
 Se o jogador errar repetidamente, pode desbloquear:
 
@@ -81,7 +88,7 @@ Se o jogador errar repetidamente, pode desbloquear:
 
 A sala é propositalmente normal, sem aparato de segurança ou exagero visual equivalente aos setores anteriores.
 
-O Diretor está trabalhando tranquilamente.
+Ronaldo Gilberto está trabalhando tranquilamente.
 
 Diálogo-base:
 
@@ -110,7 +117,7 @@ O final canônico exige que a pizza ainda esteja em condição válida de entreg
 
 > — Chegou.
 
-O Diretor olha para a caixa.
+Ronaldo olha para a caixa.
 
 > — Eventualmente.
 
@@ -126,7 +133,7 @@ Pode disparar o final alternativo:
 
 Com a pizza em condição válida:
 
-1. o Diretor recebe a pizza;
+1. Ronaldo Gilberto recebe a pizza;
 2. abre a caixa;
 3. começa a comer;
 4. o entregador finalmente relaxa;
@@ -155,9 +162,9 @@ Créditos.
 
 ## Regra narrativa final
 
-O humor vem do contraste entre a enorme complexidade necessária para atravessar a empresa e a extrema simplicidade do acesso à Diretoria.
+O humor vem do contraste entre a enorme complexidade necessária para atravessar a PAPO SAPÃO e a extrema simplicidade do acesso à Diretoria.
 
-A Bolota aprovada e os demais documentos encerram seus respectivos processos, mas não são rechecados pela secretária da Diretoria.
+A Bolota aprovada e os demais documentos encerram seus respectivos processos, mas não são rechecados por Carla Agenda.
 
 ## Status
 
