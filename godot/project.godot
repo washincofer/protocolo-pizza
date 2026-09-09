@@ -16,6 +16,7 @@ SaveManager="*res://scripts/save_manager.gd"
 SceneRouter="*res://scripts/scene_router.gd"
 GameFlow="*res://scripts/game_flow.gd"
 DebugTools="*res://scripts/debug_tools.gd"
+UIPolish="*res://scripts/ui_polish.gd"
 
 [display]
 window/size/viewport_width=1280
