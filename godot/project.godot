@@ -22,6 +22,7 @@ DialogueUI="*res://scripts/dialogue_ui.gd"
 SubareaManager="*res://scripts/subarea_manager.gd"
 AchievementsUI="*res://scripts/achievements_ui.gd"
 PlayerController="*res://scripts/player_controller.gd"
+FloorInputFix="*res://scripts/floor_input_fix.gd"
 
 [display]
 window/size/viewport_width=1280
