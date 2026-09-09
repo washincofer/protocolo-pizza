@@ -29,4 +29,22 @@ cp -R "${GODOT_DIR}/templates-unpacked/templates/." "${TEMPLATE_DIR}/"
 
 test -f godot/build/web/index.html
 
+python3 - <<'PY'
+from pathlib import Path
+
+path = Path("godot/build/web/index.html")
+html = path.read_text(encoding="utf-8")
+inject = r'''<script>
+window.addEventListener('keydown', function (event) {
+  if (event.key === 'F1' || event.key === 'F2' || event.key === 'F3') {
+    event.preventDefault();
+  }
+}, {capture: true});
+</script>
+'''
+if inject not in html:
+    html = html.replace('</head>', inject + '</head>')
+path.write_text(html, encoding='utf-8')
+PY
+
 echo "Render build concluído: godot/build/web/index.html"
