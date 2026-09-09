@@ -1,4 +1,4 @@
-; Engine configuration file.
+; Engine configuration file
 ; PROTOCOLO: PIZZA — Godot production base 0.2
 config_version=5
 
@@ -23,6 +23,7 @@ SubareaManager="*res://scripts/subarea_manager.gd"
 AchievementsUI="*res://scripts/achievements_ui.gd"
 PlayerController="*res://scripts/player_controller.gd"
 FloorInputFix="*res://scripts/floor_input_fix.gd"
+InteractionGuard="*res://scripts/interaction_guard.gd"
 
 [display]
 window/size/viewport_width=1280
