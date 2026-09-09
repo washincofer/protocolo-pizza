@@ -88,7 +88,7 @@ const SUBAREAS := {
 const ENTRY_MAP := {
 	"reception": {
 		"Balcão da Recepção": "dialogue_receptionist",
-		"Sofá de Espera": "reception_waiting_room",
+		"Sala de Espera": "reception_waiting_room",
 		"Totem Primeiro Cadastro": "reception_totem",
 		"Auditório": "reception_auditorium"
 	},
