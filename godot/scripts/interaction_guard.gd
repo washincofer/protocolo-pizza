@@ -41,7 +41,8 @@ func _prepare_main_menu(main: Control) -> void:
 
 func _cleanup_subarea_nodes(main: Control) -> void:
 	for child: Node in main.get_children():
-		if child.name.begins_with("SubareaEntry_") or child.name.begins_with("SubareaHotspot_"):
+		var node_name: String = str(child.name)
+		if node_name.begins_with("SubareaEntry_") or node_name.begins_with("SubareaHotspot_"):
 			child.queue_free()
 
 func _apply_interaction_lock(main: Control) -> void:
