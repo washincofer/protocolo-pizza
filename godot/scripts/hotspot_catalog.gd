@@ -53,12 +53,13 @@ const TITLES := {
 
 const HOTSPOTS := {
 	"reception": [
-		{"label":"Balcão da Recepção","rect":[500,270,300,250],"action":"receptionist"},
-		{"label":"Sofá de Espera","rect":[270,330,260,170],"action":"wait_sofa"},
-		{"label":"Segurança","rect":[1010,270,170,250],"action":"security_desk"},
-		{"label":"Auditório","rect":[1450,100,210,320],"action":"auditorium"},
-		{"label":"Escadas","rect":[1450,420,210,320],"action":"reception_stairs"},
-		{"label":"Porta de Entrada","rect":[0,150,190,430],"action":"reception_exit"}
+		{"label":"Balcão da Recepção","rect":[500,320,270,219],"action":"receptionist"},
+		{"label":"Sofá de Espera","rect":[37,198,151,369],"action":"wait_sofa"},
+		{"label":"Totem Primeiro Cadastro","rect":[792,352,98,202],"action":"reception_totem"},
+		{"label":"Segurança","rect":[1027,340,129,205],"action":"security_desk"},
+		{"label":"Auditório","rect":[1492,178,138,182],"action":"auditorium"},
+		{"label":"Escadas","rect":[1535,440,126,347],"action":"reception_stairs"},
+		{"label":"Porta de Entrada","rect":[366,841,1038,89],"action":"reception_exit"}
 	],
 	"innovation": [
 		{"label":"Óculos VR","rect":[900,380,190,170],"action":"take_vr"},
