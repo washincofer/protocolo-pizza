@@ -51,15 +51,18 @@ const TITLES := {
 	"directorate": "Diretoria"
 }
 
+# Em áreas já calibradas, "bounds" preserva exatamente os quatro números
+# medidos pelo F3 no formato [X1, Y1, X2, Y2]. O DebugTools usa esses limites
+# como fonte autoritativa depois do enquadramento da imagem.
 const HOTSPOTS := {
 	"reception": [
-		{"label":"Balcão da Recepção","rect":[500,320,270,219],"action":"receptionist"},
-		{"label":"Sala de Espera","rect":[37,198,151,369],"action":"wait_sofa"},
-		{"label":"Totem Primeiro Cadastro","rect":[792,352,98,202],"action":"reception_totem"},
-		{"label":"Segurança","rect":[1027,340,129,205],"action":"security_desk"},
-		{"label":"Auditório","rect":[1492,178,138,182],"action":"auditorium"},
-		{"label":"Escadas","rect":[1535,440,126,347],"action":"reception_stairs"},
-		{"label":"Porta de Entrada","rect":[366,841,1038,89],"action":"reception_exit"}
+		{"label":"Balcão da Recepção","rect":[500,320,270,219],"bounds":[500,539,770,320],"action":"receptionist"},
+		{"label":"Sala de Espera","rect":[37,198,151,369],"bounds":[37,567,188,198],"action":"wait_sofa"},
+		{"label":"Totem Primeiro Cadastro","rect":[792,352,98,202],"bounds":[792,554,890,352],"action":"reception_totem"},
+		{"label":"Segurança","rect":[1027,340,129,205],"bounds":[1027,545,1156,340],"action":"security_desk"},
+		{"label":"Auditório","rect":[1492,178,138,182],"bounds":[1492,360,1630,178],"action":"auditorium"},
+		{"label":"Escadas","rect":[1535,440,126,347],"bounds":[1535,787,1661,440],"action":"reception_stairs"},
+		{"label":"Porta de Entrada","rect":[366,340,790,590],"bounds":[366,930,1156,340],"action":"reception_exit"}
 	],
 	"innovation": [
 		{"label":"Óculos VR","rect":[900,380,190,170],"action":"take_vr"},
