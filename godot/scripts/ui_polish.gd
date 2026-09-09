@@ -134,6 +134,7 @@ func _open_pause() -> void:
 	_add_pause_button(box, "Opções", _call_main.bind("_open_options"))
 	_add_pause_button(box, "Voltar ao jogo", _close_pause)
 	_add_pause_button(box, "Menu principal", _go_main_menu)
+	_add_pause_button(box, "Sair do jogo", _quit_game)
 
 func _add_pause_button(box: VBoxContainer, label_text: String, callback: Callable) -> void:
 	var button: Button = Button.new()
@@ -274,3 +275,11 @@ func _go_main_menu() -> void:
 	if main != null and main.has_method("show_menu"):
 		main.call("show_menu")
 		_apply_menu_hotspots(main)
+
+func _quit_game() -> void:
+	_close_pause()
+	_close_inventory()
+	if DialogueUI.is_open():
+		DialogueUI.close_dialogue()
+	GameState.run_active = false
+	get_tree().quit()
