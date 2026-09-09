@@ -1,5 +1,6 @@
 extends Node
 
+const HotspotCatalog = preload("res://scripts/hotspot_catalog.gd")
 const SAFE_MARGIN: float = 28.0
 
 var hud_visible: bool = true
@@ -45,7 +46,7 @@ func _build_coordinate_overlay() -> void:
 	coord_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	coord_layer.add_child(coord_panel)
 
-	var style := StyleBoxFlat.new()
+	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = Color(0.02, 0.04, 0.07, 0.90)
 	style.border_color = Color(0.2, 0.9, 1.0, 0.9)
 	style.set_border_width_all(2)
@@ -86,6 +87,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 func _process(_delta: float) -> void:
 	_apply_safe_fit()
 	if GameState.run_active:
+		_snap_calibrated_hotspots()
 		_apply_hud_visibility()
 		_apply_hotspot_debug()
 	if coords_visible:
@@ -147,11 +149,11 @@ func _apply_safe_fit() -> void:
 	for child: Node in main.get_children():
 		if _is_hotspot(child):
 			var button: Button = child as Button
-			var source_pos := Vector2(
+			var source_pos: Vector2 = Vector2(
 				(button.position.x - old_origin.x) / old_scale_x,
 				(button.position.y - old_origin.y) / old_scale_y
 			)
-			var source_button_size := Vector2(
+			var source_button_size: Vector2 = Vector2(
 				button.size.x / old_scale_x,
 				button.size.y / old_scale_y
 			)
@@ -160,6 +162,56 @@ func _apply_safe_fit() -> void:
 
 	bg.position = new_origin
 	bg.size = new_size
+
+func _snap_calibrated_hotspots() -> void:
+	var main: Control = _get_main()
+	if main == null:
+		return
+	var bg: TextureRect = _find_background(main)
+	if bg == null or bg.texture == null or bg.size.x <= 0.0 or bg.size.y <= 0.0:
+		return
+
+	var area_id: String = GameState.current_area
+	var entries: Array = HotspotCatalog.get_hotspots(area_id)
+	if entries.is_empty():
+		return
+
+	var source_size: Vector2 = Vector2(bg.texture.get_size())
+	if source_size.x <= 0.0 or source_size.y <= 0.0:
+		return
+	var sx: float = bg.size.x / source_size.x
+	var sy: float = bg.size.y / source_size.y
+
+	var calibrated: Dictionary = {}
+	for value: Variant in entries:
+		var data: Dictionary = Dictionary(value)
+		if not data.has("bounds"):
+			continue
+		var bounds: Array = Array(data.get("bounds", []))
+		if bounds.size() < 4:
+			continue
+		var x1: float = float(bounds[0])
+		var y1: float = float(bounds[1])
+		var x2: float = float(bounds[2])
+		var y2: float = float(bounds[3])
+		var left: float = minf(x1, x2)
+		var top: float = minf(y1, y2)
+		var right: float = maxf(x1, x2)
+		var bottom: float = maxf(y1, y2)
+		calibrated[str(data.get("label", ""))] = Rect2(left, top, right - left, bottom - top)
+
+	if calibrated.is_empty():
+		return
+
+	for child: Node in main.get_children():
+		if not _is_hotspot(child):
+			continue
+		var button: Button = child as Button
+		if not calibrated.has(button.tooltip_text):
+			continue
+		var source_rect: Rect2 = calibrated[button.tooltip_text]
+		button.position = bg.position + Vector2(source_rect.position.x * sx, source_rect.position.y * sy)
+		button.size = Vector2(source_rect.size.x * sx, source_rect.size.y * sy)
 
 func _apply_hud_visibility() -> void:
 	var main: Control = _get_main()
@@ -204,14 +256,14 @@ func _update_coordinates() -> void:
 	var source_size: Vector2 = Vector2(bg.texture.get_size())
 	var local: Vector2 = mouse - bg.position
 	var inside: bool = local.x >= 0.0 and local.y >= 0.0 and local.x <= bg.size.x and local.y <= bg.size.y
-	var image_pos := Vector2(-1, -1)
+	var image_pos: Vector2 = Vector2(-1, -1)
 	if bg.size.x > 0.0 and bg.size.y > 0.0:
 		image_pos = Vector2(
 			local.x * source_size.x / bg.size.x,
 			local.y * source_size.y / bg.size.y
 		)
 
-	var state_text := "HUD %s | HOTSPOTS %s" % [
+	var state_text: String = "HUD %s | HOTSPOTS %s" % [
 		"ON" if hud_visible else "OFF",
 		"ON" if hotspot_debug_visible else "OFF"
 	]
