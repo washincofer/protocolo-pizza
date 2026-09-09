@@ -18,6 +18,8 @@ GameFlow="*res://scripts/game_flow.gd"
 DebugTools="*res://scripts/debug_tools.gd"
 UIPolish="*res://scripts/ui_polish.gd"
 MusicManager="*res://scripts/music_manager.gd"
+DialogueUI="*res://scripts/dialogue_ui.gd"
+SubareaManager="*res://scripts/subarea_manager.gd"
 
 [display]
 window/size/viewport_width=1280
