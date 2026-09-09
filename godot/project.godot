@@ -20,6 +20,7 @@ UIPolish="*res://scripts/ui_polish.gd"
 MusicManager="*res://scripts/music_manager.gd"
 DialogueUI="*res://scripts/dialogue_ui.gd"
 SubareaManager="*res://scripts/subarea_manager.gd"
+AchievementsUI="*res://scripts/achievements_ui.gd"
 
 [display]
 window/size/viewport_width=1280
