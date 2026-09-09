@@ -6,16 +6,16 @@ const SOURCE_SIZES := {
 	"reception": Vector2(1672, 941),
 	"innovation": Vector2(1672, 941),
 	"ti": Vector2(1672, 941),
-	"communication": Vector2(1448, 1086),
-	"supplies": Vector2(1448, 1086),
+	"communication": Vector2(1672, 941),
+	"supplies": Vector2(1672, 941),
 	"hall": Vector2(1672, 941),
 	"finance": Vector2(1672, 941),
 	"engineering": Vector2(1672, 941),
-	"security": Vector2(1448, 1086),
-	"rh": Vector2(1448, 1086),
-	"documentation": Vector2(1448, 1086),
-	"legal": Vector2(1448, 1086),
-	"directorate": Vector2(1448, 1086)
+	"security": Vector2(1672, 941),
+	"rh": Vector2(1672, 941),
+	"documentation": Vector2(1672, 941),
+	"legal": Vector2(1672, 941),
+	"directorate": Vector2(1672, 941)
 }
 
 const BACKGROUNDS := {
