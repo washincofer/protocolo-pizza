@@ -18,6 +18,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	var key_event := event as InputEventKey
 	if key_event == null or not key_event.pressed or key_event.echo:
 		return
+	if AchievementsUI.overlay_layer != null:
+		return
 	if key_event.keycode == KEY_ESCAPE and GameState.run_active:
 		if inventory_layer != null:
 			_close_inventory()
@@ -127,6 +129,7 @@ func _open_pause() -> void:
 	box.add_child(title)
 
 	_add_pause_button(box, "Inventário", _open_inventory)
+	_add_pause_button(box, "Conquistas", _open_achievements)
 	_add_pause_button(box, "Salvar / Carregar", _call_main.bind("_open_save_load"))
 	_add_pause_button(box, "Opções", _call_main.bind("_open_options"))
 	_add_pause_button(box, "Voltar ao jogo", _close_pause)
@@ -144,6 +147,14 @@ func _close_pause() -> void:
 	if pause_layer != null:
 		pause_layer.queue_free()
 		pause_layer = null
+
+func reopen_pause() -> void:
+	if GameState.run_active:
+		_open_pause()
+
+func _open_achievements() -> void:
+	_close_pause()
+	AchievementsUI.open(true)
 
 func _open_inventory() -> void:
 	_close_pause()
