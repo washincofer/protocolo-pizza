@@ -54,7 +54,7 @@ const TITLES := {
 const HOTSPOTS := {
 	"reception": [
 		{"label":"Balcão da Recepção","rect":[500,320,270,219],"action":"receptionist"},
-		{"label":"Sofá de Espera","rect":[37,198,151,369],"action":"wait_sofa"},
+		{"label":"Sala de Espera","rect":[37,198,151,369],"action":"wait_sofa"},
 		{"label":"Totem Primeiro Cadastro","rect":[792,352,98,202],"action":"reception_totem"},
 		{"label":"Segurança","rect":[1027,340,129,205],"action":"security_desk"},
 		{"label":"Auditório","rect":[1492,178,138,182],"action":"auditorium"},
