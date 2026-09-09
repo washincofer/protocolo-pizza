@@ -89,6 +89,7 @@ const ENTRY_MAP := {
 	"reception": {
 		"Balcão da Recepção": "dialogue_receptionist",
 		"Sofá de Espera": "reception_waiting_room",
+		"Totem Primeiro Cadastro": "reception_totem",
 		"Auditório": "reception_auditorium"
 	},
 	"innovation": {
@@ -165,6 +166,8 @@ func _apply_entry_overlays(main: Control, area: String) -> void:
 		var target := str(entries[tooltip])
 		if target == "dialogue_receptionist":
 			overlay.pressed.connect(_open_receptionist_dialogue)
+		elif target == "reception_totem":
+			overlay.pressed.connect(_open_reception_totem)
 		else:
 			overlay.pressed.connect(_enter_subarea.bind(target))
 		main.add_child(overlay)
@@ -307,6 +310,12 @@ func _feedback(text: String) -> void:
 	var main := _get_main()
 	if main != null and main.has_method("show_game"):
 		main.call_deferred("show_game")
+
+func _open_reception_totem() -> void:
+	if GameState.has_flag("identified"):
+		_feedback("Totem: cadastro localizado. Para alterar qualquer dado, abra um chamado. Prazo estimado: em breve.")
+	else:
+		_feedback("Totem — PRIMEIRO CADASTRO: Colaborador, Terceiro, Visitante ou Outro. A opção 'Entregador de Pizza' ainda está em homologação.")
 
 func _open_receptionist_dialogue() -> void:
 	if GameState.has_flag("identified"):
