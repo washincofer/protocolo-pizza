@@ -6,31 +6,32 @@ Data de calibração: 2026-09-10
 
 A Recepção permanece como área piloto da nova UI de diálogo.
 
-Após a primeira rodada de teste, os balões foram deslocados mais 20 px para a direita. O deslocamento total adotado no piloto passa a ser:
+O deslocamento total adotado no piloto permanece em:
 
 `+72 px em X` e `-58 px em Y`
 
-Esse mesmo deslocamento deve ser aplicado aos demais balões da Recepção durante esta rodada de calibração.
+Nesta rodada a arte do balão foi espelhada horizontalmente (`flip_h`) para reposicionar visualmente a ponta sem alterar o texto.
 
-Também foi ativado o alinhamento central do conteúdo textual dos balões:
+O conteúdo textual dos balões permanece centralizado:
 
 - alinhamento horizontal central;
 - alinhamento vertical central;
+- `VBoxContainer` centralizado;
 - área de texto expandida dentro do espaço útil do balão.
 
 ## Ícones de Troféu e Menu
 
-Os ícones da HUD no canto superior direito ainda estavam visualmente grandes e parcialmente fora da área útil em teste.
-
-Nesta rodada, o desenho do ícone passa a ser renderizado como um `TextureRect` controlado dentro de um botão invisível maior, garantindo tamanho visual e área de clique independentes.
+Após o teste em tela, os ícones ainda apareciam grandes e muito próximos da borda direita. A nova calibração reduz novamente o tamanho e move os dois controles mais para dentro da tela.
 
 Parâmetros atuais:
 
-- tamanho visual: `10 × 10 px`;
-- área clicável: `28 × 28 px`;
-- margem direita: `18 px`;
-- espaço entre Troféu e Menu: `8 px`;
-- posição vertical: `16 px`;
+- largura visual máxima: `6 px`;
+- área clicável: `24 × 24 px`;
+- margem direita: `36 px`;
+- espaço entre Troféu e Menu: `6 px`;
+- posição vertical: `10 px`;
+- `expand_icon = true` para impedir que o tamanho original do PNG aumente o botão;
+- `clip_contents = true` para impedir vazamento visual para fora da área clicável;
 - botões sem moldura visível (`flat`).
 
 ## HUD de escolhas A/B/C/D
@@ -41,13 +42,11 @@ O painel visual de escolhas permanece com a disposição:
 
 `C | D`
 
-Após o teste inicial, a escala foi aumentada em 30% em relação ao valor `0.20`.
+Após a revisão visual por screenshot, o painel ainda estava grande demais. A escala atual passa a ser:
 
-Escala atual:
+`0.16`
 
-`0.26`
-
-A implementação continua sendo piloto. Depois do teste visual, o valor pode ser refinado sem alterar a lógica dos diálogos.
+O painel continua centralizado horizontalmente e preso à região inferior da tela.
 
 ## Regra futura aprovada — Troféus
 
