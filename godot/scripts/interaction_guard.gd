@@ -35,6 +35,7 @@ func _prepare_main_menu(main: Control) -> void:
 		GameState.reset_run(false)
 	if DialogueUI.is_open():
 		DialogueUI.close_dialogue()
+	DialogueUI.close_speech()
 	_cleanup_subarea_nodes(main)
 	if UIPolish.has_method("_apply_menu_hotspots"):
 		UIPolish.call("_apply_menu_hotspots", main)
@@ -58,6 +59,8 @@ func _apply_interaction_lock(main: Control) -> void:
 
 	if DialogueUI.layer != null and is_instance_valid(DialogueUI.layer):
 		DialogueUI.layer.visible = not overlay_blocked
+	if DialogueUI.speech_layer != null and is_instance_valid(DialogueUI.speech_layer):
+		DialogueUI.speech_layer.visible = not overlay_blocked
 
 func _has_overlay_block(main: Control) -> bool:
 	if UIPolish.pause_layer != null or UIPolish.inventory_layer != null:
