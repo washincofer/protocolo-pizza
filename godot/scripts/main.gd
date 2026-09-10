@@ -1,6 +1,7 @@
 extends Control
 
 const HotspotCatalog = preload("res://scripts/hotspot_catalog.gd")
+const UIAssets = preload("res://scripts/ui_asset_catalog.gd")
 
 var selected_item := ""
 var feedback_text := "Clique nos elementos do cenário. Itens do inventário podem ser selecionados e usados nos hotspots."
@@ -116,12 +117,13 @@ func _activate_hotspot(action_id: String) -> void:
 
 func _build_hud() -> void:
 	var top := PanelContainer.new()
+	top.name = "HUDTopPanel"
 	top.position = Vector2(12, 10)
-	top.size = Vector2(610, 58)
+	top.size = Vector2(690, 58)
 	top.add_theme_stylebox_override("panel", _dark_panel())
 	add_child(top)
 	var top_row := HBoxContainer.new()
-	top_row.add_theme_constant_override("separation", 12)
+	top_row.add_theme_constant_override("separation", 10)
 	top.add_child(top_row)
 	var area_label := Label.new()
 	area_label.text = HotspotCatalog.get_title(GameState.current_area)
@@ -129,31 +131,44 @@ func _build_hud() -> void:
 	area_label.add_theme_color_override("font_color", Color("ffd34e"))
 	area_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top_row.add_child(area_label)
+
+	var pizza_icon: Texture2D = UIAssets.load_texture(UIAssets.PIZZA_ICON)
+	if pizza_icon != null:
+		var pizza_texture := TextureRect.new()
+		pizza_texture.texture = pizza_icon
+		pizza_texture.custom_minimum_size = Vector2(42, 42)
+		pizza_texture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		pizza_texture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		pizza_texture.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		top_row.add_child(pizza_texture)
 	var pizza := Label.new()
-	pizza.text = "🍕 %s%%  |  %s min" % [str(GameState.pizza.get("temperature", 100)), str(GameState.pizza.get("elapsed_minutes", 0))]
+	pizza.text = "%s%%  |  %s min" % [str(GameState.pizza.get("temperature", 100)), str(GameState.pizza.get("elapsed_minutes", 0))]
 	pizza.add_theme_font_size_override("font_size", 17)
+	pizza.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	top_row.add_child(pizza)
 
-	var pause := Button.new()
-	pause.text = "☰"
-	pause.position = Vector2(get_viewport_rect().size.x - 62, 10)
-	pause.size = Vector2(50, 50)
-	pause.add_theme_font_size_override("font_size", 24)
-	pause.pressed.connect(_open_pause)
+	var view_width: float = get_viewport_rect().size.x
+	var trophy := _hud_icon_button(UIAssets.TROPHY_ICON, "🏆", "HUDTrophyButton", AchievementsUI.open.bind(false))
+	trophy.position = Vector2(view_width - 120, 10)
+	add_child(trophy)
+	var pause := _hud_icon_button(UIAssets.MENU_ICON, "☰", "HUDMenuButton", _open_pause)
+	pause.position = Vector2(view_width - 62, 10)
 	add_child(pause)
 
-	var dialogue := PanelContainer.new()
-	dialogue.position = Vector2(170, get_viewport_rect().size.y - 126)
-	dialogue.size = Vector2(get_viewport_rect().size.x - 340, 106)
-	dialogue.add_theme_stylebox_override("panel", _dark_panel())
-	add_child(dialogue)
-	var d := Label.new()
-	d.text = feedback_text
-	d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	d.add_theme_font_size_override("font_size", 18)
-	d.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	d.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	dialogue.add_child(d)
+	if not _uses_balloon_hud():
+		var dialogue := PanelContainer.new()
+		dialogue.name = "HUDBottomDialogue"
+		dialogue.position = Vector2(170, get_viewport_rect().size.y - 126)
+		dialogue.size = Vector2(get_viewport_rect().size.x - 340, 106)
+		dialogue.add_theme_stylebox_override("panel", _dark_panel())
+		add_child(dialogue)
+		var d := Label.new()
+		d.text = feedback_text
+		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		d.add_theme_font_size_override("font_size", 18)
+		d.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		d.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		dialogue.add_child(d)
 
 	var inv := PanelContainer.new()
 	inv.position = Vector2(12, get_viewport_rect().size.y - 126)
@@ -177,12 +192,36 @@ func _build_hud() -> void:
 		for item in GameState.inventory:
 			var b := Button.new()
 			b.text = _item_name(item)
+			var item_texture: Texture2D = UIAssets.item_texture(str(item))
+			if item_texture != null:
+				b.icon = item_texture
+				b.icon_max_width = 26
 			b.tooltip_text = "Selecionado: use no cenário. Colete: clique novamente para vestir."
 			b.add_theme_font_size_override("font_size", 12)
 			if selected_item == item:
 				b.modulate = Color("ffd34e")
 			b.pressed.connect(_select_item.bind(item))
 			inv_box.add_child(b)
+
+func _hud_icon_button(icon_path: String, fallback_text: String, node_name: String, callback: Callable) -> Button:
+	var button := Button.new()
+	button.name = node_name
+	button.size = Vector2(50, 50)
+	button.focus_mode = Control.FOCUS_NONE
+	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	var texture: Texture2D = UIAssets.load_texture(icon_path)
+	if texture != null:
+		button.icon = texture
+		button.icon_max_width = 42
+		button.text = ""
+	else:
+		button.text = fallback_text
+		button.add_theme_font_size_override("font_size", 24)
+	button.pressed.connect(callback)
+	return button
+
+func _uses_balloon_hud() -> bool:
+	return GameState.current_area == "reception"
 
 func _select_item(item_id: String) -> void:
 	if selected_item == item_id and item_id == "maintenance_vest":
@@ -397,6 +436,29 @@ func _on_area_changed(_area_id: String) -> void:
 
 func _on_feedback(text: String) -> void:
 	feedback_text = text
+	if GameState.current_area == "reception" and GameState.run_active:
+		_show_reception_speech(text)
+
+func _show_reception_speech(text: String) -> void:
+	var speaker: String = "PAPO SAPÃO"
+	var message: String = text
+	var anchor: Vector2 = Vector2(836, 280)
+	if text.begins_with("Eliana Marli:"):
+		speaker = "Eliana Marli"
+		message = text.trim_prefix("Eliana Marli:").strip_edges()
+		anchor = Vector2(635, 320)
+	elif text.begins_with("Mauro Portela:"):
+		speaker = "Mauro Portela"
+		message = text.trim_prefix("Mauro Portela:").strip_edges()
+		anchor = Vector2(1092, 340)
+	elif text.begins_with("Totem"):
+		speaker = "Totem de Cadastro"
+		message = text.trim_prefix("Totem — ").trim_prefix("Totem:").strip_edges()
+		anchor = Vector2(840, 350)
+	elif text.begins_with("A segurança"):
+		speaker = "Mauro Portela"
+		anchor = Vector2(1092, 340)
+	DialogueUI.show_speech(speaker, message, anchor)
 
 func _on_finished(ending_name: String, message: String) -> void:
 	_clear()
