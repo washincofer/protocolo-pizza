@@ -12,6 +12,12 @@ const CHOICE_TEXT_RECTS: Array[Rect2] = [
 	Rect2(487.0, 579.0, 215.0, 23.0),
 	Rect2(789.0, 580.0, 216.0, 39.0)
 ]
+const CHOICE_CLICK_RECTS: Array[Rect2] = [
+	Rect2(430.0, 506.0, 290.0, 54.0),
+	Rect2(732.0, 506.0, 288.0, 54.0),
+	Rect2(430.0, 570.0, 290.0, 55.0),
+	Rect2(732.0, 570.0, 288.0, 55.0)
+]
 const HUD_ICON_MAX_WIDTH: int = 25
 const HUD_ICON_CLICK_SIZE: Vector2 = Vector2(42.0, 42.0)
 const HUD_RIGHT_MARGIN: float = 36.0
@@ -112,15 +118,28 @@ func _fit_choice_panel(panel: Control) -> void:
 		(view_size.x - visual_size.x) * 0.5,
 		view_size.y - visual_size.y - CHOICE_PANEL_Y_OFFSET
 	)
+	_fit_choice_click_rects(panel, view_size)
 	_fit_choice_text_rects(panel, view_size)
 
-func _fit_choice_text_rects(panel: Control, view_size: Vector2) -> void:
-	var choice_buttons: Array[Button] = []
+func _choice_buttons(panel: Control) -> Array[Button]:
+	var result: Array[Button] = []
 	for child: Node in panel.get_children():
 		var button: Button = child as Button
 		if button != null:
-			choice_buttons.append(button)
+			result.append(button)
+	return result
 
+func _fit_choice_click_rects(panel: Control, view_size: Vector2) -> void:
+	var choice_buttons: Array[Button] = _choice_buttons(panel)
+	var count: int = mini(choice_buttons.size(), CHOICE_CLICK_RECTS.size())
+	for index: int in range(count):
+		var button: Button = choice_buttons[index]
+		var target: Rect2 = _reference_rect_to_screen(CHOICE_CLICK_RECTS[index], view_size)
+		button.position = (target.position - panel.position) / CHOICE_PANEL_SCALE
+		button.size = target.size / CHOICE_PANEL_SCALE
+
+func _fit_choice_text_rects(panel: Control, view_size: Vector2) -> void:
+	var choice_buttons: Array[Button] = _choice_buttons(panel)
 	var count: int = mini(choice_buttons.size(), CHOICE_TEXT_RECTS.size())
 	for index: int in range(count):
 		var button: Button = choice_buttons[index]
