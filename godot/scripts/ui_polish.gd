@@ -1,5 +1,7 @@
 extends Node
 
+const UIAssets = preload("res://scripts/ui_asset_catalog.gd")
+
 const MENU_RECTS := {
 	"Novo Jogo": Rect2(928, 321, 329, 122),
 	"Save / Load": Rect2(928, 464, 329, 95),
@@ -208,7 +210,11 @@ func _open_inventory() -> void:
 				button.text = "Colete de Manutenção (vestido)" if GameState.disguise == "maintenance" else "Vestir Colete de Manutenção"
 			else:
 				button.text = _item_name(item_id)
-			button.custom_minimum_size = Vector2(520, 44)
+			var item_texture: Texture2D = UIAssets.item_texture(item_id)
+			if item_texture != null:
+				button.icon = item_texture
+				button.icon_max_width = 42
+			button.custom_minimum_size = Vector2(520, 52)
 			button.pressed.connect(_select_inventory_item.bind(item_id))
 			box.add_child(button)
 
@@ -270,6 +276,7 @@ func _go_main_menu() -> void:
 	_close_inventory()
 	if DialogueUI.is_open():
 		DialogueUI.close_dialogue()
+	DialogueUI.close_speech()
 	GameState.reset_run(false)
 	var main: Control = _get_main()
 	if main != null and main.has_method("show_menu"):
@@ -281,5 +288,6 @@ func _quit_game() -> void:
 	_close_inventory()
 	if DialogueUI.is_open():
 		DialogueUI.close_dialogue()
+	DialogueUI.close_speech()
 	GameState.run_active = false
 	get_tree().quit()
