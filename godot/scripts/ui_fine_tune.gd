@@ -2,14 +2,16 @@ extends Node
 
 # Ajustes temporários do piloto visual da Recepção.
 # Depois de aprovados em teste, estes valores podem virar o padrão geral da UI.
-const RECEPTION_SPEECH_IMAGE_DELTA: Vector2 = Vector2(72.0, -58.0)
-const CHOICE_PANEL_SCALE: float = 0.28
-const HUD_ICON_MAX_WIDTH: int = 9
-const HUD_ICON_CLICK_SIZE: Vector2 = Vector2(28.0, 28.0)
+const RECEPTION_SPEECH_IMAGE_DELTA: Vector2 = Vector2(172.0, -58.0)
+const CHOICE_PANEL_SCALE: float = 0.52
+const HUD_ICON_MAX_WIDTH: int = 15
+const HUD_ICON_CLICK_SIZE: Vector2 = Vector2(36.0, 36.0)
 const HUD_RIGHT_MARGIN: float = 36.0
-const HUD_ICON_GAP: float = 8.0
+const HUD_ICON_GAP: float = 10.0
 const HUD_ICON_TOP: float = 10.0
+const SPEECH_TEXT_Y_OFFSET: float = 6.0
 const SPEECH_ADJUSTED_META: StringName = &"reception_speech_fine_tuned"
+const SPEECH_TEXT_SHIFTED_META: StringName = &"reception_speech_text_shifted"
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -73,6 +75,7 @@ func _fit_dialogue_layer(canvas_layer: CanvasLayer, main: Control) -> void:
 		elif _looks_like_speech_balloon(control):
 			_shift_speech_balloon(control, main)
 			_center_speech_text(control)
+			_shift_speech_text_down(control)
 
 func _looks_like_choice_panel(control: Control) -> bool:
 	return control.size.x >= 800.0 and control.size.y >= 280.0
@@ -109,6 +112,16 @@ func _center_speech_text(balloon: Control) -> void:
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+func _shift_speech_text_down(balloon: Control) -> void:
+	if bool(balloon.get_meta(SPEECH_TEXT_SHIFTED_META, false)):
+		return
+	for node: Node in balloon.find_children("*", "MarginContainer", true, false):
+		var margin: MarginContainer = node as MarginContainer
+		if margin != null:
+			margin.position.y += SPEECH_TEXT_Y_OFFSET
+			break
+	balloon.set_meta(SPEECH_TEXT_SHIFTED_META, true)
 
 func _image_delta_to_screen(main: Control, image_delta: Vector2) -> Vector2:
 	for child: Node in main.get_children():
