@@ -6,9 +6,7 @@ Data de calibração: 2026-09-10
 
 A Recepção permanece como área piloto da nova UI de diálogo.
 
-Após a nova rodada de teste, todos os balões foram deslocados mais 120 px para a direita no sistema de coordenadas da imagem.
-
-O deslocamento total adotado no piloto passa a ser:
+O deslocamento total adotado permanece em:
 
 `+292 px em X` e `-58 px em Y`
 
@@ -24,7 +22,7 @@ O conteúdo textual dos balões foi aprovado e deve permanecer sem novas altera�
 
 ## Ícones de Troféu e Menu
 
-A posição dos ícones permanece dentro da tela e a margem direita aprovada foi mantida. Nesta rodada, o tamanho visual aumentou de 15 px para 25 px.
+A apresentação atual foi aprovada visualmente na Recepção.
 
 Parâmetros atuais:
 
@@ -39,23 +37,28 @@ Parâmetros atuais:
 
 ## HUD de escolhas A/B/C/D
 
-O painel visual de escolhas permanece com a disposição:
+O painel permanece com escala visual `0.52`, centralizado horizontalmente e deslocado `118 px` para cima a partir da base.
 
-`A | B`
+As áreas úteis de texto foram calibradas diretamente em coordenadas de tela de referência `1280 × 720`:
 
-`C | D`
+- A: `(487,514)` até `(702,551)`;
+- B: `(789,514)` até `(1005,551)`;
+- C: `(487,579)` até `(702,602)`;
+- D: `(789,580)` até `(1005,619)`.
 
-A escala visual permanece em:
+O código converte essas áreas proporcionalmente quando a viewport muda, preservando a composição.
 
-`0.52`
+Os textos são centralizados horizontal e verticalmente dentro de cada campo e o tamanho da fonte é reduzido automaticamente para opções longas.
 
-Nesta rodada, o painel foi deslocado 100 px para cima em relação à posição anterior. O deslocamento inferior usado para posicionamento passa de `18 px` para `118 px`.
+## Inventário inferior
 
-O painel continua centralizado horizontalmente.
+O painel de inventário inferior da HUD foi ocultado na Recepção por ser redundante com o inventário disponível no menu `Esc`.
+
+A decisão de design para a próxima etapa é avaliar uma **hotbar horizontal de slots** no rodapé, inspirada em jogos MMORPG, para acesso rápido aos principais itens coletáveis. O inventário completo continuará disponível pelo menu.
 
 ## Regra futura aprovada — Troféus
 
-Assim que o tamanho e a apresentação do ícone de Troféu forem aprovados na HUD principal, **o mesmo ícone deve ser reutilizado como padrão visual na interface/lista de troféus e conquistas conquistadas**.
+O ícone de Troféu aprovado na HUD principal deve ser reutilizado como padrão visual na interface/lista de troféus e conquistas conquistadas.
 
 Não criar uma segunda identidade visual de troféu para a tela de conquistas; reutilizar o asset aprovado em:
 
