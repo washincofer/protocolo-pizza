@@ -13,7 +13,11 @@ Resolução lógica: `1672 × 941`
 | Segurança | `[1027, 340, 129, 205]` |
 | Auditório | `[1492, 178, 138, 182]` |
 | Escadas | `[1535, 440, 126, 347]` |
-| Porta de Entrada | `[366, 841, 1038, 89]` |
+| Porta de Entrada | `[366, 760, 964, 170]` |
+
+### Medição F3 da Porta de Entrada
+
+Limites medidos: `[366, 930, 1330, 760]` no formato `[X1, Y1, X2, Y2]`.
 
 ## Totem Primeiro Cadastro
 
