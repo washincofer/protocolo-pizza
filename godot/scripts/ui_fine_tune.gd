@@ -2,10 +2,11 @@ extends Node
 
 # Ajustes temporários do piloto visual da Recepção.
 # Depois de aprovados em teste, estes valores podem virar o padrão geral da UI.
-const RECEPTION_SPEECH_IMAGE_DELTA: Vector2 = Vector2(172.0, -58.0)
+const RECEPTION_SPEECH_IMAGE_DELTA: Vector2 = Vector2(292.0, -58.0)
 const CHOICE_PANEL_SCALE: float = 0.52
-const HUD_ICON_MAX_WIDTH: int = 15
-const HUD_ICON_CLICK_SIZE: Vector2 = Vector2(36.0, 36.0)
+const CHOICE_PANEL_Y_OFFSET: float = 118.0
+const HUD_ICON_MAX_WIDTH: int = 25
+const HUD_ICON_CLICK_SIZE: Vector2 = Vector2(42.0, 42.0)
 const HUD_RIGHT_MARGIN: float = 36.0
 const HUD_ICON_GAP: float = 10.0
 const HUD_ICON_TOP: float = 10.0
@@ -89,7 +90,7 @@ func _fit_choice_panel(panel: Control) -> void:
 	var visual_size: Vector2 = panel.size * CHOICE_PANEL_SCALE
 	panel.position = Vector2(
 		(view_size.x - visual_size.x) * 0.5,
-		view_size.y - visual_size.y - 18.0
+		view_size.y - visual_size.y - CHOICE_PANEL_Y_OFFSET
 	)
 
 func _shift_speech_balloon(balloon: Control, main: Control) -> void:
