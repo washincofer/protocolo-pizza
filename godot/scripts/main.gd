@@ -151,7 +151,7 @@ func _build_hud() -> void:
 	var trophy := _hud_icon_button(UIAssets.TROPHY_ICON, "🏆", "HUDTrophyButton", AchievementsUI.open.bind(false))
 	trophy.position = Vector2(view_width - 120, 10)
 	add_child(trophy)
-	var pause := _hud_icon_button(UIAssets.MENU_ICON, "☰", "HUDMenuButton", _open_pause)
+	var pause := _hud_icon_button(UIAssets.MENU_ICON, "☰", "HUDMenuButton", UIPolish.reopen_pause)
 	pause.position = Vector2(view_width - 62, 10)
 	add_child(pause)
 
