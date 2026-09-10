@@ -10,7 +10,7 @@ O deslocamento total adotado no piloto permanece em:
 
 `+72 px em X` e `-58 px em Y`
 
-Nesta rodada a arte do balão foi espelhada horizontalmente (`flip_h`) para reposicionar visualmente a ponta sem alterar o texto.
+Após o novo teste visual, o `flip_h` foi removido. A orientação original da arte volta a ser usada para que a ponta do balão fique do lado da recepcionista.
 
 O conteúdo textual dos balões permanece centralizado:
 
@@ -21,17 +21,17 @@ O conteúdo textual dos balões permanece centralizado:
 
 ## Ícones de Troféu e Menu
 
-Após o teste em tela, os ícones ainda apareciam grandes e muito próximos da borda direita. A nova calibração reduz novamente o tamanho e move os dois controles mais para dentro da tela.
+Após o teste em tela, a posição dos ícones ficou correta, mas eles ficaram pequenos demais. Nesta rodada o tamanho foi aumentado levemente, preservando a margem que os mantém dentro da tela.
 
 Parâmetros atuais:
 
-- largura visual máxima: `6 px`;
-- área clicável: `24 × 24 px`;
+- largura visual máxima: `9 px`;
+- área clicável: `28 × 28 px`;
 - margem direita: `36 px`;
-- espaço entre Troféu e Menu: `6 px`;
+- espaço entre Troféu e Menu: `8 px`;
 - posição vertical: `10 px`;
-- `expand_icon = true` para impedir que o tamanho original do PNG aumente o botão;
-- `clip_contents = true` para impedir vazamento visual para fora da área clicável;
+- `expand_icon = true`;
+- `clip_contents = true`;
 - botões sem moldura visível (`flat`).
 
 ## HUD de escolhas A/B/C/D
@@ -42,9 +42,9 @@ O painel visual de escolhas permanece com a disposição:
 
 `C | D`
 
-Após a revisão visual por screenshot, o painel ainda estava grande demais. A escala atual passa a ser:
+A escala `0.16` ficou pequena demais no teste. Para a nova rodada, foi adotado um valor intermediário:
 
-`0.16`
+`0.28`
 
 O painel continua centralizado horizontalmente e preso à região inferior da tela.
 
