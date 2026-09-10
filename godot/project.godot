@@ -25,6 +25,7 @@ PlayerController="*res://scripts/player_controller.gd"
 FloorInputFix="*res://scripts/floor_input_fix.gd"
 InteractionGuard="*res://scripts/interaction_guard.gd"
 UIFineTune="*res://scripts/ui_fine_tune.gd"
+CursorManager="*res://scripts/cursor_manager.gd"
 
 [display]
 window/size/viewport_width=1280
