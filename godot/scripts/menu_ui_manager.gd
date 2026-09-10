@@ -3,7 +3,6 @@ extends Node
 const UIAssets = preload("res://scripts/ui_asset_catalog.gd")
 
 const PANEL_SHEET_PATH: String = "res://assets/ui/menus/menu_panels.png"
-const BASE_VIEW_SIZE: Vector2 = Vector2(1280.0, 720.0)
 const PANEL_REGIONS: Dictionary = {
 	"pause": Rect2(16.0, 6.0, 485.0, 618.0),
 	"inventory": Rect2(517.0, 36.0, 487.0, 580.0),
