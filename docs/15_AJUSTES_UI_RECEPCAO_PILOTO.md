@@ -6,25 +6,32 @@ Data de calibração: 2026-09-10
 
 A Recepção permanece como área piloto da nova UI de diálogo.
 
-A ponta do balão da recepcionista deve se aproximar da posição de imagem:
+Após a primeira rodada de teste, os balões foram deslocados mais 20 px para a direita. O deslocamento total adotado no piloto passa a ser:
 
-`X = 687, Y = 262`
-
-Em relação à posição anterior usada no piloto, o deslocamento adotado é:
-
-`+52 px em X` e `-58 px em Y`
+`+72 px em X` e `-58 px em Y`
 
 Esse mesmo deslocamento deve ser aplicado aos demais balões da Recepção durante esta rodada de calibração.
 
+Também foi ativado o alinhamento central do conteúdo textual dos balões:
+
+- alinhamento horizontal central;
+- alinhamento vertical central;
+- área de texto expandida dentro do espaço útil do balão.
+
 ## Ícones de Troféu e Menu
 
-Os ícones da HUD no canto superior direito estavam visualmente grandes. Para o piloto, o tamanho visual foi reduzido em aproximadamente 80%, mantendo uma área de clique maior que o desenho para preservar usabilidade.
+Os ícones da HUD no canto superior direito ainda estavam visualmente grandes e parcialmente fora da área útil em teste.
+
+Nesta rodada, o desenho do ícone passa a ser renderizado como um `TextureRect` controlado dentro de um botão invisível maior, garantindo tamanho visual e área de clique independentes.
 
 Parâmetros atuais:
 
-- largura visual máxima do ícone: `10 px`
-- área clicável: `32 × 32 px`
-- botões sem moldura visível (`flat`)
+- tamanho visual: `10 × 10 px`;
+- área clicável: `28 × 28 px`;
+- margem direita: `18 px`;
+- espaço entre Troféu e Menu: `8 px`;
+- posição vertical: `16 px`;
+- botões sem moldura visível (`flat`).
 
 ## HUD de escolhas A/B/C/D
 
@@ -34,9 +41,11 @@ O painel visual de escolhas permanece com a disposição:
 
 `C | D`
 
-Para esta rodada, a escala visual do painel foi definida como:
+Após o teste inicial, a escala foi aumentada em 30% em relação ao valor `0.20`.
 
-`0.20` do tamanho anterior.
+Escala atual:
+
+`0.26`
 
 A implementação continua sendo piloto. Depois do teste visual, o valor pode ser refinado sem alterar a lógica dos diálogos.
 
