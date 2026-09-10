@@ -6,6 +6,7 @@ const SPEECH_SMALL_PATH: String = "res://assets/ui/speech/speech_small.png"
 const SPEECH_MEDIUM_PATH: String = "res://assets/ui/speech/speech_medium.png"
 const SPEECH_LARGE_PATH: String = "res://assets/ui/speech/speech_large.png"
 const CHOICE_PANEL_PATH: String = "res://assets/ui/dialogue/choice_panel.png"
+const DEFAULT_KEYS: Array[String] = ["A", "B", "C", "D"]
 
 var layer: CanvasLayer
 var speech_layer: CanvasLayer
@@ -108,7 +109,10 @@ func _build_speech_balloon(
 	var view_size: Vector2 = get_viewport().get_visible_rect().size
 	var variant: String = _speech_variant(text)
 	var bubble_size: Vector2 = _speech_size(variant, view_size)
-	var anchor: Vector2 = _image_to_screen(anchor_image_position)
+	var resolved_anchor: Vector2 = anchor_image_position
+	if resolved_anchor.x < 0.0 or resolved_anchor.y < 0.0:
+		resolved_anchor = _default_anchor_for_speaker(speaker)
+	var anchor: Vector2 = _image_to_screen(resolved_anchor)
 	if anchor.x < 0.0 or anchor.y < 0.0:
 		anchor = Vector2(view_size.x * 0.5, view_size.y * 0.43)
 	var bubble_position: Vector2 = anchor - Vector2(bubble_size.x * 0.5, bubble_size.y + 18.0)
@@ -203,7 +207,8 @@ func _build_choice_panel(parent_layer: CanvasLayer, dialogue_id: String, choices
 
 	for index: int in range(mini(choices.size(), 4)):
 		var choice: Dictionary = Dictionary(choices[index])
-		var key: String = str(choice.get("key", char(65 + index)))
+		var default_key: String = DEFAULT_KEYS[index]
+		var key: String = str(choice.get("key", default_key))
 		var choice_id: String = str(choice.get("id", key))
 		current_choices[key.to_upper()] = choice_id
 		_build_choice_button(root, cells[index], dialogue_id, choice_id, key, str(choice.get("text", "")), panel_texture != null)
@@ -236,7 +241,7 @@ func _build_choice_button(
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	label.add_theme_font_size_override("font_size", 16)
+	label.add_theme_font_size_override("font_size", 14 if text.length() > 62 else 16)
 	label.add_theme_color_override("font_color", Color("17202a") if has_art_panel else Color.WHITE)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	button.add_child(label)
@@ -244,6 +249,16 @@ func _build_choice_button(
 func _select(dialogue_id: String, choice_id: String) -> void:
 	close_dialogue()
 	choice_selected.emit(dialogue_id, choice_id)
+
+func _default_anchor_for_speaker(speaker: String) -> Vector2:
+	if GameState.current_area == "reception":
+		if speaker.begins_with("Eliana Marli"):
+			return Vector2(635, 320)
+		if speaker.begins_with("Mauro Portela"):
+			return Vector2(1092, 340)
+		if speaker.begins_with("Totem"):
+			return Vector2(840, 350)
+	return Vector2(-1, -1)
 
 func _speech_variant(text: String) -> String:
 	var length: int = text.length()
