@@ -221,7 +221,8 @@ func _apply_hud_visibility() -> void:
 	for child: Node in main.get_children():
 		if child is Button:
 			var button: Button = child as Button
-			if button.text == "☰":
+			var button_name: String = str(button.name)
+			if button.text == "☰" or button_name == "HUDMenuButton" or button_name == "HUDTrophyButton":
 				button.visible = hud_visible
 		elif child is PanelContainer:
 			var panel: PanelContainer = child as PanelContainer
