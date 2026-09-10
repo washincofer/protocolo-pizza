@@ -27,6 +27,7 @@ InteractionGuard="*res://scripts/interaction_guard.gd"
 UIFineTune="*res://scripts/ui_fine_tune.gd"
 CursorManager="*res://scripts/cursor_manager.gd"
 MenuUI="*res://scripts/menu_ui_manager.gd"
+InventoryPreviewFix="*res://scripts/inventory_preview_fix.gd"
 
 [display]
 window/size/viewport_width=1280
