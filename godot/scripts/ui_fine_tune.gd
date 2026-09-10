@@ -3,14 +3,13 @@ extends Node
 # Ajustes temporários do piloto visual da Recepção.
 # Depois de aprovados em teste, estes valores podem virar o padrão geral da UI.
 const RECEPTION_SPEECH_IMAGE_DELTA: Vector2 = Vector2(72.0, -58.0)
-const CHOICE_PANEL_SCALE: float = 0.16
-const HUD_ICON_MAX_WIDTH: int = 6
-const HUD_ICON_CLICK_SIZE: Vector2 = Vector2(24.0, 24.0)
+const CHOICE_PANEL_SCALE: float = 0.28
+const HUD_ICON_MAX_WIDTH: int = 9
+const HUD_ICON_CLICK_SIZE: Vector2 = Vector2(28.0, 28.0)
 const HUD_RIGHT_MARGIN: float = 36.0
-const HUD_ICON_GAP: float = 6.0
+const HUD_ICON_GAP: float = 8.0
 const HUD_ICON_TOP: float = 10.0
 const SPEECH_ADJUSTED_META: StringName = &"reception_speech_fine_tuned"
-const SPEECH_FLIPPED_META: StringName = &"reception_speech_flipped"
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -73,7 +72,6 @@ func _fit_dialogue_layer(canvas_layer: CanvasLayer, main: Control) -> void:
 			_fit_choice_panel(control)
 		elif _looks_like_speech_balloon(control):
 			_shift_speech_balloon(control, main)
-			_flip_speech_balloon(control)
 			_center_speech_text(control)
 
 func _looks_like_choice_panel(control: Control) -> bool:
@@ -97,15 +95,6 @@ func _shift_speech_balloon(balloon: Control, main: Control) -> void:
 	var delta_screen: Vector2 = _image_delta_to_screen(main, RECEPTION_SPEECH_IMAGE_DELTA)
 	balloon.position += delta_screen
 	balloon.set_meta(SPEECH_ADJUSTED_META, true)
-
-func _flip_speech_balloon(balloon: Control) -> void:
-	if bool(balloon.get_meta(SPEECH_FLIPPED_META, false)):
-		return
-	for node: Node in balloon.find_children("*", "TextureRect", true, false):
-		var texture_rect: TextureRect = node as TextureRect
-		if texture_rect != null:
-			texture_rect.flip_h = true
-	balloon.set_meta(SPEECH_FLIPPED_META, true)
 
 func _center_speech_text(balloon: Control) -> void:
 	for node: Node in balloon.find_children("*", "VBoxContainer", true, false):
