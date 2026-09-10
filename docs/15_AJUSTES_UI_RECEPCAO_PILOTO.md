@@ -46,7 +46,14 @@ As áreas úteis de texto foram calibradas diretamente em coordenadas de tela de
 - C: `(487,579)` até `(702,602)`;
 - D: `(789,580)` até `(1005,619)`.
 
-O código converte essas áreas proporcionalmente quando a viewport muda, preservando a composição.
+As áreas clicáveis foram calibradas separadamente, também na referência `1280 × 720`:
+
+- A: `(430,506)` até `(720,560)`;
+- B: `(732,506)` até `(1020,560)`;
+- C: `(430,570)` até `(720,625)`;
+- D: `(732,570)` até `(1020,625)`.
+
+O código converte tanto as áreas de texto quanto os hotspots clicáveis proporcionalmente quando a viewport muda, preservando a composição.
 
 Os textos são centralizados horizontal e verticalmente dentro de cada campo e o tamanho da fonte é reduzido automaticamente para opções longas.
 
