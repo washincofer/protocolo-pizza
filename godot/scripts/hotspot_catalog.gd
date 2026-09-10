@@ -62,7 +62,7 @@ const HOTSPOTS := {
 		{"label":"Segurança","rect":[1027,340,129,205],"bounds":[1027,545,1156,340],"action":"security_desk"},
 		{"label":"Auditório","rect":[1492,178,138,182],"bounds":[1492,360,1630,178],"action":"auditorium"},
 		{"label":"Escadas","rect":[1535,440,126,347],"bounds":[1535,787,1661,440],"action":"reception_stairs"},
-		{"label":"Porta de Entrada","rect":[366,340,790,590],"bounds":[366,930,1156,340],"action":"reception_exit"}
+		{"label":"Porta de Entrada","rect":[366,760,964,170],"bounds":[366,930,1330,760],"action":"reception_exit"}
 	],
 	"innovation": [
 		{"label":"Óculos VR","rect":[900,380,190,170],"action":"take_vr"},
