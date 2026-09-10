@@ -1,8 +1,8 @@
 extends Node
 
-const CURSOR_IDLE_PATH: String = "res://assets/ui/cursor/cursor_idle.svg"
-const CURSOR_ACTIVE_PATH: String = "res://assets/ui/cursor/cursor_active.svg"
-const CURSOR_HOTSPOT: Vector2 = Vector2(40.0, 3.0)
+const CURSOR_IDLE_PATH: String = "res://assets/ui/cursor/cursor_idle.png"
+const CURSOR_ACTIVE_PATH: String = "res://assets/ui/cursor/cursor_active.png"
+const CURSOR_HOTSPOT: Vector2 = Vector2(34.0, 2.0)
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
