@@ -6,29 +6,32 @@ Data de calibração: 2026-09-10
 
 A Recepção permanece como área piloto da nova UI de diálogo.
 
-O deslocamento total adotado no piloto permanece em:
+Após a nova rodada de teste, todos os balões foram deslocados mais 100 px para a direita no sistema de coordenadas da imagem.
 
-`+72 px em X` e `-58 px em Y`
+O deslocamento total adotado no piloto passa a ser:
 
-Após o novo teste visual, o `flip_h` foi removido. A orientação original da arte volta a ser usada para que a ponta do balão fique do lado da recepcionista.
+`+172 px em X` e `-58 px em Y`
 
-O conteúdo textual dos balões permanece centralizado:
+A orientação original da arte permanece ativa, sem `flip_h`.
+
+O conteúdo textual dos balões permanece centralizado e recebeu um ajuste vertical adicional:
 
 - alinhamento horizontal central;
 - alinhamento vertical central;
 - `VBoxContainer` centralizado;
-- área de texto expandida dentro do espaço útil do balão.
+- área de texto expandida dentro do espaço útil do balão;
+- bloco de texto deslocado `+6 px` em Y para baixo.
 
 ## Ícones de Troféu e Menu
 
-Após o teste em tela, a posição dos ícones ficou correta, mas eles ficaram pequenos demais. Nesta rodada o tamanho foi aumentado levemente, preservando a margem que os mantém dentro da tela.
+A posição dos ícones permanece dentro da tela e a margem direita aprovada foi mantida. Como o teste anterior ainda ficou pequeno, o aumento anterior foi dobrado nesta rodada.
 
 Parâmetros atuais:
 
-- largura visual máxima: `9 px`;
-- área clicável: `28 × 28 px`;
+- largura visual máxima: `15 px`;
+- área clicável: `36 × 36 px`;
 - margem direita: `36 px`;
-- espaço entre Troféu e Menu: `8 px`;
+- espaço entre Troféu e Menu: `10 px`;
 - posição vertical: `10 px`;
 - `expand_icon = true`;
 - `clip_contents = true`;
@@ -42,9 +45,9 @@ O painel visual de escolhas permanece com a disposição:
 
 `C | D`
 
-A escala `0.16` ficou pequena demais no teste. Para a nova rodada, foi adotado um valor intermediário:
+A escala `0.28` ainda ficou pequena no teste. Aplicando o critério de dobrar o aumento anterior, a nova escala passa a ser:
 
-`0.28`
+`0.52`
 
 O painel continua centralizado horizontalmente e preso à região inferior da tela.
 
