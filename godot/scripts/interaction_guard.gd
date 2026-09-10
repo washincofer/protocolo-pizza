@@ -63,6 +63,8 @@ func _apply_interaction_lock(main: Control) -> void:
 		DialogueUI.speech_layer.visible = not overlay_blocked
 
 func _has_overlay_block(main: Control) -> bool:
+	if MenuUI.overlay_layer != null:
+		return true
 	if UIPolish.pause_layer != null or UIPolish.inventory_layer != null:
 		return true
 	if AchievementsUI.overlay_layer != null:
