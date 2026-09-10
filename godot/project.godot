@@ -24,6 +24,7 @@ AchievementsUI="*res://scripts/achievements_ui.gd"
 PlayerController="*res://scripts/player_controller.gd"
 FloorInputFix="*res://scripts/floor_input_fix.gd"
 InteractionGuard="*res://scripts/interaction_guard.gd"
+UIFineTune="*res://scripts/ui_fine_tune.gd"
 
 [display]
 window/size/viewport_width=1280
