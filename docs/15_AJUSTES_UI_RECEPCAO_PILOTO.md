@@ -6,15 +6,15 @@ Data de calibração: 2026-09-10
 
 A Recepção permanece como área piloto da nova UI de diálogo.
 
-Após a nova rodada de teste, todos os balões foram deslocados mais 100 px para a direita no sistema de coordenadas da imagem.
+Após a nova rodada de teste, todos os balões foram deslocados mais 120 px para a direita no sistema de coordenadas da imagem.
 
 O deslocamento total adotado no piloto passa a ser:
 
-`+172 px em X` e `-58 px em Y`
+`+292 px em X` e `-58 px em Y`
 
 A orientação original da arte permanece ativa, sem `flip_h`.
 
-O conteúdo textual dos balões permanece centralizado e recebeu um ajuste vertical adicional:
+O conteúdo textual dos balões foi aprovado e deve permanecer sem novas alterações nesta etapa:
 
 - alinhamento horizontal central;
 - alinhamento vertical central;
@@ -24,12 +24,12 @@ O conteúdo textual dos balões permanece centralizado e recebeu um ajuste verti
 
 ## Ícones de Troféu e Menu
 
-A posição dos ícones permanece dentro da tela e a margem direita aprovada foi mantida. Como o teste anterior ainda ficou pequeno, o aumento anterior foi dobrado nesta rodada.
+A posição dos ícones permanece dentro da tela e a margem direita aprovada foi mantida. Nesta rodada, o tamanho visual aumentou de 15 px para 25 px.
 
 Parâmetros atuais:
 
-- largura visual máxima: `15 px`;
-- área clicável: `36 × 36 px`;
+- largura visual máxima: `25 px`;
+- área clicável: `42 × 42 px`;
 - margem direita: `36 px`;
 - espaço entre Troféu e Menu: `10 px`;
 - posição vertical: `10 px`;
@@ -45,11 +45,13 @@ O painel visual de escolhas permanece com a disposição:
 
 `C | D`
 
-A escala `0.28` ainda ficou pequena no teste. Aplicando o critério de dobrar o aumento anterior, a nova escala passa a ser:
+A escala visual permanece em:
 
 `0.52`
 
-O painel continua centralizado horizontalmente e preso à região inferior da tela.
+Nesta rodada, o painel foi deslocado 100 px para cima em relação à posição anterior. O deslocamento inferior usado para posicionamento passa de `18 px` para `118 px`.
+
+O painel continua centralizado horizontalmente.
 
 ## Regra futura aprovada — Troféus
 
