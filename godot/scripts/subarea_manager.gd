@@ -303,8 +303,12 @@ func _handle_subarea_action(area: String, action: String) -> void:
 			_call_core("documentation_printer")
 
 func _show_waiting_visitor_dialogue() -> void:
-	var current_index: int = int(GameState.flags.get("waiting_room_talks", 0)) % WAITING_VISITOR_LINES.size()
-	GameState.flags["waiting_room_talks"] = (current_index + 1) % WAITING_VISITOR_LINES.size()
+	var click_count: int = int(GameState.flags.get("waiting_room_talks", 0)) + 1
+	GameState.flags["waiting_room_talks"] = click_count
+	if click_count >= 4:
+		_finish("VISITANTE RETIRADO", "Você esperou tanto que virou parte do mobiliário. A segurança resolveu o problema.")
+		return
+	var current_index: int = click_count - 1
 	DialogueUI.show_speech(
 		WAITING_VISITOR_SPEAKERS[current_index],
 		WAITING_VISITOR_LINES[current_index],
