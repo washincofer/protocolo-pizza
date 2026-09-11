@@ -4,6 +4,7 @@ signal transition_started(kind: String, target_area: String)
 signal transition_finished(kind: String, target_area: String)
 
 const PIZZA_ICON_PATH: String = "res://assets/ui/icons/pizza.png"
+const MENU_TEXTURE_PATH: String = "res://assets/scenarios/menu.png"
 const SUBAREA_IDS: Array[String] = [
 	"reception_waiting_room",
 	"reception_auditorium",
@@ -40,7 +41,9 @@ func transition_to(area_id: String, commit_callback: Callable) -> void:
 	if _busy:
 		return
 	var current_area: String = str(GameState.current_area)
-	if current_area == area_id:
+	# Mesmo quando GameState já aponta para a Recepção, saindo do menu principal
+	# ainda queremos a animação de entrada no jogo.
+	if current_area == area_id and not _main_menu_is_visible():
 		commit_callback.call(area_id)
 		return
 	var kind: String = "subarea" if _is_subarea_transition(current_area, area_id) else "area"
@@ -150,3 +153,14 @@ func _set_blocking(enabled: bool) -> void:
 
 func _is_subarea_transition(from_area: String, to_area: String) -> bool:
 	return from_area in SUBAREA_IDS or to_area in SUBAREA_IDS
+
+func _main_menu_is_visible() -> bool:
+	var current: Node = get_tree().current_scene
+	if not (current is Control):
+		return false
+	for child: Node in current.get_children():
+		if child is TextureRect:
+			var background: TextureRect = child as TextureRect
+			if background.texture != null and background.texture.resource_path == MENU_TEXTURE_PATH:
+				return true
+	return false
