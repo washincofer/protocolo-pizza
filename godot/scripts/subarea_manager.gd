@@ -8,9 +8,9 @@ const SUBAREAS := {
 		"parent": "reception",
 		"background": "res://assets/subareas/reception_waiting_room.webp",
 		"hotspots": [
-			{"label":"Visitante esperando","rect":[310,300,650,390],"action":"waiting_person"},
-			{"label":"Máquina de café","rect":[1280,220,300,520],"action":"waiting_coffee"},
-			{"label":"Voltar à Recepção","rect":[0,100,190,700],"action":"return_parent"}
+			{"label":"Visitantes esperando","rect":[324,346,578,230],"action":"waiting_person"},
+			{"label":"Máquina de Água","rect":[1015,289,84,296],"action":"waiting_water"},
+			{"label":"Voltar à Recepção","rect":[1447,150,178,589],"action":"return_parent"}
 		]
 	},
 	"reception_auditorium": {
@@ -265,8 +265,8 @@ func _handle_subarea_action(area: String, action: String) -> void:
 				_finish("VISITANTE RETIRADO", "Você esperou tanto que a segurança concluiu que esperar era sua atividade principal.")
 			else:
 				_feedback("Visitante: estou esperando alguém. Não lembro quem, mas a reunião deve começar em breve. Desde ontem.")
-		"waiting_coffee":
-			_feedback("A máquina oferece Café, Sem Café e Reunião. A terceira opção está indisponível por excesso de reuniões.")
+		"waiting_water":
+			_feedback("Máquina de Água: Natural, Gelada ou Em Manutenção. A terceira opção parece ser a mais utilizada.")
 		"auditorium_lucia":
 			_open_auditorium_dialogue()
 		"auditorium_stage":
