@@ -1,6 +1,17 @@
 extends Node
 
 const SOURCE_SIZE := Vector2(1672, 941)
+const WAITING_VISITOR_SPEAKERS: Array[String] = ["Visitante 1", "Visitante 2", "Visitante 3"]
+const WAITING_VISITOR_LINES: Array[String] = [
+	"Estou esperando desde cedo. Já fui remarcado duas vezes sem sair do sofá.",
+	"Me disseram que era uma reunião rápida. Isso foi antes do almoço.",
+	"Eu só vim entregar um documento. Agora aparentemente faço parte da mobília."
+]
+const WAITING_VISITOR_ANCHORS: Array[Vector2] = [
+	Vector2(560.0, 360.0),
+	Vector2(710.0, 360.0),
+	Vector2(470.0, 360.0)
+]
 
 const SUBAREAS := {
 	"reception_waiting_room": {
@@ -259,12 +270,7 @@ func _handle_subarea_action(area: String, action: String) -> void:
 			var data := Dictionary(SUBAREAS[area])
 			SceneRouter.route_to(str(data.get("parent", "reception")))
 		"waiting_person":
-			var count := int(GameState.flags.get("waiting_room_talks", 0)) + 1
-			GameState.flags["waiting_room_talks"] = count
-			if count >= 3:
-				_finish("VISITANTE RETIRADO", "Você esperou tanto que a segurança concluiu que esperar era sua atividade principal.")
-			else:
-				_feedback("Visitante: estou esperando alguém. Não lembro quem, mas a reunião deve começar em breve. Desde ontem.")
+			_show_waiting_visitor_dialogue()
 		"waiting_water":
 			_feedback("Máquina de Água: Natural, Gelada ou Em Manutenção. A terceira opção parece ser a mais utilizada.")
 		"auditorium_lucia":
@@ -295,6 +301,15 @@ func _handle_subarea_action(area: String, action: String) -> void:
 			_feedback("Domingos Hurley: você quer o original, a cópia, a segunda via ou a cópia da segunda via?")
 		"core_documentation_printer":
 			_call_core("documentation_printer")
+
+func _show_waiting_visitor_dialogue() -> void:
+	var current_index: int = int(GameState.flags.get("waiting_room_talks", 0)) % WAITING_VISITOR_LINES.size()
+	GameState.flags["waiting_room_talks"] = (current_index + 1) % WAITING_VISITOR_LINES.size()
+	DialogueUI.show_speech(
+		WAITING_VISITOR_SPEAKERS[current_index],
+		WAITING_VISITOR_LINES[current_index],
+		WAITING_VISITOR_ANCHORS[current_index]
+	)
 
 func _call_core(action: String) -> void:
 	var selected := ""
