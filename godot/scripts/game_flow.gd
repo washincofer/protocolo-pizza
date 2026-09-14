@@ -32,6 +32,9 @@ func perform(action_id: String, selected_item := "") -> void:
 			if not GameState.has_flag("identified"):
 				feedback.emit("A segurança bloqueia a passagem. Identifique-se primeiro.")
 				return
+			if not GameState.has_flag("security_cleared"):
+				feedback.emit("A segurança bloqueia a passagem. Mostre o crachá ao Mauro Portela primeiro.")
+				return
 			SceneRouter.route_to("innovation")
 		"reception_exit":
 			if int(GameState.pizza.get("elapsed_minutes", 0)) <= 4:
