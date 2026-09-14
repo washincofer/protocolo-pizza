@@ -97,16 +97,18 @@ const HOTSPOTS := {
 		{"label":"Hall / saída para TI","rect":[0,90,170,520],"action":"innovation_exit"}
 	],
 	"ti": [
-		{"label":"Rogério Wilco","rect":[1120,180,300,340],"action":"rogerio"},
-		{"label":"Sala de Reunião / Weekly","rect":[850,100,290,510],"action":"ti_weekly"},
-		{"label":"Service Desk","rect":[250,150,430,370],"action":"ti_service"},
-		{"label":"Segurança da Informação","rect":[1400,170,260,430],"action":"ti_security"}
+		{"label":"Rogério Wilco","rect":[1259,286,157,134],"bounds":[1259,420,1416,286],"action":"rogerio"},
+		{"label":"Sala de Reunião / Weekly","rect":[998,66,180,496],"bounds":[998,562,1178,66],"action":"ti_weekly"},
+		{"label":"Sala de Servidores","rect":[660,182,230,138],"bounds":[660,320,890,182],"action":"ti_server_room_entry"},
+		{"label":"Service Desk","rect":[326,323,198,130],"bounds":[326,453,524,323],"action":"ti_service"},
+		{"label":"Segurança da Informação","rect":[1412,452,207,267],"bounds":[1412,719,1619,452],"action":"ti_security"},
+		{"label":"Voltar Inovação / Avançar Comunicação","rect":[0,182,164,314],"bounds":[0,496,164,182],"action":"ti_exit"}
 	],
 	"communication": [
-		{"label":"Planejamento","rect":[1080,300,250,370],"action":"communication_board"},
-		{"label":"Impressora","rect":[760,650,280,390],"action":"communication_printer"},
-		{"label":"Estúdio / Microfone","rect":[790,160,310,470],"action":"communication_studio"},
-		{"label":"Sala de Criação / saída","rect":[0,70,260,520],"action":"communication_exit"}
+		{"label":"Planejamento","rect":[1254,349,126,202],"bounds":[1254,551,1380,349],"action":"communication_board"},
+		{"label":"Carimbo","rect":[504,762,99,66],"bounds":[504,828,603,762],"action":"communication_printer"},
+		{"label":"Estúdio / Microfone","rect":[990,203,232,325],"bounds":[990,528,1222,203],"action":"communication_studio"},
+		{"label":"Saída — TI / Suprimentos","rect":[113,190,177,416],"bounds":[113,606,290,190],"action":"communication_exit"}
 	],
 	"supplies": [
 		{"label":"Stan Leilo / Aprovação de Compras","rect":[300,260,500,360],"action":"supplies_stan"},
