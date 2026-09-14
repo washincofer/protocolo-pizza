@@ -4,8 +4,13 @@ const UIAssets = preload("res://scripts/ui_asset_catalog.gd")
 
 const GENERIC_SPEECH_ANCHOR: Vector2 = Vector2(560.0, 360.0)
 const ITEM_TEXTURE_PREFIX: String = "res://assets/ui/items/"
+
 const VR_WORLD_NODE: String = "WorldItem_VRGlasses"
 const VR_WORLD_RECT: Rect2 = Rect2(744.0, 510.0, 76.0, 49.0)
+const STAMP_WORLD_NODE: String = "WorldItem_ExecutiveStamp"
+const STAMP_WORLD_RECT: Rect2 = Rect2(504.0, 762.0, 99.0, 66.0)
+const ROGER_VR_NODE: String = "WorldItem_RogerVRGlasses"
+const ROGER_VR_RECT: Rect2 = Rect2(1326.0, 300.0, 49.0, 38.0)
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -22,6 +27,7 @@ func _process(_delta: float) -> void:
 	_sync_world_items(main)
 	if GameState.current_area != "reception":
 		_apply_shared_dialogue_layout(main)
+	_reposition_area_dialogue(main)
 
 func _get_main() -> Control:
 	var current: Node = get_tree().current_scene
@@ -53,41 +59,80 @@ func _hide_legacy_game_hud(main: Control) -> void:
 				break
 
 func _sync_world_items(main: Control) -> void:
-	var existing: TextureRect = main.get_node_or_null(VR_WORLD_NODE) as TextureRect
-	if GameState.current_area != "innovation":
-		if existing != null:
-			existing.queue_free()
+	var vr_collected: bool = GameState.has_item("vr_glasses") or GameState.has_flag("vr_collected") or GameState.has_flag("boss_ti_done")
+	_sync_pickup_item(main, "innovation", VR_WORLD_NODE, "vr_glasses", VR_WORLD_RECT, "Óculos VR", vr_collected)
+
+	var stamp_collected: bool = GameState.has_item("executive_priority_stamp") or GameState.has_flag("communication_stamp_collected")
+	_sync_pickup_item(main, "communication", STAMP_WORLD_NODE, "executive_priority_stamp", STAMP_WORLD_RECT, "Carimbo", stamp_collected)
+
+	_sync_roger_vr(main)
+
+func _sync_pickup_item(
+	main: Control,
+	area_id: String,
+	node_name: String,
+	item_id: String,
+	world_rect: Rect2,
+	hotspot_tooltip: String,
+	collected: bool
+) -> void:
+	var existing: TextureRect = main.get_node_or_null(node_name) as TextureRect
+	if GameState.current_area != area_id:
+		_remove_world_node(existing)
 		return
 
-	var already_collected: bool = GameState.has_item("vr_glasses")
-	_set_hotspot_enabled(main, "Óculos VR", not already_collected)
-	if already_collected:
-		if existing != null:
-			existing.queue_free()
+	_set_hotspot_enabled(main, hotspot_tooltip, not collected)
+	if collected:
+		_remove_world_node(existing)
 		return
 
-	var bg: TextureRect = _find_background(main)
-	if bg == null or bg.texture == null:
+	var texture: Texture2D = UIAssets.item_texture(item_id)
+	if texture == null:
+		return
+	_place_world_texture(main, existing, node_name, texture, world_rect, 20)
+
+func _sync_roger_vr(main: Control) -> void:
+	var existing: TextureRect = main.get_node_or_null(ROGER_VR_NODE) as TextureRect
+	if GameState.current_area != "ti" or not GameState.has_flag("boss_ti_done"):
+		_remove_world_node(existing)
 		return
 	var texture: Texture2D = UIAssets.item_texture("vr_glasses")
 	if texture == null:
 		return
+	_place_world_texture(main, existing, ROGER_VR_NODE, texture, ROGER_VR_RECT, 30)
+
+func _place_world_texture(
+	main: Control,
+	existing: TextureRect,
+	node_name: String,
+	texture: Texture2D,
+	world_rect: Rect2,
+	z_value: int
+) -> void:
+	var bg: TextureRect = _find_background(main)
+	if bg == null or bg.texture == null:
+		return
 	if existing == null:
 		existing = TextureRect.new()
-		existing.name = VR_WORLD_NODE
+		existing.name = node_name
 		existing.texture = texture
 		existing.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		existing.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		existing.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		existing.z_index = 20
+		existing.z_index = z_value
 		main.add_child(existing)
 
 	var source_size: Vector2 = Vector2(bg.texture.get_size())
 	var sx: float = bg.size.x / maxf(source_size.x, 1.0)
 	var sy: float = bg.size.y / maxf(source_size.y, 1.0)
-	existing.position = bg.position + Vector2(VR_WORLD_RECT.position.x * sx, VR_WORLD_RECT.position.y * sy)
-	existing.size = Vector2(VR_WORLD_RECT.size.x * sx, VR_WORLD_RECT.size.y * sy)
+	existing.position = bg.position + Vector2(world_rect.position.x * sx, world_rect.position.y * sy)
+	existing.size = Vector2(world_rect.size.x * sx, world_rect.size.y * sy)
 	existing.visible = true
+
+func _remove_world_node(node: TextureRect) -> void:
+	if node != null and is_instance_valid(node):
+		node.visible = false
+		node.queue_free()
 
 func _set_hotspot_enabled(main: Control, tooltip: String, enabled: bool) -> void:
 	for child: Node in main.get_children():
@@ -101,6 +146,67 @@ func _apply_shared_dialogue_layout(main: Control) -> void:
 	if UIFineTune.has_method("_fit_dialogue_layer"):
 		UIFineTune.call("_fit_dialogue_layer", DialogueUI.layer, main)
 		UIFineTune.call("_fit_dialogue_layer", DialogueUI.speech_layer, main)
+
+func _reposition_area_dialogue(main: Control) -> void:
+	if DialogueUI.layer == null or not is_instance_valid(DialogueUI.layer):
+		return
+	if GameState.current_area == "reception_auditorium":
+		_move_dialogue_balloon(DialogueUI.layer, main, Vector2(1272.0, 310.0))
+
+func _move_dialogue_balloon(layer: CanvasLayer, main: Control, image_anchor: Vector2) -> void:
+	if layer.get_child_count() < 2:
+		return
+	var root: Control = layer.get_child(1) as Control
+	if root == null or root.size.x <= 0.0 or root.size.y <= 0.0:
+		return
+	var anchor: Vector2 = _image_to_screen(main, image_anchor)
+	if anchor.x < 0.0 or anchor.y < 0.0:
+		return
+	var view_size: Vector2 = get_viewport().get_visible_rect().size
+	var position: Vector2 = anchor - Vector2(root.size.x * 0.5, root.size.y + 18.0)
+	position.x = clampf(position.x, 16.0, maxf(16.0, view_size.x - root.size.x - 16.0))
+	position.y = clampf(position.y, 12.0, maxf(12.0, view_size.y - root.size.y - 330.0))
+	root.position = position
+
+func _image_to_screen(main: Control, image_position: Vector2) -> Vector2:
+	var bg: TextureRect = _find_background(main)
+	if bg == null or bg.texture == null or bg.size.x <= 0.0 or bg.size.y <= 0.0:
+		return Vector2(-1.0, -1.0)
+	var source_size: Vector2 = Vector2(bg.texture.get_size())
+	return bg.position + Vector2(
+		image_position.x * bg.size.x / maxf(source_size.x, 1.0),
+		image_position.y * bg.size.y / maxf(source_size.y, 1.0)
+	)
+
+func _feedback_anchor(area: String, speaker: String, text: String) -> Vector2:
+	match area:
+		"reception_auditorium":
+			if speaker.begins_with("Lúcia Pauta"):
+				return Vector2(1272.0, 310.0)
+			if text.contains("ONBOARDING") or text.contains("slide"):
+				return Vector2(624.0, 255.0)
+		"innovation":
+			if speaker.begins_with("Caio Brusch"):
+				return Vector2(866.0, 390.0)
+			if speaker.begins_with("Bernardo Nolli"):
+				return Vector2(426.0, 430.0)
+			if speaker.begins_with("Placa"):
+				return Vector2(1489.0, 182.0)
+			if text.contains("Óculos VR"):
+				return Vector2(782.0, 512.0)
+			if text.contains("Pouco colaborativo") or text.contains("Você sai"):
+				return Vector2(1149.0, 115.0)
+		"ti":
+			if speaker.begins_with("Rogério Wilco") or text.contains("CALMA BORIS") or text.contains("PROCESSO CONTORNADO"):
+				return Vector2(1337.0, 290.0)
+		"communication":
+			if speaker.begins_with("Informação adquirida") or text.contains("CC-0001"):
+				return Vector2(1317.0, 350.0)
+			if speaker.begins_with("Microfone"):
+				return Vector2(1106.0, 205.0)
+			if text.contains("Carimbo"):
+				return Vector2(553.0, 762.0)
+	return GENERIC_SPEECH_ANCHOR
 
 func _sanitize_menu_ui() -> void:
 	var menu_ui: Node = get_node_or_null("/root/MenuUI")
@@ -157,4 +263,5 @@ func _on_game_feedback(text: String) -> void:
 		if not possible_speaker.contains("//"):
 			speaker = possible_speaker
 			message = clean_text.substr(colon_index + 1).strip_edges()
-	DialogueUI.show_speech(speaker, message, GENERIC_SPEECH_ANCHOR)
+	var anchor: Vector2 = _feedback_anchor(GameState.current_area, speaker, clean_text)
+	DialogueUI.show_speech(speaker, message, anchor)
