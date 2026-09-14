@@ -25,6 +25,7 @@ func _process(_delta: float) -> void:
 		return
 	_hide_legacy_game_hud(main)
 	_sync_world_items(main)
+	_suppress_legacy_ti_server_overlay(main)
 	if GameState.current_area != "reception":
 		_apply_shared_dialogue_layout(main)
 	_reposition_area_dialogue(main)
@@ -141,6 +142,15 @@ func _set_hotspot_enabled(main: Control, tooltip: String, enabled: bool) -> void
 			continue
 		button.disabled = not enabled
 		button.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
+
+func _suppress_legacy_ti_server_overlay(main: Control) -> void:
+	if GameState.current_area != "ti":
+		return
+	var legacy: Button = main.get_node_or_null("SubareaEntry_Servidores") as Button
+	if legacy != null:
+		legacy.visible = false
+		legacy.disabled = true
+		legacy.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func _apply_shared_dialogue_layout(main: Control) -> void:
 	if UIFineTune.has_method("_fit_dialogue_layer"):
