@@ -89,11 +89,11 @@ const HOTSPOTS := {
 		{"label":"Porta de Entrada","rect":[366,760,964,170],"bounds":[366,930,1330,760],"action":"reception_exit"}
 	],
 	"innovation": [
-		{"label":"Óculos VR","rect":[900,380,190,170],"action":"take_vr"},
-		{"label":"Caio Brusch","rect":[760,260,270,260],"action":"talk_caio"},
-		{"label":"Bernardo Nolli","rect":[350,350,300,180],"action":"talk_bernardo"},
-		{"label":"Sala de Reunião","rect":[1040,100,300,430],"action":"innovation_meeting"},
-		{"label":"Banheiro","rect":[1430,110,220,500],"action":"innovation_bathroom"},
+		{"label":"Óculos VR","rect":[744,510,76,49],"bounds":[744,559,820,510],"action":"take_vr"},
+		{"label":"Caio Brusch","rect":[819,383,94,195],"bounds":[819,578,913,383],"action":"talk_caio"},
+		{"label":"Bernardo Nolli","rect":[380,427,92,123],"bounds":[380,550,472,427],"action":"talk_bernardo"},
+		{"label":"Sala de Reunião","rect":[1030,110,238,510],"bounds":[1030,620,1268,110],"action":"innovation_meeting"},
+		{"label":"Banheiro","rect":[1440,177,98,419],"bounds":[1440,596,1538,177],"action":"innovation_bathroom"},
 		{"label":"Hall / saída para TI","rect":[0,90,170,520],"action":"innovation_exit"}
 	],
 	"ti": [
