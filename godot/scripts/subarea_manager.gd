@@ -29,9 +29,9 @@ const SUBAREAS := {
 		"parent": "reception",
 		"background": "res://assets/subareas/reception_auditorium.webp",
 		"hotspots": [
-			{"label":"Lúcia Pauta","rect":[90,250,390,470],"action":"auditorium_lucia"},
-			{"label":"Púlpito da apresentação","rect":[540,210,620,470],"action":"auditorium_stage"},
-			{"label":"Voltar à Recepção","rect":[1460,100,210,700],"action":"return_parent"}
+			{"label":"Lúcia Pauta","rect":[1191,299,163,426],"action":"auditorium_lucia"},
+			{"label":"Púlpito da apresentação","rect":[512,247,223,170],"action":"auditorium_stage"},
+			{"label":"Voltar à Recepção","rect":[1375,102,208,384],"action":"return_parent"}
 		]
 	},
 	"innovation_meeting_room": {
