@@ -10,7 +10,7 @@ const VR_WORLD_RECT: Rect2 = Rect2(744.0, 510.0, 76.0, 49.0)
 const STAMP_WORLD_NODE: String = "WorldItem_ExecutiveStamp"
 const STAMP_WORLD_RECT: Rect2 = Rect2(504.0, 762.0, 99.0, 66.0)
 const ROGER_VR_NODE: String = "WorldItem_RogerVRGlasses"
-const ROGER_VR_RECT: Rect2 = Rect2(1326.0, 300.0, 49.0, 38.0)
+const ROGER_VR_RECT: Rect2 = Rect2(1317.0, 294.0, 68.0, 52.0)
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -90,7 +90,7 @@ func _sync_pickup_item(
 	var texture: Texture2D = UIAssets.item_texture(item_id)
 	if texture == null:
 		return
-	_place_world_texture(main, existing, node_name, texture, world_rect, 20)
+	_place_world_texture(main, existing, node_name, texture, world_rect, 20, false)
 
 func _sync_roger_vr(main: Control) -> void:
 	var existing: TextureRect = main.get_node_or_null(ROGER_VR_NODE) as TextureRect
@@ -100,7 +100,7 @@ func _sync_roger_vr(main: Control) -> void:
 	var texture: Texture2D = UIAssets.item_texture("vr_glasses")
 	if texture == null:
 		return
-	_place_world_texture(main, existing, ROGER_VR_NODE, texture, ROGER_VR_RECT, 30)
+	_place_world_texture(main, existing, ROGER_VR_NODE, texture, ROGER_VR_RECT, 30, true)
 
 func _place_world_texture(
 	main: Control,
@@ -108,7 +108,8 @@ func _place_world_texture(
 	node_name: String,
 	texture: Texture2D,
 	world_rect: Rect2,
-	z_value: int
+	z_value: int,
+	flip_h: bool
 ) -> void:
 	var bg: TextureRect = _find_background(main)
 	if bg == null or bg.texture == null:
@@ -128,6 +129,7 @@ func _place_world_texture(
 	var sy: float = bg.size.y / maxf(source_size.y, 1.0)
 	existing.position = bg.position + Vector2(world_rect.position.x * sx, world_rect.position.y * sy)
 	existing.size = Vector2(world_rect.size.x * sx, world_rect.size.y * sy)
+	existing.flip_h = flip_h
 	existing.visible = true
 
 func _remove_world_node(node: TextureRect) -> void:
