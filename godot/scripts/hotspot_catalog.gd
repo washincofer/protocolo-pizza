@@ -4,8 +4,13 @@ extends RefCounted
 const SOURCE_SIZES := {
 	"menu": Vector2(1672, 941),
 	"reception": Vector2(1672, 941),
+	"reception_waiting_room": Vector2(1672, 941),
+	"reception_auditorium": Vector2(1672, 941),
 	"innovation": Vector2(1672, 941),
+	"innovation_meeting_room": Vector2(1672, 941),
 	"ti": Vector2(1672, 941),
+	"ti_server_room": Vector2(1672, 941),
+	"ti_service_desk": Vector2(1672, 941),
 	"communication": Vector2(1672, 941),
 	"supplies": Vector2(1672, 941),
 	"hall": Vector2(1672, 941),
@@ -13,7 +18,10 @@ const SOURCE_SIZES := {
 	"engineering": Vector2(1672, 941),
 	"security": Vector2(1672, 941),
 	"rh": Vector2(1672, 941),
+	"rh_time_control": Vector2(1672, 941),
+	"rh_third_party_registration": Vector2(1672, 941),
 	"documentation": Vector2(1672, 941),
+	"documentation_archive_reprography": Vector2(1672, 941),
 	"legal": Vector2(1672, 941),
 	"directorate": Vector2(1672, 941)
 }
@@ -21,8 +29,13 @@ const SOURCE_SIZES := {
 const BACKGROUNDS := {
 	"menu": "res://assets/scenarios/menu.png",
 	"reception": "res://assets/scenarios/reception.png",
+	"reception_waiting_room": "res://assets/subareas/reception_waiting_room.webp",
+	"reception_auditorium": "res://assets/subareas/reception_auditorium.webp",
 	"innovation": "res://assets/scenarios/innovation.png",
+	"innovation_meeting_room": "res://assets/subareas/innovation_meeting_room.webp",
 	"ti": "res://assets/scenarios/ti.png",
+	"ti_server_room": "res://assets/subareas/ti_server_room.webp",
+	"ti_service_desk": "res://assets/subareas/ti_service_desk.webp",
 	"communication": "res://assets/scenarios/communication.png",
 	"supplies": "res://assets/scenarios/supplies.png",
 	"hall": "res://assets/scenarios/hall.png",
@@ -30,15 +43,23 @@ const BACKGROUNDS := {
 	"engineering": "res://assets/scenarios/engineering.png",
 	"security": "res://assets/scenarios/security.png",
 	"rh": "res://assets/scenarios/rh.png",
+	"rh_time_control": "res://assets/subareas/rh_time_control.webp",
+	"rh_third_party_registration": "res://assets/subareas/rh_third_party_registration.webp",
 	"documentation": "res://assets/scenarios/documentation.png",
+	"documentation_archive_reprography": "res://assets/subareas/documentation_archive_reprography.webp",
 	"legal": "res://assets/scenarios/legal.png",
 	"directorate": "res://assets/scenarios/directorate.png"
 }
 
 const TITLES := {
 	"reception": "Recepção / Térreo",
+	"reception_waiting_room": "Recepção — Sala de Espera",
+	"reception_auditorium": "Recepção — Auditório / Onboarding",
 	"innovation": "Inovação",
+	"innovation_meeting_room": "Inovação — Sala de Reunião",
 	"ti": "TI — Chefe 1",
+	"ti_server_room": "TI — Sala de Servidores",
+	"ti_service_desk": "TI — Service Desk",
 	"communication": "Comunicação",
 	"supplies": "Suprimentos — Chefe 2",
 	"hall": "Hall Corporativo",
@@ -46,7 +67,10 @@ const TITLES := {
 	"engineering": "Engenharia",
 	"security": "Vigilância — Chefe 3",
 	"rh": "RH — Chefe 4",
+	"rh_time_control": "RH — Controle de Ponto",
+	"rh_third_party_registration": "RH — Cadastro de Terceiros",
 	"documentation": "Documentação",
+	"documentation_archive_reprography": "Documentação — Arquivo / Reprografia",
 	"legal": "Jurídico — Chefe 5",
 	"directorate": "Diretoria"
 }
