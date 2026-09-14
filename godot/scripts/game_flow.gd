@@ -3,6 +3,9 @@ extends Node
 signal feedback(text: String)
 signal finished(ending_name: String, message: String)
 
+func _ready() -> void:
+	DialogueUI.choice_selected.connect(_on_dialogue_choice)
+
 func perform(action_id: String, selected_item := "") -> void:
 	if not GameState.run_active:
 		return
@@ -42,6 +45,7 @@ func perform(action_id: String, selected_item := "") -> void:
 			_finish("ENTREGA ABANDONADA", "Você evitou toda a burocracia. Inclusive a entrega.")
 		"take_vr":
 			GameState.add_item("vr_glasses")
+			GameState.set_flag("vr_collected")
 			feedback.emit("Óculos VR coletados. Talvez alguém da TI se interesse.")
 		"talk_caio":
 			feedback.emit("Caio Brusch: estamos reinventando uma experiência que já existia, mas agora com outro nome.")
@@ -59,38 +63,44 @@ func perform(action_id: String, selected_item := "") -> void:
 			else:
 				feedback.emit("Placa: Só pode cagar no seu andar.")
 		"innovation_exit":
-			if not GameState.has_item("vr_glasses"):
+			if not GameState.has_item("vr_glasses") and not GameState.has_flag("boss_ti_done"):
 				feedback.emit("Ainda existe um Óculos VR brilhando de forma suspeita no cenário.")
 				return
 			SceneRouter.route_to("ti")
 		"rogerio":
+			if GameState.has_flag("boss_ti_done"):
+				feedback.emit("Rogério Wilco: CALMA BORIS. O P1 agora está literalmente na minha cara.")
+				return
 			if selected_item != "vr_glasses":
 				feedback.emit("Rogério Wilco: Já tivemos nossa weekly hoje? Tente usar o item certo nele.")
 				return
+			GameState.remove_item("vr_glasses")
+			GameState.set_flag("vr_collected")
 			GameState.set_flag("boss_ti_done")
 			AchievementManager.unlock("Primeiro processo contornado")
-			feedback.emit("CALMA BORIS! O VR virou P1. Rogério abandona o bloqueio — PROCESSO CONTORNADO.")
-			SceneRouter.route_to("communication")
+			feedback.emit("CALMA BORIS! O VR virou P1. Rogério coloca os óculos e abandona o bloqueio — PROCESSO CONTORNADO.")
 		"ti_weekly":
 			AchievementManager.unlock("Weekly eterna")
 			_finish("REUNIÃO RECORRENTE", "A reunião acabou. A próxima começou antes.")
+		"ti_server_room_entry":
+			SceneRouter.route_to("ti_server_room")
 		"ti_service":
 			_finish("ENTREGA DIGITALMENTE CONCLUÍDA", "O Service Desk marcou a pizza como entregue. A realidade abriu chamado.")
 		"ti_security":
 			_finish("INCIDENTE DE SEGURANÇA", "Jorge Stobarte reteve a pizza para análise por tempo indeterminado.")
+		"ti_exit":
+			_open_ti_navigation()
 		"communication_board":
 			GameState.learn("cc_0001")
 			feedback.emit("Informação adquirida: CC-0001 — Centro de custo da Diretoria.")
 		"communication_printer":
 			GameState.add_item("executive_priority_stamp")
+			GameState.set_flag("communication_stamp_collected")
 			feedback.emit("Carimbo — Prioridade Executiva obtido.")
 		"communication_studio":
 			feedback.emit("Microfone: olá, olá, oláaaa... olááá. A vinheta ecoa pelo andar.")
 		"communication_exit":
-			if not GameState.knows("cc_0001") or not GameState.has_item("executive_priority_stamp"):
-				feedback.emit("Antes de sair, você ainda precisa do CC-0001 e do Carimbo de Prioridade Executiva.")
-				return
-			SceneRouter.route_to("supplies")
+			_open_communication_navigation()
 		"supplies_stan":
 			if selected_item != "executive_priority_stamp":
 				feedback.emit("Stan Leilo: prioridade sem carimbo não é prioridade.")
@@ -292,6 +302,49 @@ func perform(action_id: String, selected_item := "") -> void:
 			feedback.emit("Revista interna: 'Simplificando processos — edição especial de 248 páginas'.")
 		_:
 			feedback.emit("Nada útil aconteceu. O que, nesta empresa, já é alguma coisa.")
+
+func _open_ti_navigation() -> void:
+	var choices: Array = [
+		{"id":"A","key":"A","text":"Voltar para Inovação."}
+	]
+	if GameState.has_flag("boss_ti_done"):
+		choices.append({"id":"B","key":"B","text":"Avançar para Comunicação."})
+	DialogueUI.open_dialogue(
+		"ti_navigation",
+		"Corredor da TI",
+		"Para onde deseja ir?",
+		choices,
+		Vector2(82.0, 190.0)
+	)
+
+func _open_communication_navigation() -> void:
+	DialogueUI.open_dialogue(
+		"communication_navigation",
+		"Saída da Comunicação",
+		"Escolha o próximo destino.",
+		[
+			{"id":"A","key":"A","text":"Voltar para TI."},
+			{"id":"B","key":"B","text":"Avançar para Suprimentos."}
+		],
+		Vector2(200.0, 200.0)
+	)
+
+func _on_dialogue_choice(dialogue_id: String, choice_id: String) -> void:
+	if not GameState.run_active:
+		return
+	if dialogue_id == "ti_navigation":
+		if choice_id == "A":
+			SceneRouter.route_to("innovation")
+		elif choice_id == "B" and GameState.has_flag("boss_ti_done"):
+			SceneRouter.route_to("communication")
+	elif dialogue_id == "communication_navigation":
+		if choice_id == "A":
+			SceneRouter.route_to("ti")
+		elif choice_id == "B":
+			if not GameState.knows("cc_0001") or not GameState.has_item("executive_priority_stamp"):
+				feedback.emit("Antes de avançar, você ainda precisa do CC-0001 e do Carimbo de Prioridade Executiva.")
+				return
+			SceneRouter.route_to("supplies")
 
 func equip_item(item_id: String) -> void:
 	if item_id == "maintenance_vest":
