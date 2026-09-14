@@ -2,6 +2,7 @@ extends Node
 
 const MENU_AUDIO_PATH: String = "res://assets/audio/menu_intro.ogg"
 const RECEPTION_AUDIO_PATH: String = "res://assets/audio/reception_theme.ogg"
+const INNOVATION_TI_AUDIO_PATH: String = "res://assets/audio/innovation_ti_theme.ogg"
 const MENU_IMAGE_SUFFIX: String = "/assets/scenarios/menu.png"
 const CHECK_INTERVAL: float = 0.25
 const FADE_IN_SECONDS: float = 0.8
@@ -12,6 +13,14 @@ const RECEPTION_AREAS: Array[String] = [
 	"reception",
 	"reception_waiting_room",
 	"reception_auditorium"
+]
+
+const INNOVATION_TI_AREAS: Array[String] = [
+	"innovation",
+	"innovation_meeting_room",
+	"ti",
+	"ti_server_room",
+	"ti_service_desk"
 ]
 
 var player: AudioStreamPlayer
@@ -61,6 +70,8 @@ func _desired_mode() -> String:
 		return ""
 	if GameState.current_area in RECEPTION_AREAS:
 		return "reception"
+	if GameState.current_area in INNOVATION_TI_AREAS:
+		return "innovation_ti"
 	return ""
 
 func _menu_is_visible() -> bool:
@@ -83,6 +94,8 @@ func _track_path(mode: String) -> String:
 			return MENU_AUDIO_PATH
 		"reception":
 			return RECEPTION_AUDIO_PATH
+		"innovation_ti":
+			return INNOVATION_TI_AUDIO_PATH
 		_:
 			return ""
 
