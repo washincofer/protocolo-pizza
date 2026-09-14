@@ -1,7 +1,11 @@
 extends Node
 
+const UIAssets = preload("res://scripts/ui_asset_catalog.gd")
+
 const GENERIC_SPEECH_ANCHOR: Vector2 = Vector2(560.0, 360.0)
 const ITEM_TEXTURE_PREFIX: String = "res://assets/ui/items/"
+const VR_WORLD_NODE: StringName = &"WorldItem_VRGlasses"
+const VR_WORLD_RECT: Rect2 = Rect2(744.0, 510.0, 76.0, 49.0)
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -15,6 +19,7 @@ func _process(_delta: float) -> void:
 	if main == null or not GameState.run_active:
 		return
 	_hide_legacy_game_hud(main)
+	_sync_world_items(main)
 	if GameState.current_area != "reception":
 		_apply_shared_dialogue_layout(main)
 
@@ -22,6 +27,14 @@ func _get_main() -> Control:
 	var current: Node = get_tree().current_scene
 	if current is Control:
 		return current as Control
+	return null
+
+func _find_background(main: Control) -> TextureRect:
+	for child: Node in main.get_children():
+		if child is TextureRect:
+			var bg: TextureRect = child as TextureRect
+			if bg.texture != null:
+				return bg
 	return null
 
 func _hide_legacy_game_hud(main: Control) -> void:
@@ -38,6 +51,51 @@ func _hide_legacy_game_hud(main: Control) -> void:
 			if label != null and label.text.contains("Inventário"):
 				panel.visible = false
 				break
+
+func _sync_world_items(main: Control) -> void:
+	var existing: TextureRect = main.get_node_or_null(VR_WORLD_NODE) as TextureRect
+	if GameState.current_area != "innovation":
+		if existing != null:
+			existing.queue_free()
+		return
+
+	var already_collected: bool = GameState.has_item("vr_glasses")
+	_set_hotspot_enabled(main, "Óculos VR", not already_collected)
+	if already_collected:
+		if existing != null:
+			existing.queue_free()
+		return
+
+	var bg: TextureRect = _find_background(main)
+	if bg == null or bg.texture == null:
+		return
+	var texture: Texture2D = UIAssets.item_texture("vr_glasses")
+	if texture == null:
+		return
+	if existing == null:
+		existing = TextureRect.new()
+		existing.name = VR_WORLD_NODE
+		existing.texture = texture
+		existing.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		existing.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		existing.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		existing.z_index = 20
+		main.add_child(existing)
+
+	var source_size: Vector2 = Vector2(bg.texture.get_size())
+	var sx: float = bg.size.x / maxf(source_size.x, 1.0)
+	var sy: float = bg.size.y / maxf(source_size.y, 1.0)
+	existing.position = bg.position + Vector2(VR_WORLD_RECT.position.x * sx, VR_WORLD_RECT.position.y * sy)
+	existing.size = Vector2(VR_WORLD_RECT.size.x * sx, VR_WORLD_RECT.size.y * sy)
+	existing.visible = true
+
+func _set_hotspot_enabled(main: Control, tooltip: String, enabled: bool) -> void:
+	for child: Node in main.get_children():
+		var button: Button = child as Button
+		if button == null or button.tooltip_text != tooltip:
+			continue
+		button.disabled = not enabled
+		button.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
 
 func _apply_shared_dialogue_layout(main: Control) -> void:
 	if UIFineTune.has_method("_fit_dialogue_layer"):
