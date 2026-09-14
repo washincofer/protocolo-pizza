@@ -4,7 +4,7 @@ const UIAssets = preload("res://scripts/ui_asset_catalog.gd")
 
 const GENERIC_SPEECH_ANCHOR: Vector2 = Vector2(560.0, 360.0)
 const ITEM_TEXTURE_PREFIX: String = "res://assets/ui/items/"
-const VR_WORLD_NODE: StringName = &"WorldItem_VRGlasses"
+const VR_WORLD_NODE: String = "WorldItem_VRGlasses"
 const VR_WORLD_RECT: Rect2 = Rect2(744.0, 510.0, 76.0, 49.0)
 
 func _ready() -> void:
