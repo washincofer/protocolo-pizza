@@ -4,7 +4,7 @@ const HotspotCatalog = preload("res://scripts/hotspot_catalog.gd")
 const SAFE_MARGIN: float = 28.0
 
 var hud_visible: bool = true
-var hotspot_debug_visible: bool = true
+var hotspot_debug_visible: bool = false
 var coords_visible: bool = false
 
 var coord_layer: CanvasLayer
