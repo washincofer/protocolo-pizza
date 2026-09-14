@@ -156,8 +156,10 @@ func _suppress_legacy_ti_server_overlay(main: Control) -> void:
 
 func _apply_shared_dialogue_layout(main: Control) -> void:
 	if UIFineTune.has_method("_fit_dialogue_layer"):
-		UIFineTune.call("_fit_dialogue_layer", DialogueUI.layer, main)
-		UIFineTune.call("_fit_dialogue_layer", DialogueUI.speech_layer, main)
+		# Fora da Recepção, preserva a âncora real do hotspot e só reaproveita
+		# tipografia/painel. O deslocamento específico da Recepção não é aplicado.
+		UIFineTune.call("_fit_dialogue_layer", DialogueUI.layer, main, false)
+		UIFineTune.call("_fit_dialogue_layer", DialogueUI.speech_layer, main, false)
 
 func _reposition_area_dialogue(main: Control) -> void:
 	if DialogueUI.layer == null or not is_instance_valid(DialogueUI.layer):
