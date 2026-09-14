@@ -7,6 +7,8 @@ const SPEECH_MEDIUM_PATH: String = "res://assets/ui/speech/speech_medium.png"
 const SPEECH_LARGE_PATH: String = "res://assets/ui/speech/speech_large.png"
 const CHOICE_PANEL_PATH: String = "res://assets/ui/dialogue/choice_panel.png"
 const DEFAULT_KEYS: Array[String] = ["A", "B", "C", "D"]
+const EDGE_SIDE_THRESHOLD: float = 0.72
+const EDGE_SIDE_GAP: float = 24.0
 
 var layer: CanvasLayer
 var speech_layer: CanvasLayer
@@ -115,7 +117,19 @@ func _build_speech_balloon(
 	var anchor: Vector2 = _image_to_screen(resolved_anchor)
 	if anchor.x < 0.0 or anchor.y < 0.0:
 		anchor = Vector2(view_size.x * 0.5, view_size.y * 0.43)
-	var bubble_position: Vector2 = anchor - Vector2(bubble_size.x * 0.5, bubble_size.y + 18.0)
+
+	var flip_balloon: bool = false
+	var bubble_position: Vector2 = Vector2.ZERO
+	if anchor.x >= view_size.x * EDGE_SIDE_THRESHOLD:
+		# Hotspots próximos à borda direita abrem o balão para a esquerda.
+		bubble_position.x = anchor.x - bubble_size.x - EDGE_SIDE_GAP
+		flip_balloon = true
+	elif anchor.x <= view_size.x * (1.0 - EDGE_SIDE_THRESHOLD):
+		# Hotspots próximos à borda esquerda abrem o balão para a direita.
+		bubble_position.x = anchor.x + EDGE_SIDE_GAP
+	else:
+		bubble_position.x = anchor.x - bubble_size.x * 0.5
+	bubble_position.y = anchor.y - bubble_size.y - 18.0
 	bubble_position.x = clampf(bubble_position.x, 16.0, maxf(16.0, view_size.x - bubble_size.x - 16.0))
 	bubble_position.y = clampf(bubble_position.y, 12.0, maxf(12.0, view_size.y - bubble_size.y - 330.0))
 
@@ -133,6 +147,7 @@ func _build_speech_balloon(
 		texture_rect.size = bubble_size
 		texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		texture_rect.stretch_mode = TextureRect.STRETCH_SCALE
+		texture_rect.flip_h = flip_balloon
 		texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		root.add_child(texture_rect)
 	else:
