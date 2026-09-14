@@ -40,13 +40,21 @@ func _process(_delta: float) -> void:
 	if GameState.current_area != "reception":
 		return
 	_hide_reception_inline_inventory(main)
-	_fit_dialogue_layer(DialogueUI.layer, main)
-	_fit_dialogue_layer(DialogueUI.speech_layer, main)
+	_fit_dialogue_layer(DialogueUI.layer, main, true)
+	_fit_dialogue_layer(DialogueUI.speech_layer, main, true)
 
 func _get_main() -> Control:
 	var current: Node = get_tree().current_scene
 	if current is Control:
 		return current as Control
+	return null
+
+func _find_background(main: Control) -> TextureRect:
+	for child: Node in main.get_children():
+		if child is TextureRect:
+			var bg: TextureRect = child as TextureRect
+			if bg.texture != null:
+				return bg
 	return null
 
 func _fit_hud_icons(main: Control) -> void:
@@ -90,7 +98,7 @@ func _hide_reception_inline_inventory(main: Control) -> void:
 				panel.visible = false
 				break
 
-func _fit_dialogue_layer(canvas_layer: CanvasLayer, main: Control) -> void:
+func _fit_dialogue_layer(canvas_layer: CanvasLayer, main: Control, apply_reception_shift: bool = true) -> void:
 	if canvas_layer == null or not is_instance_valid(canvas_layer):
 		return
 	for child: Node in canvas_layer.get_children():
@@ -100,7 +108,8 @@ func _fit_dialogue_layer(canvas_layer: CanvasLayer, main: Control) -> void:
 		if _looks_like_choice_panel(control):
 			_fit_choice_panel(control)
 		elif _looks_like_speech_balloon(control):
-			_shift_speech_balloon(control, main)
+			if apply_reception_shift:
+				_shift_speech_balloon(control, main)
 			_center_speech_text(control)
 			_shift_speech_text_down(control)
 
