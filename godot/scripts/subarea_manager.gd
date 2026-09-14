@@ -305,6 +305,7 @@ func _handle_subarea_action(area: String, action: String) -> void:
 func _show_waiting_visitor_dialogue() -> void:
 	var click_count: int = int(GameState.flags.get("waiting_room_talks", 0)) + 1
 	GameState.flags["waiting_room_talks"] = click_count
+	GameState.tick(2)
 	if click_count >= 4:
 		_finish("VISITANTE RETIRADO", "Você esperou tanto que virou parte do mobiliário. A segurança resolveu o problema.")
 		return
