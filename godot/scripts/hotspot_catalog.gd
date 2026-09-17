@@ -111,10 +111,11 @@ const HOTSPOTS := {
 		{"label":"Saída — TI / Suprimentos","rect":[113,190,177,416],"bounds":[113,606,290,190],"action":"communication_exit"}
 	],
 	"supplies": [
-		{"label":"Stan Leilo / Aprovação de Compras","rect":[300,260,500,360],"action":"supplies_stan"},
-		{"label":"Três cotações","rect":[230,100,300,300],"action":"supplies_quotes"},
-		{"label":"Almoxarifado","rect":[940,80,470,620],"action":"supplies_warehouse"},
-		{"label":"Sala de Compras","rect":[0,90,270,500],"action":"supplies_supplier"}
+		{"label":"Stan Leilo / Aprovação de Compras","rect":[395,403,425,316],"bounds":[395,719,820,403],"action":"supplies_stan"},
+		{"label":"Três Cotações","rect":[320,320,170,95],"bounds":[320,415,490,320],"action":"supplies_quotes"},
+		{"label":"Almoxarifado","rect":[1217,180,323,503],"bounds":[1217,683,1540,180],"action":"supplies_warehouse"},
+		{"label":"Sala de Compras","rect":[38,87,94,628],"bounds":[38,715,132,87],"action":"supplies_supplier"},
+		{"label":"Saída — Comunicação / Hall","rect":[630,845,470,70],"bounds":[630,915,1100,845],"action":"supplies_exit"}
 	],
 	"hall": [
 		{"label":"Financeiro","rect":[0,220,330,430],"action":"hall_finance"},
