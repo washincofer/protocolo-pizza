@@ -9,6 +9,18 @@ const VR_WORLD_NODE: String = "WorldItem_VRGlasses"
 const VR_WORLD_RECT: Rect2 = Rect2(744.0, 510.0, 76.0, 49.0)
 const STAMP_WORLD_NODE: String = "WorldItem_ExecutiveStamp"
 const STAMP_WORLD_RECT: Rect2 = Rect2(504.0, 762.0, 99.0, 66.0)
+const VISITOR_BADGE_WORLD_NODE: String = "WorldItem_VisitorBadge"
+const VISITOR_BADGE_WORLD_RECT: Rect2 = Rect2(650.0, 420.0, 70.0, 70.0)
+const FINANCE_PROOF_WORLD_NODE: String = "WorldItem_ThirdPartyProof"
+const FINANCE_PROOF_WORLD_RECT: Rect2 = Rect2(528.0, 395.0, 72.0, 82.0)
+const FINANCE_PROTOCOL_WORLD_NODE: String = "WorldItem_FiscalProtocol"
+const FINANCE_PROTOCOL_WORLD_RECT: Rect2 = Rect2(620.0, 395.0, 72.0, 82.0)
+const VEST_WORLD_NODE: String = "WorldItem_MaintenanceVest"
+const VEST_WORLD_RECT: Rect2 = Rect2(1225.0, 587.0, 86.0, 113.0)
+const WORK_ORDER_WORLD_NODE: String = "WorldItem_WorkOrder"
+const WORK_ORDER_WORLD_RECT: Rect2 = Rect2(0.0, 475.0, 86.0, 102.0)
+const BOLOTA_WORLD_NODE: String = "WorldItem_LegalBolotaPending"
+const BOLOTA_WORLD_RECT: Rect2 = Rect2(1170.0, 420.0, 120.0, 120.0)
 const ROGER_VR_NODE: String = "WorldItem_RogerVRGlasses"
 const ROGER_VR_RECT: Rect2 = Rect2(1317.0, 294.0, 68.0, 52.0)
 
@@ -60,11 +72,29 @@ func _hide_legacy_game_hud(main: Control) -> void:
 				break
 
 func _sync_world_items(main: Control) -> void:
+	# Padrão canônico: todo item coletável que já possui arte aparece fisicamente
+	# no hotspot. Depois da coleta, a arte some da cena e o item permanece no inventário.
+	var badge_collected: bool = GameState.has_item("visitor_badge") or GameState.has_flag("identified")
+	_sync_pickup_item(main, "reception", VISITOR_BADGE_WORLD_NODE, "visitor_badge", VISITOR_BADGE_WORLD_RECT, "Balcão da Recepção", badge_collected, false)
+
 	var vr_collected: bool = GameState.has_item("vr_glasses") or GameState.has_flag("vr_collected") or GameState.has_flag("boss_ti_done")
-	_sync_pickup_item(main, "innovation", VR_WORLD_NODE, "vr_glasses", VR_WORLD_RECT, "Óculos VR", vr_collected)
+	_sync_pickup_item(main, "innovation", VR_WORLD_NODE, "vr_glasses", VR_WORLD_RECT, "Óculos VR", vr_collected, true)
 
 	var stamp_collected: bool = GameState.has_item("executive_priority_stamp") or GameState.has_flag("communication_stamp_collected")
-	_sync_pickup_item(main, "communication", STAMP_WORLD_NODE, "executive_priority_stamp", STAMP_WORLD_RECT, "Carimbo", stamp_collected)
+	_sync_pickup_item(main, "communication", STAMP_WORLD_NODE, "executive_priority_stamp", STAMP_WORLD_RECT, "Carimbo", stamp_collected, true)
+
+	var finance_docs_collected: bool = GameState.has_item("third_party_proof") and GameState.has_item("fiscal_exception_protocol")
+	_sync_pickup_item(main, "finance", FINANCE_PROOF_WORLD_NODE, "third_party_proof", FINANCE_PROOF_WORLD_RECT, "Bruno Basco", finance_docs_collected, false)
+	_sync_pickup_item(main, "finance", FINANCE_PROTOCOL_WORLD_NODE, "fiscal_exception_protocol", FINANCE_PROTOCOL_WORLD_RECT, "Bruno Basco", finance_docs_collected, false)
+
+	var vest_collected: bool = GameState.has_item("maintenance_vest")
+	_sync_pickup_item(main, "engineering", VEST_WORLD_NODE, "maintenance_vest", VEST_WORLD_RECT, "Colete de Manutenção", vest_collected, true)
+
+	var work_order_collected: bool = GameState.has_item("work_order")
+	_sync_pickup_item(main, "engineering", WORK_ORDER_WORLD_NODE, "work_order", WORK_ORDER_WORLD_RECT, "Ordem de Serviço", work_order_collected, true)
+
+	var bolota_collected: bool = GameState.has_item("legal_bolota_pending") or GameState.has_item("legal_bolota_approved") or GameState.has_flag("boss_legal_done")
+	_sync_pickup_item(main, "documentation", BOLOTA_WORLD_NODE, "legal_bolota_pending", BOLOTA_WORLD_RECT, "Bolota do Jurídico", bolota_collected, true)
 
 	_sync_roger_vr(main)
 
@@ -75,14 +105,18 @@ func _sync_pickup_item(
 	item_id: String,
 	world_rect: Rect2,
 	hotspot_tooltip: String,
-	collected: bool
+	collected: bool,
+	disable_hotspot_when_collected: bool = true
 ) -> void:
 	var existing: TextureRect = main.get_node_or_null(node_name) as TextureRect
 	if GameState.current_area != area_id:
 		_remove_world_node(existing)
 		return
 
-	_set_hotspot_enabled(main, hotspot_tooltip, not collected)
+	if disable_hotspot_when_collected:
+		_set_hotspot_enabled(main, hotspot_tooltip, not collected)
+	else:
+		_set_hotspot_enabled(main, hotspot_tooltip, true)
 	if collected:
 		_remove_world_node(existing)
 		return

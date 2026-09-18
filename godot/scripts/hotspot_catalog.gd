@@ -118,25 +118,25 @@ const HOTSPOTS := {
 		{"label":"Saída — Comunicação / Hall","rect":[630,845,470,70],"bounds":[630,915,1100,845],"action":"supplies_exit"}
 	],
 	"hall": [
-		{"label":"Financeiro","rect":[0,220,330,430],"action":"hall_finance"},
-		{"label":"Engenharia","rect":[1350,220,320,430],"action":"hall_engineering"},
-		{"label":"Escadas","rect":[690,50,300,250],"action":"hall_stairs"},
-		{"label":"Painel de Diretórios","rect":[650,250,370,300],"action":"hall_map"},
-		{"label":"Banco de Espera","rect":[350,430,300,160],"action":"hall_wait"}
+		{"label":"Financeiro","rect":[102,283,203,340],"bounds":[102,623,305,283],"action":"hall_finance"},
+		{"label":"Engenharia","rect":[1406,248,195,376],"bounds":[1406,624,1601,248],"action":"hall_engineering"},
+		{"label":"Escadas","rect":[714,178,245,94],"bounds":[714,272,959,178],"action":"hall_stairs"},
+		{"label":"Painel de Diretórios","rect":[660,282,366,235],"bounds":[660,517,1026,282],"action":"hall_map"},
+		{"label":"Banco de Espera","rect":[329,478,290,122],"bounds":[329,600,619,478],"action":"hall_wait"}
 	],
 	"finance": [
-		{"label":"Bruno Basco","rect":[500,300,360,300],"action":"finance_bruno"},
-		{"label":"Pasta de Reembolso","rect":[840,430,250,250],"action":"finance_reimbursement"},
-		{"label":"Calculadora","rect":[1040,520,190,190],"action":"finance_calculator"},
-		{"label":"Arquivo / Carlos","rect":[1320,260,330,360],"action":"finance_archive"},
-		{"label":"Voltar ao Hall","rect":[0,160,190,480],"action":"finance_back"}
+		{"label":"Bruno Basco","rect":[506,337,217,156],"bounds":[506,493,723,337],"action":"finance_bruno"},
+		{"label":"Pasta de Reembolso","rect":[1267,204,103,130],"bounds":[1267,334,1370,204],"action":"finance_reimbursement"},
+		{"label":"Calculadora","rect":[1062,583,65,67],"bounds":[1062,650,1127,583],"action":"finance_calculator"},
+		{"label":"Arquivo / Carlos","rect":[1424,334,155,149],"bounds":[1424,483,1579,334],"action":"finance_archive"},
+		{"label":"Voltar ao Hall","rect":[0,765,546,160],"bounds":[0,925,546,765],"action":"finance_back"}
 	],
 	"engineering": [
-		{"label":"Colete de Manutenção","rect":[930,210,260,350],"action":"engineering_vest"},
-		{"label":"Ordem de Serviço","rect":[1160,430,250,230],"action":"engineering_os"},
-		{"label":"Bento Tróti","rect":[520,260,330,330],"action":"engineering_bento"},
-		{"label":"Análise estrutural da pizza","rect":[1370,250,280,390],"action":"engineering_analysis"},
-		{"label":"Voltar ao Hall","rect":[0,140,210,500],"action":"engineering_back"}
+		{"label":"Colete de Manutenção","rect":[1225,587,86,113],"bounds":[1225,700,1311,587],"action":"engineering_vest"},
+		{"label":"Ordem de Serviço","rect":[0,475,86,102],"bounds":[0,577,86,475],"action":"engineering_os"},
+		{"label":"Bento Tróti","rect":[616,384,191,208],"bounds":[616,592,807,384],"action":"engineering_bento"},
+		{"label":"Análise estrutural da pizza","rect":[392,436,76,77],"bounds":[392,513,468,436],"action":"engineering_analysis"},
+		{"label":"Voltar ao Hall","rect":[1413,212,157,472],"bounds":[1413,684,1570,212],"action":"engineering_back"}
 	],
 	"security": [
 		{"label":"Sônia Bondes / Posto","rect":[520,300,420,330],"action":"security_sonia"},
