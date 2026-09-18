@@ -196,6 +196,8 @@ func perform(action_id: String, selected_item := "") -> void:
 		"security_inspection":
 			AchievementManager.unlock("Amostragem destrutiva")
 			_finish("PIZZA EM QUARENTENA", "Inspeção concluída. Amostra indisponível para entrega.")
+		"security_back":
+			SceneRouter.route_to("hall")
 		"rh_helena":
 			if not GameState.has_item("third_party_proof"):
 				feedback.emit("Helena Folha: isso prova que você entrou, não que você existe para o RH.")

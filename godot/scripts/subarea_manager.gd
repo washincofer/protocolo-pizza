@@ -69,9 +69,9 @@ const SUBAREAS := {
 		"parent": "rh",
 		"background": "res://assets/subareas/rh_time_control.webp",
 		"hotspots": [
-			{"label":"Paulo Pontes","rect":[230,230,520,500],"action":"core_rh_point"},
-			{"label":"Controle paralelo","rect":[870,240,620,450],"action":"core_rh_parallel"},
-			{"label":"Voltar ao RH","rect":[0,100,180,700],"action":"return_parent"}
+			{"label":"Paulo Pontes","rect":[834,266,185,205],"action":"core_rh_point"},
+			{"label":"Controle paralelo","rect":[697,381,122,122],"action":"core_rh_parallel"},
+			{"label":"Voltar ao RH","rect":[1244,107,208,484],"action":"return_parent"}
 		]
 	},
 	"rh_third_party_registration": {
@@ -79,9 +79,9 @@ const SUBAREAS := {
 		"parent": "rh",
 		"background": "res://assets/subareas/rh_third_party_registration.webp",
 		"hotspots": [
-			{"label":"Caio Dastro","rect":[260,220,550,510],"action":"core_rh_validator"},
-			{"label":"Formulários de cadastro","rect":[860,250,600,430],"action":"registration_forms"},
-			{"label":"Voltar ao RH","rect":[0,100,180,700],"action":"return_parent"}
+			{"label":"Caio Dastro","rect":[510,260,163,173],"action":"core_rh_validator"},
+			{"label":"Formulários de cadastro","rect":[701,368,87,82],"action":"registration_forms"},
+			{"label":"Voltar ao RH","rect":[28,26,270,565],"action":"return_parent"}
 		]
 	},
 	"documentation_archive_reprography": {

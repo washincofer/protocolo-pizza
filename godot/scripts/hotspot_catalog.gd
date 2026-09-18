@@ -139,17 +139,18 @@ const HOTSPOTS := {
 		{"label":"Voltar ao Hall","rect":[1413,212,157,472],"bounds":[1413,684,1570,212],"action":"engineering_back"}
 	],
 	"security": [
-		{"label":"Sônia Bondes / Posto","rect":[520,300,420,330],"action":"security_sonia"},
-		{"label":"Sala de Monitoramento","rect":[280,150,620,300],"action":"security_monitors"},
-		{"label":"Acesso Restrito","rect":[1190,220,240,500],"action":"security_access"},
-		{"label":"Detector / inspeção da pizza","rect":[1050,540,330,300],"action":"security_inspection"}
+		{"label":"Sônia Bondes / Posto","rect":[747,485,311,109],"bounds":[747,594,1058,485],"action":"security_sonia"},
+		{"label":"Sala de Monitoramento","rect":[553,190,687,273],"bounds":[553,463,1240,190],"action":"security_monitors"},
+		{"label":"Acesso Restrito","rect":[1526,365,123,201],"bounds":[1526,566,1649,365],"action":"security_access"},
+		{"label":"Detector / inspeção da pizza","rect":[1265,285,220,459],"bounds":[1265,744,1485,285],"action":"security_inspection"},
+		{"label":"Voltar ao Hall","rect":[524,841,659,99],"bounds":[524,940,1183,841],"action":"security_back"}
 	],
 	"rh": [
-		{"label":"Helena Folha","rect":[390,300,420,330],"action":"rh_helena"},
-		{"label":"Controle de Ponto","rect":[850,170,250,350],"action":"rh_point"},
-		{"label":"Controle paralelo / Formulários","rect":[0,720,520,330],"action":"rh_parallel"},
-		{"label":"Cadastro de Terceiros","rect":[1100,260,330,330],"action":"rh_validator"},
-		{"label":"Micro-ondas","rect":[1050,620,330,320],"action":"rh_microwave"}
+		{"label":"Helena Folha","rect":[669,349,124,171],"bounds":[669,520,793,349],"action":"rh_helena"},
+		{"label":"Controle de Ponto","rect":[1146,332,137,117],"bounds":[1146,449,1283,332],"action":"rh_point"},
+		{"label":"Controle paralelo / Formulários","rect":[1132,460,161,188],"bounds":[1132,648,1293,460],"action":"rh_parallel"},
+		{"label":"Cadastro de Terceiros","rect":[1347,305,195,174],"bounds":[1347,479,1542,305],"action":"rh_validator"},
+		{"label":"Micro-ondas","rect":[1389,632,133,86],"bounds":[1389,718,1522,632],"action":"rh_microwave"}
 	],
 	"documentation": [
 		{"label":"Balcão de Atendimento","rect":[430,230,420,340],"action":"documentation_counter"},
