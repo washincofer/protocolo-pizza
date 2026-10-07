@@ -2,7 +2,7 @@ extends Node
 
 const MENU_AUDIO_PATH: String = "res://assets/audio/menu_intro.ogg"
 const RECEPTION_AUDIO_PATH: String = "res://assets/audio/reception_theme.ogg"
-const INNOVATION_TI_AUDIO_PATH: String = "res://assets/audio/innovation_ti_theme.ogg"
+const INNOVATION_TI_AUDIO_PATH: String = "res://assets/audio/reception_theme.ogg"
 const MENU_IMAGE_SUFFIX: String = "/assets/scenarios/menu.png"
 const CHECK_INTERVAL: float = 0.25
 const FADE_IN_SECONDS: float = 0.8
@@ -72,7 +72,7 @@ func _desired_mode() -> String:
 		return "reception"
 	if GameState.current_area in INNOVATION_TI_AREAS:
 		return "innovation_ti"
-	return ""
+	return "reception"
 
 func _menu_is_visible() -> bool:
 	var current: Node = get_tree().current_scene
@@ -161,3 +161,9 @@ func _kill_tween() -> void:
 	if fade_tween != null and fade_tween.is_valid():
 		fade_tween.kill()
 	fade_tween = null
+
+func _exit_tree() -> void:
+	_kill_tween()
+	if is_instance_valid(player):
+		player.stop()
+		player.stream = null

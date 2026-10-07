@@ -10,6 +10,7 @@ var flags: Dictionary = {}
 var disguise := ""
 var player_name := ""
 var pizza: Dictionary = {}
+var dialogue_history: Array = []
 
 func _ready() -> void:
 	reset_run(false)
@@ -17,6 +18,7 @@ func _ready() -> void:
 func reset_run(mark_active: bool = true) -> void:
 	run_active = mark_active
 	current_area = "reception"
+	dialogue_history = []
 	inventory = []
 	knowledge = []
 	flags = {}
@@ -78,6 +80,7 @@ func to_dict() -> Dictionary:
 		"flags": flags.duplicate(true),
 		"disguise": disguise,
 		"player_name": player_name,
+		"dialogue_history": dialogue_history.duplicate(true),
 		"pizza": pizza.duplicate(true)
 	}
 
@@ -89,6 +92,7 @@ func restore(data: Dictionary) -> void:
 	flags = data.get("flags", {}).duplicate(true)
 	disguise = str(data.get("disguise", ""))
 	player_name = str(data.get("player_name", ""))
+	dialogue_history = data.get("dialogue_history", []).duplicate(true)
 	pizza = data.get("pizza", {}).duplicate(true)
 	if pizza.is_empty():
 		pizza = {"temperature":100,"integrity":100,"quantity":8,"elapsed_minutes":0,"possession":"player"}

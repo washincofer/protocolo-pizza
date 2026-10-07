@@ -42,7 +42,7 @@ func _ensure_menu_button() -> void:
 	menu_button.text = "Conquistas"
 	menu_button.tooltip_text = "Ver progresso das 22 conquistas"
 	menu_button.custom_minimum_size = Vector2(190, 50)
-	menu_button.add_theme_font_size_override("font_size", 18)
+	menu_button.add_theme_font_size_override("font_size", SettingsManager.font_size(18))
 	menu_button.pressed.connect(open.bind(false))
 	menu_layer.add_child(menu_button)
 	_position_menu_button()
@@ -81,7 +81,7 @@ func open(from_pause: bool = false) -> void:
 	var title: Label = Label.new()
 	title.text = "CONQUISTAS"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 34)
+	title.add_theme_font_size_override("font_size", SettingsManager.font_size(34))
 	title.add_theme_color_override("font_color", Color("ffd34e"))
 	outer.add_child(title)
 
@@ -90,7 +90,7 @@ func open(from_pause: bool = false) -> void:
 	var progress: Label = Label.new()
 	progress.text = "%d / %d desbloqueadas" % [unlocked_count, total_count]
 	progress.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	progress.add_theme_font_size_override("font_size", 20)
+	progress.add_theme_font_size_override("font_size", SettingsManager.font_size(20))
 	outer.add_child(progress)
 
 	var bar: ProgressBar = ProgressBar.new()
@@ -119,7 +119,7 @@ func open(from_pause: bool = false) -> void:
 	var close_button: Button = Button.new()
 	close_button.text = "Voltar"
 	close_button.custom_minimum_size = Vector2(820, 48)
-	close_button.add_theme_font_size_override("font_size", 18)
+	close_button.add_theme_font_size_override("font_size", SettingsManager.font_size(18))
 	close_button.pressed.connect(_close)
 	outer.add_child(close_button)
 
@@ -149,14 +149,14 @@ func _achievement_row(number: int, achievement_name: String, unlocked: bool) -> 
 	status.custom_minimum_size = Vector2(38, 40)
 	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	status.add_theme_font_size_override("font_size", 20)
+	status.add_theme_font_size_override("font_size", SettingsManager.font_size(20))
 	line.add_child(status)
 
 	var label: Label = Label.new()
 	label.text = "%02d. %s" % [number, achievement_name]
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 18)
+	label.add_theme_font_size_override("font_size", SettingsManager.font_size(18))
 	label.add_theme_color_override("font_color", Color("fff2c2") if unlocked else Color("969aa1"))
 	line.add_child(label)
 
@@ -165,7 +165,7 @@ func _achievement_row(number: int, achievement_name: String, unlocked: bool) -> 
 	state.custom_minimum_size = Vector2(145, 40)
 	state.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	state.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	state.add_theme_font_size_override("font_size", 13)
+	state.add_theme_font_size_override("font_size", SettingsManager.font_size(13))
 	state.add_theme_color_override("font_color", Color("ffd34e") if unlocked else Color("777b82"))
 	line.add_child(state)
 	return row

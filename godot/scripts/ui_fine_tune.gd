@@ -80,7 +80,7 @@ func _prepare_hud_button(button: Button) -> void:
 	button.flat = true
 	button.clip_contents = true
 	button.expand_icon = true
-	button.icon_max_width = HUD_ICON_MAX_WIDTH
+	button.add_theme_constant_override("icon_max_width", HUD_ICON_MAX_WIDTH)
 	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	button.vertical_icon_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -167,7 +167,7 @@ func _fit_choice_text_rects(panel: Control, view_size: Vector2) -> void:
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		label.add_theme_font_size_override("font_size", _choice_font_size(label.text))
+		label.add_theme_font_size_override("font_size", SettingsManager.font_size(_choice_font_size(label.text)))
 
 func _reference_rect_to_screen(reference_rect: Rect2, view_size: Vector2) -> Rect2:
 	var sx: float = view_size.x / CHOICE_REFERENCE_SIZE.x

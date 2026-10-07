@@ -5,6 +5,10 @@ const CELL_SIZE: Vector2i = Vector2i(192, 320)
 const WALK_SPEED: float = 430.0
 const ARRIVAL_DISTANCE: float = 9.0
 
+const Walkable = preload("res://scripts/walkable_catalog.gd")
+var _path: PackedVector2Array = []
+var _restore_data: Dictionary = {}
+var _hotspot_signature: int = -1
 var _main: Control = null
 var _player_root: Node2D = null
 var _sprite: AnimatedSprite2D = null
@@ -32,13 +36,14 @@ func _process(delta: float) -> void:
 		return
 	_ensure_player(_main)
 	_handle_area_change(bg)
-	_patch_hotspot_buttons(_main)
+	if _main.get_child_count() != _hotspot_signature:
+		_patch_hotspot_buttons(_main)
+		_hotspot_signature = _main.get_child_count()
 	_update_movement(delta, bg)
 	_update_screen_transform(bg)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not GameState.run_active:
-		return
+	if InteractionGuard.world_blocked(): return
 	var mouse_event: InputEventMouseButton = event as InputEventMouseButton
 	if mouse_event == null or not mouse_event.pressed or mouse_event.button_index != MOUSE_BUTTON_LEFT:
 		return
@@ -74,6 +79,7 @@ func _ensure_player(main: Control) -> void:
 	if _player_root != null and is_instance_valid(_player_root) and _player_root.get_parent() == main:
 		_player_root.visible = true
 		return
+	_hotspot_signature = -1
 	_player_root = Node2D.new()
 	_player_root.name = "PointAndClickPlayer"
 	main.add_child(_player_root)
@@ -131,15 +137,20 @@ func _atlas_frame(texture: Texture2D, column: int, row: int) -> AtlasTexture:
 
 func _handle_area_change(bg: TextureRect) -> void:
 	var area: String = GameState.current_area
-	if area == _current_area:
+	if area == _current_area and _restore_data.is_empty():
 		return
 	_current_area = area
 	var source_size: Vector2 = Vector2(bg.texture.get_size())
 	_image_position = _spawn_for_area(area, source_size)
+	if not _restore_data.is_empty():
+		var pos: Array = _restore_data.get("position",[])
+		if pos.size() == 2: _image_position = Vector2(pos[0],pos[1])
+		_last_direction = str(_restore_data.get("direction","up"))
+		_restore_data.clear()
 	_target_image_position = _image_position
 	_moving = false
 	_pending_callback = Callable()
-	_last_direction = "up" if area != "reception" else "up"
+	_path.clear()
 	_play_idle()
 
 func _spawn_for_area(area: String, source_size: Vector2) -> Vector2:
@@ -156,24 +167,31 @@ func _spawn_for_area(area: String, source_size: Vector2) -> Vector2:
 		return _clamp_walkable(Vector2(spawns[area]), source_size)
 	return _clamp_walkable(Vector2(source_size.x * 0.5, source_size.y * 0.84), source_size)
 
-func _walk_bounds(source_size: Vector2) -> Rect2:
-	return Rect2(
-		Vector2(source_size.x * 0.07, source_size.y * 0.56),
-		Vector2(source_size.x * 0.86, source_size.y * 0.35)
-	)
-
-func _clamp_walkable(point: Vector2, source_size: Vector2) -> Vector2:
-	var bounds: Rect2 = _walk_bounds(source_size)
-	return Vector2(
-		clampf(point.x, bounds.position.x, bounds.end.x),
-		clampf(point.y, bounds.position.y, bounds.end.y)
-	)
-
+func _walk_bounds(_source_size: Vector2) -> Rect2:
+	return Walkable.bounds(GameState.current_area)
+func _clamp_walkable(point: Vector2,_source_size: Vector2) -> Vector2:
+	return Walkable.safe_point(GameState.current_area,point)
 func _move_to(point: Vector2) -> void:
-	_target_image_position = point
-	_moving = _image_position.distance_to(_target_image_position) > ARRIVAL_DISTANCE
-	if not _moving:
+	_path = Walkable.path(GameState.current_area,_image_position,point)
+	if _path.is_empty():
+		_pending_callback = Callable()
+		GameFlow.feedback.emit("Esse móvel bloqueia a passagem. Escolha um ponto livre do piso.")
+		return
+	_image_position = _path[0]
+	_path.remove_at(0)
+	if bool(SettingsManager.get_value("reduced_motion",false)):
+		_image_position = point
+		_path.clear()
 		_finish_move()
+		return
+	_next_waypoint()
+func _next_waypoint() -> void:
+	if _path.is_empty():
+		_finish_move()
+		return
+	_target_image_position = _path[0]
+	_path.remove_at(0)
+	_moving = true
 
 func _update_movement(delta: float, bg: TextureRect) -> void:
 	if not _moving:
@@ -182,7 +200,7 @@ func _update_movement(delta: float, bg: TextureRect) -> void:
 	var distance: float = offset.length()
 	if distance <= ARRIVAL_DISTANCE:
 		_image_position = _target_image_position
-		_finish_move()
+		_next_waypoint()
 		return
 	var direction: Vector2 = offset / maxf(distance, 0.001)
 	var step: float = minf(WALK_SPEED * delta, distance)
@@ -249,7 +267,7 @@ func _patch_hotspot_buttons(main: Control) -> void:
 		var button: Button = node as Button
 		if button == null:
 			continue
-		if button.text != "" or button.tooltip_text == "":
+		if not bool(button.get_meta("world_hotspot",false)):
 			continue
 		if button.has_meta("player_walk_wrapped"):
 			continue
@@ -271,6 +289,7 @@ func _patch_hotspot_buttons(main: Control) -> void:
 		button.set_meta("player_walk_wrapped", true)
 
 func _hotspot_pressed(button: Button, callbacks: Array[Callable]) -> void:
+	if InteractionGuard.world_blocked(): return
 	if button == null or not is_instance_valid(button):
 		return
 	var main: Control = _get_main()
@@ -294,3 +313,14 @@ func _call_callbacks(callbacks: Array[Callable]) -> void:
 func _hide_player() -> void:
 	if _player_root != null and is_instance_valid(_player_root):
 		_player_root.visible = false
+
+func cancel_movement() -> void:
+	_moving = false
+	_path.clear()
+	_pending_callback = Callable()
+func snapshot() -> Dictionary:
+	return {"area":GameState.current_area,"position":[_image_position.x,_image_position.y],"direction":_last_direction}
+func restore_snapshot(data: Dictionary) -> void:
+	cancel_movement()
+	_restore_data = data.duplicate(true)
+	_current_area = ""

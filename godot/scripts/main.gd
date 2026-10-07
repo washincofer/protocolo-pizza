@@ -21,6 +21,7 @@ func _clear() -> void:
 	for child in get_children():
 		child.free()
 	modal_layer = null
+	set_meta("protocol_buttons", 0)
 
 func _fit_image(area_id: String) -> void:
 	var path := HotspotCatalog.get_background(area_id)
@@ -45,7 +46,8 @@ func _hotspot(rect_data: Array, label: String, callback: Callable) -> Button:
 	var b := Button.new()
 	b.text = ""
 	b.tooltip_text = label
-	b.focus_mode = Control.FOCUS_NONE
+	b.set_meta("world_hotspot", GameState.run_active)
+	b.focus_mode = Control.FOCUS_ALL
 	b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	var x := float(rect_data[0])
 	var y := float(rect_data[1])
@@ -68,6 +70,7 @@ func _hotspot(rect_data: Array, label: String, callback: Callable) -> Button:
 	hover.corner_radius_bottom_right = 12
 	b.add_theme_stylebox_override("hover", hover)
 	b.add_theme_stylebox_override("pressed", hover)
+	b.add_theme_stylebox_override("focus", hover)
 	b.pressed.connect(callback)
 	add_child(b)
 	return b
@@ -92,6 +95,12 @@ func show_menu() -> void:
 	_hotspot([900,570,390,120], "Opções", _open_options)
 
 func _new_game() -> void:
+	DialogueUI.close_dialogue()
+	DialogueUI.close_speech()
+	MenuUI.inventory_selected_id = ""
+	ExperienceUI.hint_levels.clear()
+	PlayerController.cancel_movement()
+	PlayerController.restore_snapshot({})
 	GameState.reset_run(true)
 	feedback_text = "Bem-vindo à PAPO SAPÃO. A missão é simples: entregar a pizza para Ronaldo Gilberto."
 	SceneRouter.route_to("reception")
@@ -102,12 +111,17 @@ func show_game() -> void:
 	_fit_image(area)
 	for hs in HotspotCatalog.get_hotspots(area):
 		var data := Dictionary(hs)
+		if data["action"] == "engineering_vest" and GameState.has_item("maintenance_vest"): continue
+		if data["action"] == "engineering_os" and not GameState.has_item("maintenance_vest"): continue
 		_hotspot(Array(data["rect"]), str(data["label"]), _activate_hotspot.bind(str(data["action"])))
 	_build_hud()
+	ExperienceUI.attach(self)
 	if area == "directorate" and GameState.has_flag("director_question"):
 		_build_director_choices()
 
 func _activate_hotspot(action_id: String) -> void:
+	if InteractionGuard.world_blocked(): return
+	SaveManager.checkpoint()
 	var area_before := GameState.current_area
 	GameFlow.perform(action_id, selected_item)
 	if action_id in ["rogerio","supplies_stan","security_sonia","legal_analysis"]:
@@ -127,7 +141,7 @@ func _build_hud() -> void:
 	top.add_child(top_row)
 	var area_label := Label.new()
 	area_label.text = HotspotCatalog.get_title(GameState.current_area)
-	area_label.add_theme_font_size_override("font_size", 22)
+	area_label.add_theme_font_size_override("font_size", SettingsManager.font_size(22))
 	area_label.add_theme_color_override("font_color", Color("ffd34e"))
 	area_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top_row.add_child(area_label)
@@ -143,7 +157,7 @@ func _build_hud() -> void:
 		top_row.add_child(pizza_texture)
 	var pizza := Label.new()
 	pizza.text = "%s%%  |  %s min" % [str(GameState.pizza.get("temperature", 100)), str(GameState.pizza.get("elapsed_minutes", 0))]
-	pizza.add_theme_font_size_override("font_size", 17)
+	pizza.add_theme_font_size_override("font_size", SettingsManager.font_size(17))
 	pizza.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	top_row.add_child(pizza)
 
@@ -165,7 +179,7 @@ func _build_hud() -> void:
 		var d := Label.new()
 		d.text = feedback_text
 		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		d.add_theme_font_size_override("font_size", 18)
+		d.add_theme_font_size_override("font_size", SettingsManager.font_size(18))
 		d.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		d.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		dialogue.add_child(d)
@@ -195,9 +209,9 @@ func _build_hud() -> void:
 			var item_texture: Texture2D = UIAssets.item_texture(str(item))
 			if item_texture != null:
 				b.icon = item_texture
-				b.icon_max_width = 26
+				b.add_theme_constant_override("icon_max_width", 26)
 			b.tooltip_text = "Selecionado: use no cenário. Colete: clique novamente para vestir."
-			b.add_theme_font_size_override("font_size", 12)
+			b.add_theme_font_size_override("font_size", SettingsManager.font_size(12))
 			if selected_item == item:
 				b.modulate = Color("ffd34e")
 			b.pressed.connect(_select_item.bind(item))
@@ -207,16 +221,16 @@ func _hud_icon_button(icon_path: String, fallback_text: String, node_name: Strin
 	var button := Button.new()
 	button.name = node_name
 	button.size = Vector2(50, 50)
-	button.focus_mode = Control.FOCUS_NONE
+	button.focus_mode = Control.FOCUS_ALL
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	var texture: Texture2D = UIAssets.load_texture(icon_path)
 	if texture != null:
 		button.icon = texture
-		button.icon_max_width = 42
+		button.add_theme_constant_override("icon_max_width", 42)
 		button.text = ""
 	else:
 		button.text = fallback_text
-		button.add_theme_font_size_override("font_size", 24)
+		button.add_theme_font_size_override("font_size", SettingsManager.font_size(24))
 	button.pressed.connect(callback)
 	return button
 
@@ -224,6 +238,7 @@ func _uses_balloon_hud() -> bool:
 	return GameState.current_area == "reception"
 
 func _select_item(item_id: String) -> void:
+	if not GameState.has_item(item_id): return
 	if selected_item == item_id and item_id == "maintenance_vest":
 		GameFlow.equip_item(item_id)
 		selected_item = ""
@@ -260,12 +275,12 @@ func _build_director_choices() -> void:
 	var title := Label.new()
 	title.text = "Qual o nome do diretor?"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_font_size_override("font_size", SettingsManager.font_size(22))
 	box.add_child(title)
 	for entry in [["Ronaldo Gilberto", true],["Rogério Wilco", false],["Stan Leilo", false]]:
 		var b := Button.new()
 		b.text = str(entry[0])
-		b.add_theme_font_size_override("font_size", 18)
+		b.add_theme_font_size_override("font_size", SettingsManager.font_size(18))
 		b.pressed.connect(_director_choice.bind(bool(entry[1])))
 		box.add_child(b)
 
@@ -302,14 +317,14 @@ func _show_modal(title_text: String, buttons: Array) -> void:
 	var title := Label.new()
 	title.text = title_text
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 30)
+	title.add_theme_font_size_override("font_size", SettingsManager.font_size(30))
 	title.add_theme_color_override("font_color", Color("ffd34e"))
 	box.add_child(title)
 	for entry in buttons:
 		var b := Button.new()
 		b.text = str(entry[0])
 		b.custom_minimum_size = Vector2(420, 50)
-		b.add_theme_font_size_override("font_size", 19)
+		b.add_theme_font_size_override("font_size", SettingsManager.font_size(19))
 		var callback: Callable = entry[1]
 		b.pressed.connect(callback)
 		box.add_child(b)
@@ -318,6 +333,7 @@ func _close_modal() -> void:
 	if modal_layer:
 		modal_layer.queue_free()
 		modal_layer = null
+	set_meta("protocol_buttons", 0)
 
 func _open_save_load() -> void:
 	if modal_layer:
@@ -339,7 +355,7 @@ func _open_save_load() -> void:
 	var title := Label.new()
 	title.text = "SAVE / LOAD"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 30)
+	title.add_theme_font_size_override("font_size", SettingsManager.font_size(30))
 	title.add_theme_color_override("font_color", Color("ffd34e"))
 	box.add_child(title)
 	for slot in range(1,4):
@@ -399,7 +415,7 @@ func _open_options() -> void:
 	var title := Label.new()
 	title.text = "OPÇÕES"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 30)
+	title.add_theme_font_size_override("font_size", SettingsManager.font_size(30))
 	title.add_theme_color_override("font_color", Color("ffd34e"))
 	box.add_child(title)
 	box.add_child(_slider_row("Volume geral", "master_volume"))
@@ -481,14 +497,14 @@ func _on_finished(ending_name: String, message: String) -> void:
 	var title := Label.new()
 	title.text = ending_name
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 42)
+	title.add_theme_font_size_override("font_size", SettingsManager.font_size(42))
 	title.add_theme_color_override("font_color", Color("ffd34e"))
 	box.add_child(title)
 	var body := Label.new()
 	body.text = message
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	body.add_theme_font_size_override("font_size", 20)
+	body.add_theme_font_size_override("font_size", SettingsManager.font_size(20))
 	box.add_child(body)
 	var restart := Button.new()
 	restart.text = "Nova partida"

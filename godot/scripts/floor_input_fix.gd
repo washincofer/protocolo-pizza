@@ -7,7 +7,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 func _input(event: InputEvent) -> void:
-	if not GameState.run_active:
+	if InteractionGuard.world_blocked():
 		return
 	var mouse_event: InputEventMouseButton = event as InputEventMouseButton
 	if mouse_event == null or not mouse_event.pressed or mouse_event.button_index != MOUSE_BUTTON_LEFT:
@@ -23,6 +23,10 @@ func _input(event: InputEvent) -> void:
 	if hovered != null and hovered != main:
 		return
 
+	for node: Node in main.find_children("*", "Button", true, false):
+		var button: Button = node as Button
+		if button.is_visible_in_tree() and button.mouse_filter != Control.MOUSE_FILTER_IGNORE and button.get_global_rect().has_point(mouse_event.position):
+			return
 	var bg: TextureRect = _find_background(main)
 	if bg == null or bg.texture == null:
 		return

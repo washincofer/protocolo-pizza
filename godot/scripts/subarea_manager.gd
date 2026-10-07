@@ -54,6 +54,10 @@ const SUBAREAS := {
 			{"label":"Voltar à TI","rect":[0,100,180,700],"action":"return_parent"}
 		]
 	},
+	"ti_systems_room": {
+		"title":"TI — Sala de Sistemas", "parent":"ti", "background":"res://assets/subareas/ti_server_room.webp",
+		"hotspots":[{"label":"Terminal Pizza as a Service","rect":[660,400,270,230],"action":"systems_virtualize"},{"label":"Voltar à TI","rect":[0,100,180,700],"action":"return_parent"}]
+	},
 	"ti_service_desk": {
 		"title": "TI — Service Desk",
 		"parent": "ti",
@@ -119,6 +123,7 @@ const ENTRY_MAP := {
 }
 
 var _patched_area := ""
+var _patched_view_id: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -132,6 +137,11 @@ func _process(_delta: float) -> void:
 	if main == null:
 		return
 	var area := GameState.current_area
+	var bg := _find_background(main)
+	var view_id: int = bg.get_instance_id() if bg != null else 0
+	if area == _patched_area and view_id == _patched_view_id: return
+	_patched_area = area
+	_patched_view_id = view_id
 	if SUBAREAS.has(area):
 		_apply_subarea(main, area)
 	else:
@@ -171,6 +181,8 @@ func _apply_entry_overlays(main: Control, area: String) -> void:
 		if main.get_node_or_null(node_name) != null:
 			continue
 		original.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		original.focus_mode = Control.FOCUS_NONE
+		original.set_meta("world_hotspot",false)
 		var overlay := _transparent_button(str(tooltip), original.position, original.size)
 		overlay.name = node_name
 		overlay.z_index = 60
@@ -241,9 +253,10 @@ func _transparent_button(tooltip: String, position: Vector2, size: Vector2) -> B
 	var button := Button.new()
 	button.text = ""
 	button.tooltip_text = tooltip
+	button.set_meta("world_hotspot", true)
 	button.position = position
 	button.size = size
-	button.focus_mode = Control.FOCUS_NONE
+	button.focus_mode = Control.FOCUS_ALL
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = Color(1, 1, 1, 0)
@@ -259,12 +272,17 @@ func _transparent_button(tooltip: String, position: Vector2, size: Vector2) -> B
 	hover.corner_radius_bottom_right = 10
 	button.add_theme_stylebox_override("hover", hover)
 	button.add_theme_stylebox_override("pressed", hover)
+	button.add_theme_stylebox_override("focus", hover)
 	return button
 
 func _enter_subarea(area_id: String) -> void:
+	if InteractionGuard.world_blocked(): return
+	SaveManager.checkpoint()
 	SceneRouter.route_to(area_id)
 
 func _handle_subarea_action(area: String, action: String) -> void:
+	if InteractionGuard.world_blocked(): return
+	SaveManager.checkpoint()
 	match action:
 		"return_parent":
 			var data := Dictionary(SUBAREAS[area])
@@ -295,8 +313,10 @@ func _handle_subarea_action(area: String, action: String) -> void:
 			_call_core("rh_parallel")
 		"core_rh_validator":
 			_call_core("rh_validator")
+		"systems_virtualize":
+			ContentFlow.open_action("ti_virtualize")
 		"registration_forms":
-			_feedback("Formulário de cadastro: 14 campos obrigatórios. Três perguntam a mesma coisa com nomes diferentes.")
+			ContentFlow.open_action("rh_employee")
 		"archive_domingos":
 			_feedback("Domingos Hurley: você quer o original, a cópia, a segunda via ou a cópia da segunda via?")
 		"core_documentation_printer":
@@ -307,7 +327,7 @@ func _show_waiting_visitor_dialogue() -> void:
 	GameState.flags["waiting_room_talks"] = click_count
 	GameState.tick(2)
 	if click_count >= 4:
-		_finish("VISITANTE RETIRADO", "Você esperou tanto que virou parte do mobiliário. A segurança resolveu o problema.")
+		ContentFlow.open_action("waiting_guard")
 		return
 	var current_index: int = click_count - 1
 	DialogueUI.show_speech(
@@ -338,6 +358,8 @@ func _open_reception_totem() -> void:
 		_feedback("Totem — PRIMEIRO CADASTRO: Colaborador, Terceiro, Visitante ou Outro. A opção 'Entregador de Pizza' ainda está em homologação.")
 
 func _open_receptionist_dialogue() -> void:
+	if InteractionGuard.world_blocked(): return
+	SaveManager.checkpoint()
 	if GameState.has_flag("identified"):
 		_feedback("Eliana Marli: já está identificado. Ronaldo Gilberto, Diretoria, último andar. E sim, o elevador continua parado.")
 		return
@@ -354,6 +376,8 @@ func _open_receptionist_dialogue() -> void:
 	)
 
 func _open_auditorium_dialogue() -> void:
+	if InteractionGuard.world_blocked(): return
+	SaveManager.checkpoint()
 	DialogueUI.open_dialogue(
 		"auditorium_lucia",
 		"Lúcia Pauta — Onboarding",
@@ -386,7 +410,7 @@ func _on_dialogue_choice(dialogue_id: String, choice_id: String) -> void:
 			"A":
 				GameState.set_flag("temporary_rh_shortcut")
 				AchievementManager.unlock("O palestrante atrasado")
-				_feedback("Lúcia Pauta: perfeito! O RH estava esperando você. Você acaba de ganhar um atalho que não deveria existir.")
+				SceneRouter.route_to("rh")
 			"B":
 				_finish("IDENTIDADE FALSIFICADA", "O cadastro aceitou a informação. A Segurança da Informação também aceitou — como incidente.")
 			"C":
@@ -398,6 +422,4 @@ func _on_dialogue_choice(dialogue_id: String, choice_id: String) -> void:
 				SceneRouter.route_to("reception")
 
 func _finish(ending_name: String, message: String) -> void:
-	EndingManager.register(ending_name)
-	GameState.run_active = false
-	GameFlow.finished.emit(ending_name, message)
+	GameFlow._finish(ending_name,message)

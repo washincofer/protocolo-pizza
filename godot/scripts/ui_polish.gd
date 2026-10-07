@@ -126,7 +126,7 @@ func _open_pause() -> void:
 	var title: Label = Label.new()
 	title.text = "PAUSA"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 30)
+	title.add_theme_font_size_override("font_size", SettingsManager.font_size(30))
 	title.add_theme_color_override("font_color", Color("ffd34e"))
 	box.add_child(title)
 
@@ -142,7 +142,7 @@ func _add_pause_button(box: VBoxContainer, label_text: String, callback: Callabl
 	var button: Button = Button.new()
 	button.text = label_text
 	button.custom_minimum_size = Vector2(420, 50)
-	button.add_theme_font_size_override("font_size", 19)
+	button.add_theme_font_size_override("font_size", SettingsManager.font_size(19))
 	button.pressed.connect(callback)
 	box.add_child(button)
 
@@ -187,7 +187,7 @@ func _open_inventory() -> void:
 	var title: Label = Label.new()
 	title.text = "INVENTÁRIO"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 30)
+	title.add_theme_font_size_override("font_size", SettingsManager.font_size(30))
 	title.add_theme_color_override("font_color", Color("ffd34e"))
 	box.add_child(title)
 
@@ -200,7 +200,7 @@ func _open_inventory() -> void:
 		var empty: Label = Label.new()
 		empty.text = "Inventário vazio."
 		empty.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		empty.add_theme_font_size_override("font_size", 20)
+		empty.add_theme_font_size_override("font_size", SettingsManager.font_size(20))
 		box.add_child(empty)
 	else:
 		for item: Variant in GameState.inventory:
@@ -213,7 +213,7 @@ func _open_inventory() -> void:
 			var item_texture: Texture2D = UIAssets.item_texture(item_id)
 			if item_texture != null:
 				button.icon = item_texture
-				button.icon_max_width = 42
+				button.add_theme_constant_override("icon_max_width", 42)
 			button.custom_minimum_size = Vector2(520, 52)
 			button.pressed.connect(_select_inventory_item.bind(item_id))
 			box.add_child(button)

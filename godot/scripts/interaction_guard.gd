@@ -47,9 +47,12 @@ func _cleanup_subarea_nodes(main: Control) -> void:
 			child.queue_free()
 
 func _apply_interaction_lock(main: Control) -> void:
-	var overlay_blocked: bool = _has_overlay_block(main)
+	var overlay_blocked: bool = _has_overlay_block(main) or ExperienceUI.is_open()
 	var movement_blocked: bool = overlay_blocked or DialogueUI.is_open()
 
+	for child: Node in main.get_children():
+		if child is Button and child.get_meta("world_hotspot", false):
+			child.focus_mode = Control.FOCUS_NONE if movement_blocked else Control.FOCUS_ALL
 	FloorInputFix.set_process_input(not movement_blocked)
 	PlayerController.set_process_unhandled_input(not movement_blocked)
 	if GameState.run_active:
@@ -75,3 +78,9 @@ func _has_overlay_block(main: Control) -> bool:
 		if modal != null and is_instance_valid(modal):
 			return true
 	return false
+
+func modal_blocked() -> bool:
+	var main: Control = _get_main()
+	return main != null and (_has_overlay_block(main) or ExperienceUI.is_open())
+func world_blocked() -> bool:
+	return modal_blocked() or DialogueUI.is_open() or not GameState.run_active

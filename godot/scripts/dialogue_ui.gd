@@ -15,6 +15,8 @@ var speech_layer: CanvasLayer
 var current_dialogue_id: String = ""
 var current_choices: Dictionary = {}
 var speech_generation: int = 0
+var speech_remaining: float = 0
+var current_snapshot: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -30,6 +32,8 @@ func open_dialogue(
 	close_dialogue()
 	close_speech()
 	current_dialogue_id = dialogue_id
+	current_snapshot = {"id":dialogue_id,"speaker":speaker,"text":text,"choices":choices.duplicate(true),"anchor":[anchor_image_position.x,anchor_image_position.y]}
+	_record(speaker,text)
 	current_choices = {}
 
 	layer = CanvasLayer.new()
@@ -53,21 +57,18 @@ func show_speech(
 ) -> void:
 	close_speech()
 	speech_generation += 1
-	var generation: int = speech_generation
 	speech_layer = CanvasLayer.new()
 	speech_layer.layer = 935
 	add_child(speech_layer)
 	_build_speech_balloon(speech_layer, speaker, text, anchor_image_position)
-	var timer: SceneTreeTimer = get_tree().create_timer(seconds, true, false, true)
-	timer.timeout.connect(func() -> void:
-		if generation == speech_generation:
-			close_speech()
-	)
+	speech_remaining = maxf(seconds, float(text.length()) / 18.0 + 1.5) * float(SettingsManager.get_value("reading_time",1.0))
+	_record(speaker,text)
 
 func close_dialogue() -> void:
 	if layer != null:
 		layer.queue_free()
 		layer = null
+	current_snapshot = {}
 	current_dialogue_id = ""
 	current_choices = {}
 
@@ -81,6 +82,11 @@ func is_open() -> bool:
 	return layer != null
 
 func _unhandled_key_input(event: InputEvent) -> void:
+	if InteractionGuard.modal_blocked(): return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode in [KEY_SPACE,KEY_ENTER] and layer == null and speech_layer != null:
+		close_speech()
+		get_viewport().set_input_as_handled()
+		return
 	if layer == null or current_choices.is_empty():
 		return
 	var key_event: InputEventKey = event as InputEventKey
@@ -136,11 +142,12 @@ func _build_speech_balloon(
 	var root: Control = Control.new()
 	root.position = bubble_position
 	root.size = bubble_size
-	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.mouse_filter = Control.MOUSE_FILTER_STOP if parent_layer == speech_layer else Control.MOUSE_FILTER_IGNORE
+	if parent_layer == speech_layer: root.gui_input.connect(_speech_input)
 	parent_layer.add_child(root)
 
 	var bubble_texture: Texture2D = _load_texture(_speech_path(variant))
-	if bubble_texture != null:
+	if bubble_texture != null and not bool(SettingsManager.get_value("high_contrast",false)):
 		var texture_rect: TextureRect = TextureRect.new()
 		texture_rect.texture = bubble_texture
 		texture_rect.position = Vector2.ZERO
@@ -171,7 +178,7 @@ func _build_speech_balloon(
 
 	var speaker_label: Label = Label.new()
 	speaker_label.text = speaker
-	speaker_label.add_theme_font_size_override("font_size", 17)
+	speaker_label.add_theme_font_size_override("font_size", SettingsManager.font_size(17))
 	speaker_label.add_theme_color_override("font_color", Color("1f2933"))
 	speaker_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(speaker_label)
@@ -195,8 +202,8 @@ func _build_choice_panel(parent_layer: CanvasLayer, dialogue_id: String, choices
 	root.size = panel_size
 	parent_layer.add_child(root)
 
-	var panel_texture: Texture2D = _load_texture(CHOICE_PANEL_PATH)
-	if panel_texture != null:
+	var panel_texture: Texture2D = null if bool(SettingsManager.get_value("high_contrast",false)) else _load_texture(CHOICE_PANEL_PATH)
+	if panel_texture != null and not bool(SettingsManager.get_value("high_contrast",false)):
 		var texture_rect: TextureRect = TextureRect.new()
 		texture_rect.texture = panel_texture
 		texture_rect.position = Vector2.ZERO
@@ -241,7 +248,7 @@ func _build_choice_button(
 	button.position = cell.position
 	button.size = cell.size
 	button.text = ""
-	button.focus_mode = Control.FOCUS_NONE
+	button.focus_mode = Control.FOCUS_ALL
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.add_theme_stylebox_override("normal", _choice_style(false))
 	button.add_theme_stylebox_override("hover", _choice_style(true))
@@ -262,6 +269,8 @@ func _build_choice_button(
 	button.add_child(label)
 
 func _select(dialogue_id: String, choice_id: String) -> void:
+	if InteractionGuard.modal_blocked() or dialogue_id != current_dialogue_id or choice_id not in current_choices.values(): return
+	SaveManager.checkpoint()
 	close_dialogue()
 	choice_selected.emit(dialogue_id, choice_id)
 
@@ -359,3 +368,35 @@ func _panel_style() -> StyleBoxFlat:
 	style.corner_radius_bottom_left = 18
 	style.corner_radius_bottom_right = 18
 	return style
+
+func _process(delta: float) -> void:
+	if speech_layer == null or InteractionGuard.modal_blocked() or bool(SettingsManager.get_value("manual_dialogue",false)): return
+	speech_remaining -= delta
+	if speech_remaining <= 0: close_speech()
+func _speech_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		close_speech()
+		get_viewport().set_input_as_handled()
+func _record(speaker: String,text: String) -> void:
+	GameState.dialogue_history.append({"speaker":speaker,"text":text,"area":GameState.current_area})
+	while GameState.dialogue_history.size() > 120: GameState.dialogue_history.pop_front()
+func snapshot() -> Dictionary:
+	return current_snapshot.duplicate(true)
+func restore_snapshot(data: Dictionary) -> void:
+	if not data.is_empty() and valid_snapshot(data):
+		open_dialogue(data["id"],data["speaker"],data["text"],data["choices"],Vector2(data["anchor"][0],data["anchor"][1]))
+static func valid_snapshot(data: Variant) -> bool:
+	if not (data is Dictionary): return false
+	if data.is_empty(): return true
+	for key: String in ["id","speaker","text"]:
+		if not (data.get(key) is String): return false
+	if not (data.get("choices") is Array) or data["choices"].size() > 4: return false
+	for choice: Variant in data["choices"]:
+		if not (choice is Dictionary): return false
+		for key: String in ["id","key","text"]:
+			if not (choice.get(key) is String): return false
+	var anchor: Variant = data.get("anchor")
+	if not (anchor is Array) or anchor.size() != 2: return false
+	for v: Variant in anchor:
+		if not (v is int or v is float) or not is_finite(float(v)): return false
+	return true

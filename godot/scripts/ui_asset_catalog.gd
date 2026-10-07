@@ -13,7 +13,9 @@ const ITEM_ICONS: Dictionary = {
 	"fiscal_exception_protocol": "res://assets/ui/items/fiscal_exception_protocol.png",
 	"maintenance_vest": "res://assets/ui/items/maintenance_vest.png",
 	"work_order": "res://assets/ui/items/work_order.png",
-	"legal_bolota_pending": "res://assets/ui/items/legal_bolota_approved.png",
+	"legal_bolota_pending": "res://assets/ui/items/legal_bolota_pending.svg",
+	"third_party_form": "res://assets/ui/items/third_party_form.svg",
+	"rh_validation_signature": "res://assets/ui/items/rh_validation_signature.svg",
 	"legal_bolota_approved": "res://assets/ui/items/legal_bolota_approved.png"
 }
 

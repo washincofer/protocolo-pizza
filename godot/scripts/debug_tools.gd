@@ -58,7 +58,7 @@ func _build_coordinate_overlay() -> void:
 
 	coord_label = Label.new()
 	coord_label.text = "F1 HUD | F2 HOTSPOTS | F3 XY"
-	coord_label.add_theme_font_size_override("font_size", 16)
+	coord_label.add_theme_font_size_override("font_size", SettingsManager.font_size(16))
 	coord_label.add_theme_color_override("font_color", Color("d7f7ff"))
 	coord_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	coord_panel.add_child(coord_label)
@@ -111,7 +111,7 @@ func _is_hotspot(node: Node) -> bool:
 	if not (node is Button):
 		return false
 	var button: Button = node as Button
-	return button.text == "" and button.tooltip_text != ""
+	return bool(button.get_meta("world_hotspot",false))
 
 func _apply_safe_fit() -> void:
 	var main: Control = _get_main()
@@ -240,7 +240,7 @@ func _apply_hotspot_debug() -> void:
 			var button: Button = child as Button
 			button.add_theme_stylebox_override(
 				"normal",
-				hotspot_style_visible if hotspot_debug_visible else hotspot_style_hidden
+				hotspot_style_visible if hotspot_debug_visible or bool(SettingsManager.get_value("show_hotspots",false)) else hotspot_style_hidden
 			)
 
 func _update_coordinates() -> void:

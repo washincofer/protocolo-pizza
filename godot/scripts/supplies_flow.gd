@@ -50,6 +50,8 @@ func _patch_supplies_hotspots(main: Control) -> void:
 			continue
 		original.disabled = true
 		original.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		original.focus_mode = Control.FOCUS_NONE
+		original.set_meta("world_hotspot",false)
 
 		var overlay_name: String = "SuppliesFlow_%s" % tooltip.replace(" ", "_").replace("/", "_").replace("—", "_")
 		var overlay: Button = main.get_node_or_null(overlay_name) as Button
@@ -67,7 +69,8 @@ func _transparent_button(tooltip: String) -> Button:
 	var button: Button = Button.new()
 	button.text = ""
 	button.tooltip_text = tooltip
-	button.focus_mode = Control.FOCUS_NONE
+	button.set_meta("world_hotspot", true)
+	button.focus_mode = Control.FOCUS_ALL
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	var normal: StyleBoxFlat = StyleBoxFlat.new()
 	normal.bg_color = Color(1, 1, 1, 0)
@@ -83,9 +86,12 @@ func _transparent_button(tooltip: String) -> Button:
 	hover.corner_radius_bottom_right = 10
 	button.add_theme_stylebox_override("hover", hover)
 	button.add_theme_stylebox_override("pressed", hover)
+	button.add_theme_stylebox_override("focus", hover)
 	return button
 
 func _handle_action(action: String) -> void:
+	if InteractionGuard.world_blocked(): return
+	SaveManager.checkpoint()
 	if not GameState.run_active or GameState.current_area != AREA_ID:
 		return
 	GameState.tick(2)
@@ -154,7 +160,8 @@ func _open_supplier_dialogue() -> void:
 		[
 			{"id":"A","key":"A","text":"Entregar uma fatia para degustação técnica."},
 			{"id":"B","key":"B","text":"O fornecedor é a pizzaria. Eu só sou o entregador."},
-			{"id":"C","key":"C","text":"Pedir o formulário de homologação e recuar lentamente."}
+			{"id":"C","key":"C","text":"Pedir o formulário de homologação e recuar lentamente."},
+			{"id":"D","key":"D","text":"Aceitar cadastro em análise por tempo indeterminado."}
 		],
 		SUPPLIER_ANCHOR
 	)
@@ -202,6 +209,8 @@ func _on_dialogue_choice(dialogue_id: String, choice_id: String) -> void:
 					_show_near("Sala de Compras", "Tecnicamente correto. Você escapou de ser homologado como fornecedor de si mesmo.", SUPPLIER_ANCHOR)
 				"C":
 					_show_near("Sala de Compras", "Formulário SC-47 entregue. São 11 páginas. Você decide não criar esse problema hoje.", SUPPLIER_ANCHOR)
+				"D":
+					_finish("CADASTRO EM ANÁLISE", "A pizza aguarda homologação por tempo indeterminado.")
 		"supplies_patch_navigation":
 			if choice_id == "A":
 				SceneRouter.route_to("communication")
@@ -212,6 +221,4 @@ func _show_near(speaker: String, text: String, anchor: Vector2) -> void:
 	DialogueUI.show_speech(speaker, text, anchor)
 
 func _finish(ending_name: String, message: String) -> void:
-	EndingManager.register(ending_name)
-	GameState.run_active = false
-	GameFlow.finished.emit(ending_name, message)
+	GameFlow._finish(ending_name,message)

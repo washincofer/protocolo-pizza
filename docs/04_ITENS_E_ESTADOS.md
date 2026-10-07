@@ -10,23 +10,17 @@ A pizza acompanha cinco dimensões globais:
 - tempo decorrido;
 - posse.
 
-Representação sugerida:
+Representação vigente no Godot (fontes: `game_state.gd` e `_resolve_delivery` em `game_flow.gd`):
 
 ```text
-pizza.temperature = 100.0
-pizza.integrity = 100.0
-pizza.quantity = 100.0
-pizza.elapsed_time = 0.0
-pizza.possessed = true
+pizza.temperature = 100       # percentual
+pizza.integrity = 100         # percentual
+pizza.quantity = 8            # fatias
+pizza.elapsed_minutes = 0     # tempo de ações; não relógio real
+pizza.possession = "player"   # player, lost ou confiscated
 ```
 
-Faixas sugeridas como constantes ajustáveis:
-
-```text
-HOT_THRESHOLD = 70
-COLD_THRESHOLD = 40
-MAX_DELIVERY_TIME = valor de balanceamento
-```
+A entrega é recusada sem posse, com zero fatias ou integridade zero. A partir de 150 minutos, o final é entrega atrasada; temperatura de até 25 gera pizza fria. Os limites da versão anterior foram preservados: balanceamento com jogadores continua pendente.
 
 O micro-ondas do RH, quando desbloqueado, restaura apenas a temperatura para 100%. Não restaura integridade nem quantidade.
 

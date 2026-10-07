@@ -31,6 +31,10 @@ CursorManager="*res://scripts/cursor_manager.gd"
 MenuUI="*res://scripts/menu_ui_manager.gd"
 GlobalGameUI="*res://scripts/global_game_ui.gd"
 
+ContentFlow="*res://scripts/content_flow.gd"
+ExperienceUI="*res://scripts/experience_ui.gd"
+SFXManager="*res://scripts/sfx_manager.gd"
+
 [display]
 window/size/viewport_width=1280
 window/size/viewport_height=720
