@@ -41,3 +41,7 @@ Ainda requer playtest visual nas resoluções alvo, caminho inteiro por mouse, n
 ## Recuperação da entrega
 
 O commit local da primeira implementação foi removido pela manutenção automática antes do envio autorizado. Esta branch reconstrói as mudanças e tem uma nova rodada de validação; não usa o SHA nem a contagem de testes daquela execução como prova da versão atual.
+
+## Revisão de colisões
+
+A revisão posterior das imagens das 22 áreas jogáveis substituiu os limites retangulares por contornos do piso e 116 sólidos, com aproximações para as interações. A suíte passou a 403 verificações. O detalhamento e o uso de F4 estão em [Colisões dos cenários](30_COLISOES_CENARIOS.md).

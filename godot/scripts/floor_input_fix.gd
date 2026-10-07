@@ -37,9 +37,9 @@ func _input(event: InputEvent) -> void:
 	if not full_rect.has_point(image_point):
 		return
 
-	var target: Vector2 = _clamp_walkable(image_point, source_size)
 	PlayerController.set("_pending_callback", Callable())
-	PlayerController.call("_move_to", target)
+	PlayerController.call("_move_to", image_point)
+	get_viewport().set_input_as_handled()
 
 func _get_main() -> Control:
 	var current: Node = get_tree().current_scene
@@ -63,17 +63,4 @@ func _screen_to_image(bg: TextureRect, screen_point: Vector2) -> Vector2:
 	return Vector2(
 		local.x * source_size.x / bg.size.x,
 		local.y * source_size.y / bg.size.y
-	)
-
-func _walk_bounds(source_size: Vector2) -> Rect2:
-	return Rect2(
-		Vector2(source_size.x * 0.07, source_size.y * 0.56),
-		Vector2(source_size.x * 0.86, source_size.y * 0.35)
-	)
-
-func _clamp_walkable(point: Vector2, source_size: Vector2) -> Vector2:
-	var bounds: Rect2 = _walk_bounds(source_size)
-	return Vector2(
-		clampf(point.x, bounds.position.x, bounds.end.x),
-		clampf(point.y, bounds.position.y, bounds.end.y)
 	)

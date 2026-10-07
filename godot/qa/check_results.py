@@ -7,7 +7,7 @@ failed = [item for item in results if not item["passed"]]
 for item in failed:
     print(item)
 print(f"{len(results) - len(failed)}/{len(results)} verificações satisfeitas")
-if len(results) < 149 or failed:
+if len(results) < 403 or failed:
     raise SystemExit(1)
 
 for log in sys.argv[1:]:

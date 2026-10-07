@@ -126,9 +126,17 @@ func run_checks() -> void:
 	await content_checks()
 	await geometry_checks()
 	await input_checks()
+	await preload("res://qa/collision_checks.gd").run(self)
 	var file: FileAccess = FileAccess.open("res://qa/results.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify(checks,"\t"))
 	file.close()
+	# Cancel pending fades before releasing audio at test shutdown. Otherwise
+	# a scheduled track switch can restart the stream during the final frames.
+	MusicManager.set_process(false)
+	MusicManager.set_process_input(false)
+	MusicManager._kill_tween()
+	MusicManager.requested_mode=""
+	MusicManager.current_mode=""
 	MusicManager.player.stop()
 	MusicManager.player.stream=null
 	SFXManager.player.stop()
@@ -314,7 +322,7 @@ func geometry_checks() -> void:
 			valid=valid and r[0]>=0 and r[1]>=0 and r[0]+r[2]<=1672 and r[1]+r[3]<=941
 		check("bounds_"+area,valid)
 		var floor_rect: Rect2=Walkable.bounds(area)
-		var path: PackedVector2Array=Walkable.path(area,floor_rect.position+Vector2(10,10),floor_rect.end-Vector2(10,10))
+		var path: PackedVector2Array=Walkable.path(area,Walkable.spawn(area),floor_rect.get_center())
 		valid=not path.is_empty()
 		for i: int in range(path.size()-1): valid=valid and Walkable.clear_segment(area,path[i],path[i+1])
 		check("walk_"+area,valid)

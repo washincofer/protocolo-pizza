@@ -13,6 +13,7 @@ A versão jogável usa **Godot 4.3**, com exportação Web. A campanha principal
 - Abra `godot/project.godot` no Godot 4.3 para executar ou editar.
 - Exporte para Web com `scripts/build-render.sh` (build usado pelo Render).
 - [Melhorias de QA e validações](docs/08_MELHORIAS_QA.md).
+- [Colisões e navegação dos cenários](docs/30_COLISOES_CENARIOS.md).
 
 ## Espinha dorsal atual
 

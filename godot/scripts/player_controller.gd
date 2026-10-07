@@ -59,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not full_rect.has_point(image_point):
 		return
 	_pending_callback = Callable()
-	_move_to(_clamp_walkable(image_point, source_size))
+	_move_to(image_point)
 
 func _get_main() -> Control:
 	var current: Node = get_tree().current_scene
@@ -144,7 +144,7 @@ func _handle_area_change(bg: TextureRect) -> void:
 	_image_position = _spawn_for_area(area, source_size)
 	if not _restore_data.is_empty():
 		var pos: Array = _restore_data.get("position",[])
-		if pos.size() == 2: _image_position = Vector2(pos[0],pos[1])
+		if pos.size() == 2: _image_position = _clamp_walkable(Vector2(pos[0],pos[1]), source_size)
 		_last_direction = str(_restore_data.get("direction","up"))
 		_restore_data.clear()
 	_target_image_position = _image_position
@@ -153,19 +153,8 @@ func _handle_area_change(bg: TextureRect) -> void:
 	_path.clear()
 	_play_idle()
 
-func _spawn_for_area(area: String, source_size: Vector2) -> Vector2:
-	var spawns: Dictionary = {
-		"reception": Vector2(830, 820),
-		"reception_waiting_room": Vector2(835, 820),
-		"reception_auditorium": Vector2(1370, 790),
-		"innovation": Vector2(180, 780),
-		"ti": Vector2(180, 790),
-		"rh": Vector2(180, 820),
-		"documentation": Vector2(180, 850)
-	}
-	if spawns.has(area):
-		return _clamp_walkable(Vector2(spawns[area]), source_size)
-	return _clamp_walkable(Vector2(source_size.x * 0.5, source_size.y * 0.84), source_size)
+func _spawn_for_area(area: String, _source_size: Vector2) -> Vector2:
+	return Walkable.spawn(area)
 
 func _walk_bounds(_source_size: Vector2) -> Rect2:
 	return Walkable.bounds(GameState.current_area)
@@ -175,12 +164,15 @@ func _move_to(point: Vector2) -> void:
 	_path = Walkable.path(GameState.current_area,_image_position,point)
 	if _path.is_empty():
 		_pending_callback = Callable()
-		GameFlow.feedback.emit("Esse móvel bloqueia a passagem. Escolha um ponto livre do piso.")
+		_moving = false
+		_play_idle()
+		GameFlow.feedback.emit("Não há passagem até esse ponto. Escolha outro ponto livre do piso.")
 		return
 	_image_position = _path[0]
+	var destination: Vector2 = _path[-1]
 	_path.remove_at(0)
 	if bool(SettingsManager.get_value("reduced_motion",false)):
-		_image_position = point
+		_image_position = destination
 		_path.clear()
 		_finish_move()
 		return
@@ -193,7 +185,7 @@ func _next_waypoint() -> void:
 	_path.remove_at(0)
 	_moving = true
 
-func _update_movement(delta: float, bg: TextureRect) -> void:
+func _update_movement(delta: float, _bg: TextureRect) -> void:
 	if not _moving:
 		return
 	var offset: Vector2 = _target_image_position - _image_position
@@ -204,11 +196,14 @@ func _update_movement(delta: float, bg: TextureRect) -> void:
 		return
 	var direction: Vector2 = offset / maxf(distance, 0.001)
 	var step: float = minf(WALK_SPEED * delta, distance)
-	_image_position += direction * step
+	var next_position: Vector2 = _image_position + direction * step
+	if not Walkable.clear_segment(GameState.current_area, _image_position, next_position):
+		cancel_movement()
+		_play_idle()
+		return
+	_image_position = next_position
 	_set_direction_from_vector(direction)
 	_play_walk()
-	var source_size: Vector2 = Vector2(bg.texture.get_size())
-	_image_position = _clamp_walkable(_image_position, source_size)
 
 func _finish_move() -> void:
 	_moving = false
@@ -300,8 +295,7 @@ func _hotspot_pressed(button: Button, callbacks: Array[Callable]) -> void:
 		_call_callbacks(callbacks)
 		return
 	var approach_screen: Vector2 = button.position + Vector2(button.size.x * 0.5, button.size.y * 0.92)
-	var source_size: Vector2 = Vector2(bg.texture.get_size())
-	var approach_image: Vector2 = _clamp_walkable(_screen_to_image(bg, approach_screen), source_size)
+	var approach_image: Vector2 = Walkable.approach(GameState.current_area, button.tooltip_text, _screen_to_image(bg, approach_screen))
 	_pending_callback = _call_callbacks.bind(callbacks)
 	_move_to(approach_image)
 
