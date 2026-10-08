@@ -18,3 +18,7 @@ exports/
 
 # Local notes
 *.local.md
+
+*.import
+godot/qa/results*.json
+godot/qa/collision_maps.json

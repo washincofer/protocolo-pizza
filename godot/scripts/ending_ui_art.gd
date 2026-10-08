@@ -80,7 +80,7 @@ func _show(ending_name: String, message: String, earned: Array[String]) -> void:
 		_label("CONQUISTA!", RIBBON_RECT, 17, Color.WHITE)
 		_label("CONQUISTA DESBLOQUEADA — %s" % _join(earned), REWARD_RECT, 18, Color("7a4a00"), true)
 
-	_action_button(BUTTON_RECTS[0], "Nova partida", _new_game)
+	_action_button(BUTTON_RECTS[0], "Retomar antes da escolha" if SaveManager.has_slot(0) else "Nova partida", _resume_or_new)
 	_action_button(BUTTON_RECTS[1], "Conquistas", _open_achievements)
 	_action_button(BUTTON_RECTS[2], "Menu principal", _go_to_menu)
 	_action_button(BUTTON_RECTS[3], "Ver finais", _open_archive)
@@ -105,7 +105,7 @@ func _action_button(source_rect: Rect2, text_value: String, callback: Callable) 
 	button.text = ""
 	button.position = rect.position
 	button.size = rect.size
-	button.focus_mode = Control.FOCUS_NONE
+	button.focus_mode = Control.FOCUS_ALL
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.add_theme_stylebox_override("normal", _button_style(false))
 	button.add_theme_stylebox_override("hover", _button_style(true))
@@ -195,7 +195,7 @@ func _open_archive() -> void:
 	var title := Label.new()
 	title.text = "ARQUIVO DE FINAIS — %d/%d" % [EndingManager.seen.size(), EndingManager.CATALOG.size()]
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 28)
+	title.add_theme_font_size_override("font_size", SettingsManager.font_size(28))
 	title.add_theme_color_override("font_color", Color("ffd34e"))
 	box.add_child(title)
 
@@ -211,7 +211,7 @@ func _open_archive() -> void:
 		var discovered := ending_title in EndingManager.seen
 		var row := Label.new()
 		row.text = "✓  %s" % ending_title if discovered else "•  ???"
-		row.add_theme_font_size_override("font_size", 16)
+		row.add_theme_font_size_override("font_size", SettingsManager.font_size(16))
 		row.add_theme_color_override("font_color", Color("fff1b0") if discovered else Color("66717b"))
 		list.add_child(row)
 
@@ -250,3 +250,9 @@ func _load_texture(path: String) -> Texture2D:
 	if resource is Texture2D:
 		return resource as Texture2D
 	return null
+
+func _resume_or_new() -> void:
+	if SaveManager.has_slot(0) and SaveManager.load_slot(0):
+		_close_overlay()
+	else:
+		_new_game()

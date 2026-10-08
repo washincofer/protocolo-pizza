@@ -32,6 +32,10 @@ func _input(event: InputEvent) -> void:
 		return
 	if key_event.keycode != KEY_ESCAPE:
 		return
+	if ExperienceUI.is_open():
+		ExperienceUI.close()
+		get_viewport().set_input_as_handled()
+		return
 	if overlay_layer != null:
 		if current_screen == "pause":
 			close_all()
@@ -82,11 +86,12 @@ func open_pause() -> void:
 	var quit_button: Button = _text_button("Sair do jogo", Color("d94334"))
 	quit_button.position = Vector2(331.0, 548.0)
 	quit_button.size = Vector2(132.0, 38.0)
-	quit_button.add_theme_font_size_override("font_size", 15)
+	quit_button.add_theme_font_size_override("font_size", SettingsManager.font_size(15))
 	quit_button.pressed.connect(_quit_game)
 	root.add_child(quit_button)
 
 func open_inventory(from_pause: bool = false) -> void:
+	if not GameState.has_item(inventory_selected_id): inventory_selected_id = ""
 	_close_overlay_only()
 	current_screen = "inventory"
 	return_to_pause_after_child = from_pause
@@ -157,7 +162,7 @@ func open_trophies(from_pause: bool = false) -> void:
 	count.text = "%d / %d" % [unlocked, total]
 	count.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	count.add_theme_font_size_override("font_size", 16)
+	count.add_theme_font_size_override("font_size", SettingsManager.font_size(16))
 	count.add_theme_color_override("font_color", Color("332718"))
 	progress_panel.add_child(count)
 
@@ -204,7 +209,7 @@ func open_save_load(from_pause: bool = false) -> void:
 		feedback.size = Vector2(360.0, 42.0)
 		feedback.text = save_feedback
 		feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		feedback.add_theme_font_size_override("font_size", 14)
+		feedback.add_theme_font_size_override("font_size", SettingsManager.font_size(14))
 		feedback.add_theme_color_override("font_color", Color("4a3824"))
 		root.add_child(feedback)
 	_add_brand(root, Vector2(430.0, 421.0), 11)
@@ -242,13 +247,13 @@ func open_options(from_pause: bool = false) -> void:
 	var reset: Button = _text_button("Restaurar padrões", Color("a8b0bb"))
 	reset.position = Vector2(36.0, 357.0)
 	reset.size = Vector2(236.0, 52.0)
-	reset.add_theme_font_size_override("font_size", 18)
+	reset.add_theme_font_size_override("font_size", SettingsManager.font_size(18))
 	reset.pressed.connect(_restore_defaults)
 	root.add_child(reset)
 	var apply: Button = _text_button("Aplicar", Color("52c93f"))
 	apply.position = Vector2(299.0, 357.0)
 	apply.size = Vector2(260.0, 52.0)
-	apply.add_theme_font_size_override("font_size", 20)
+	apply.add_theme_font_size_override("font_size", SettingsManager.font_size(20))
 	apply.pressed.connect(_close_child)
 	root.add_child(apply)
 	_add_brand(root, Vector2(438.0, 420.0), 11)
@@ -323,7 +328,7 @@ func _add_hotspot_button(root: Control, rect: Rect2, tooltip: String, callback: 
 	button.size = rect.size
 	button.text = ""
 	button.tooltip_text = tooltip
-	button.focus_mode = Control.FOCUS_NONE
+	button.focus_mode = Control.FOCUS_ALL
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.add_theme_stylebox_override("normal", _transparent_style())
 	button.add_theme_stylebox_override("hover", _hover_style())
@@ -364,7 +369,7 @@ func _apply_selected_overlay(button: Button) -> void:
 func _text_button(text_value: String, base_color: Color) -> Button:
 	var button: Button = Button.new()
 	button.text = text_value
-	button.focus_mode = Control.FOCUS_NONE
+	button.focus_mode = Control.FOCUS_ALL
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.add_theme_color_override("font_color", Color("17120d"))
 	button.add_theme_color_override("font_hover_color", Color("17120d"))
@@ -403,14 +408,14 @@ func _icon_button(texture: Texture2D, fallback: String) -> Button:
 	var button: Button = Button.new()
 	button.text = "" if texture != null else fallback
 	button.icon = texture
-	button.icon_max_width = 58
+	button.add_theme_constant_override("icon_max_width", 58)
 	button.expand_icon = true
-	button.focus_mode = Control.FOCUS_NONE
+	button.focus_mode = Control.FOCUS_ALL
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.add_theme_stylebox_override("normal", _transparent_style())
 	button.add_theme_stylebox_override("hover", _hover_style())
 	button.add_theme_stylebox_override("pressed", _selected_style())
-	button.add_theme_font_size_override("font_size", 11)
+	button.add_theme_font_size_override("font_size", SettingsManager.font_size(11))
 	button.add_theme_color_override("font_color", Color("2f2418"))
 	return button
 
@@ -475,7 +480,7 @@ func _build_inventory_description(root: Control) -> void:
 	title.position = Vector2(142.0, 446.0)
 	title.size = Vector2(300.0, 28.0)
 	title.text = _item_name(inventory_selected_id)
-	title.add_theme_font_size_override("font_size", 18)
+	title.add_theme_font_size_override("font_size", SettingsManager.font_size(18))
 	title.add_theme_color_override("font_color", Color("2d2116"))
 	root.add_child(title)
 	var description: Label = Label.new()
@@ -483,19 +488,19 @@ func _build_inventory_description(root: Control) -> void:
 	description.size = Vector2(300.0, 48.0)
 	description.text = _item_description(inventory_selected_id)
 	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	description.add_theme_font_size_override("font_size", 13)
+	description.add_theme_font_size_override("font_size", SettingsManager.font_size(13))
 	description.add_theme_color_override("font_color", Color("4c3926"))
 	root.add_child(description)
 	var action_text: String = "Vestir" if inventory_selected_id == "maintenance_vest" else "Selecionar"
 	var action: Button = _text_button(action_text, Color("f7c934"))
 	action.position = Vector2(334.0, 523.0)
 	action.size = Vector2(112.0, 34.0)
-	action.add_theme_font_size_override("font_size", 14)
+	action.add_theme_font_size_override("font_size", SettingsManager.font_size(14))
 	action.pressed.connect(_inventory_use_selected)
 	root.add_child(action)
 
 func _inventory_use_selected() -> void:
-	if inventory_selected_id.is_empty():
+	if inventory_selected_id.is_empty() or not GameState.has_item(inventory_selected_id):
 		return
 	var main: Control = _get_main()
 	if inventory_selected_id == "maintenance_vest":
@@ -508,6 +513,8 @@ func _inventory_use_selected() -> void:
 			main.set("selected_item", inventory_selected_id)
 			main.set("feedback_text", "Selecionado: %s. Agora clique no alvo do cenário." % _item_name(inventory_selected_id))
 	close_all()
+	ExperienceUI._refresh_status()
+	DialogueUI.show_speech("Inventário", "Colete vestido." if inventory_selected_id == "maintenance_vest" else "Selecionado: " + _item_name(inventory_selected_id))
 
 func _item_name(item_id: String) -> String:
 	var names: Dictionary = {
@@ -586,7 +593,7 @@ func _trophy_row(number: int, achievement_name: String, unlocked: bool) -> Contr
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 14)
+	label.add_theme_font_size_override("font_size", SettingsManager.font_size(14))
 	label.add_theme_color_override("font_color", Color("2e2419") if unlocked else Color("5f594f"))
 	line.add_child(label)
 	return row
@@ -620,7 +627,7 @@ func _build_save_row(root: Control, slot: int) -> void:
 		var saved_at: String = str(meta.get("saved_at", ""))
 		info.text = "Slot %d  •  %s  •  %d min\n%s" % [slot, area, minutes, saved_at]
 	info.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	info.add_theme_font_size_override("font_size", 14)
+	info.add_theme_font_size_override("font_size", SettingsManager.font_size(14))
 	info.add_theme_color_override("font_color", Color("3e3021"))
 	info.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(info)
@@ -630,7 +637,7 @@ func _build_save_row(root: Control, slot: int) -> void:
 	delete.position = Vector2(558.0, y + 5.0)
 	delete.size = Vector2(38.0, 40.0)
 	delete.disabled = meta.is_empty()
-	delete.focus_mode = Control.FOCUS_NONE
+	delete.focus_mode = Control.FOCUS_ALL
 	delete.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	delete.pressed.connect(_delete_save_slot.bind(slot))
 	root.add_child(delete)
@@ -640,7 +647,7 @@ func _activate_save_slot(slot: int) -> void:
 		if SaveManager.save_slot(slot):
 			save_feedback = "Partida salva no Slot %d." % slot
 		else:
-			save_feedback = "Não foi possível salvar neste momento."
+			save_feedback = SaveManager.last_error
 		open_save_load(return_to_pause_after_child)
 		return
 	if SaveManager.load_slot(slot):
@@ -652,6 +659,9 @@ func _activate_save_slot(slot: int) -> void:
 			main.set("feedback_text", "Partida carregada.")
 			if main.has_method("show_game"):
 				main.call("show_game")
+	else:
+		save_feedback = SaveManager.last_error
+		open_save_load(return_to_pause_after_child)
 
 func _delete_save_slot(slot: int) -> void:
 	SaveManager.delete_slot(slot)
@@ -678,26 +688,33 @@ func _build_options_content(panel: Panel) -> void:
 			box.add_child(_option_slider_row("Música", "music_volume"))
 			box.add_child(_option_slider_row("Efeitos sonoros", "sfx_volume"))
 		"controls":
-			box.add_child(_info_label("Mouse: mover e interagir\nA/B/C/D: escolhas de diálogo\nESC: menu\nF1: HUD  •  F2: Hotspots  •  F3: Coordenadas"))
+			box.add_child(_info_label("Mouse: mover e interagir\nA/B/C/D: escolhas de diálogo\nESC: menu\nD: Diário  •  Tab/Enter: navegação\nEspaço/Enter: avançar fala  •  Clique direito: cancelar item"))
 		"video":
 			box.add_child(_option_toggle_row("Tela cheia", "fullscreen"))
 			box.add_child(_info_label("Resolução base: 1280 × 720\nProporção preservada para os cenários."))
 		"accessibility":
-			box.add_child(_info_label("Cursor muda em áreas clicáveis.\nTextos de diálogo usam balões de alta leitura.\nMais opções de acessibilidade entrarão após o piloto de UI."))
+			box.add_theme_constant_override("separation", 4)
+			box.add_child(_option_slider_row("Tamanho do texto", "font_scale"))
+			box.add_child(_option_slider_row("Tempo de leitura", "reading_time"))
+			box.add_child(_option_toggle_row("Avanço manual", "manual_dialogue"))
+			box.add_child(_option_toggle_row("Movimento reduzido", "reduced_motion"))
+			box.add_child(_option_toggle_row("Alto contraste", "high_contrast"))
+			box.add_child(_option_toggle_row("Mostrar alvos", "show_hotspots"))
 
 func _option_slider_row(label_text: String, key: String) -> Control:
 	var row: HBoxContainer = HBoxContainer.new()
-	row.custom_minimum_size = Vector2(350.0, 48.0)
+	row.custom_minimum_size = Vector2(350.0, 42.0)
 	var label: Label = Label.new()
 	label.text = label_text
 	label.custom_minimum_size = Vector2(132.0, 42.0)
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 15)
+	label.add_theme_font_size_override("font_size", SettingsManager.font_size(15))
 	label.add_theme_color_override("font_color", Color("3b2d20"))
 	row.add_child(label)
 	var slider: HSlider = HSlider.new()
 	slider.min_value = 0.0
-	slider.max_value = 1.0
+	slider.max_value = 1.3 if key == "font_scale" else (2.0 if key == "reading_time" else 1.0)
+	slider.min_value = 0.8 if key == "font_scale" else (0.5 if key == "reading_time" else 0.0)
 	slider.step = 0.05
 	slider.value = float(SettingsManager.get_value(key, 0.8))
 	slider.custom_minimum_size = Vector2(170.0, 42.0)
@@ -708,18 +725,18 @@ func _option_slider_row(label_text: String, key: String) -> Control:
 	percent.custom_minimum_size = Vector2(46.0, 42.0)
 	percent.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	percent.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	percent.add_theme_font_size_override("font_size", 14)
+	percent.add_theme_font_size_override("font_size", SettingsManager.font_size(14))
 	row.add_child(percent)
 	return row
 
 func _option_toggle_row(label_text: String, key: String) -> Control:
 	var row: HBoxContainer = HBoxContainer.new()
-	row.custom_minimum_size = Vector2(350.0, 50.0)
+	row.custom_minimum_size = Vector2(350.0, 28.0)
 	var label: Label = Label.new()
 	label.text = label_text
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 15)
+	label.add_theme_font_size_override("font_size", SettingsManager.font_size(15))
 	label.add_theme_color_override("font_color", Color("3b2d20"))
 	row.add_child(label)
 	var toggle: CheckButton = CheckButton.new()
@@ -734,7 +751,7 @@ func _info_label(text_value: String) -> Label:
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.custom_minimum_size = Vector2(350.0, 180.0)
-	label.add_theme_font_size_override("font_size", 15)
+	label.add_theme_font_size_override("font_size", SettingsManager.font_size(15))
 	label.add_theme_color_override("font_color", Color("3b2d20"))
 	return label
 
@@ -748,6 +765,9 @@ func _restore_defaults() -> void:
 	SettingsManager.set_value("master_volume", 0.85)
 	SettingsManager.set_value("music_volume", 0.75)
 	SettingsManager.set_value("sfx_volume", 0.85)
+	for key: String in ["manual_dialogue","reduced_motion","high_contrast","show_hotspots"]: SettingsManager.set_value(key,false)
+	SettingsManager.set_value("font_scale",1.0)
+	SettingsManager.set_value("reading_time",1.0)
 	SettingsManager.set_value("fullscreen", false)
 	open_options(return_to_pause_after_child)
 
@@ -768,12 +788,13 @@ func _sync_proxy_for_named_button(main: Control, source_name: String, proxy_name
 	if source == null:
 		return
 	source.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	source.focus_mode = Control.FOCUS_NONE
 	var proxy: Button = main.get_node_or_null(proxy_name) as Button
 	if proxy == null:
 		proxy = Button.new()
 		proxy.name = proxy_name
 		proxy.text = ""
-		proxy.focus_mode = Control.FOCUS_NONE
+		proxy.focus_mode = Control.FOCUS_ALL
 		proxy.z_index = 950
 		proxy.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		proxy.add_theme_stylebox_override("normal", _transparent_style())
@@ -801,13 +822,14 @@ func _sync_menu_tooltip_proxy(main: Control, tooltip: String, proxy_name: String
 	if source == null:
 		return
 	source.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	source.focus_mode = Control.FOCUS_NONE
 	var proxy: Button = main.get_node_or_null(proxy_name) as Button
 	if proxy == null:
 		proxy = Button.new()
 		proxy.name = proxy_name
 		proxy.text = ""
 		proxy.tooltip_text = tooltip
-		proxy.focus_mode = Control.FOCUS_NONE
+		proxy.focus_mode = Control.FOCUS_ALL
 		proxy.z_index = 950
 		proxy.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		proxy.add_theme_stylebox_override("normal", _transparent_style())

@@ -13,6 +13,8 @@ Abra `project.godot` no Godot 4.x e execute o projeto.
 - Clique em um item no inventário e depois no alvo do cenário.
 - Para vestir o `Colete`, clique nele uma segunda vez no inventário.
 - Menu ☰ no canto superior direito abre Save/Load e Opções.
+- Clique no piso para caminhar; paredes e móveis bloqueiam a passagem.
+- F4 mostra/oculta o piso permitido, os sólidos e a rota. Detalhes em [Colisões dos cenários](../docs/30_COLISOES_CENARIOS.md).
 
 ## Fluxo implementado
 Recepção → Inovação → TI → Comunicação → Suprimentos → Hall → Financeiro/Engenharia → Vigilância → RH → Documentação → Jurídico → Diretoria.

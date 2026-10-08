@@ -9,7 +9,18 @@ func _ready() -> void:
 func perform(action_id: String, selected_item := "") -> void:
 	if not GameState.run_active:
 		return
+	if not selected_item.is_empty() and not GameState.has_item(selected_item):
+		feedback.emit("Esse item não está mais no inventário. Selecione um item disponível.")
+		return
+	SaveManager.checkpoint()
 	GameState.tick(2)
+	if action_id in ["innovation_meeting","ti_weekly","ti_service","ti_security","finance_bruno","finance_reimbursement","engineering_analysis","security_inspection","legal_terms","legal_secretary"]:
+		ContentFlow.open_action(action_id)
+		return
+	if action_id == "security_access":
+		if GameState.has_flag("boss_security_done"): SceneRouter.route_to("rh")
+		else: ContentFlow.open_action(action_id)
+		return
 	match action_id:
 		"receptionist":
 			GameState.set_flag("identified")
@@ -17,23 +28,24 @@ func perform(action_id: String, selected_item := "") -> void:
 			GameState.learn("director_name:ronaldo_gilberto")
 			feedback.emit("Eliana Marli: Pizza para a Diretoria? Para Ronaldo Gilberto. Crachá liberado.")
 		"wait_sofa":
-			var count := int(GameState.flags.get("wait_clicks", 0)) + 1
-			GameState.flags["wait_clicks"] = count
-			if count >= 3:
-				_finish("VISITANTE RETIRADO", "Você esperou tanto que virou parte do mobiliário. A segurança resolveu o problema.")
-			else:
-				feedback.emit("O visitante ao lado ainda está esperando. Ele não lembra por quem.")
+			SceneRouter.route_to("reception_waiting_room")
 		"security_desk":
 			if GameState.has_flag("identified"):
 				GameState.set_flag("security_cleared")
 				feedback.emit("Mauro Portela: Crachá ok. Elevadores indisponíveis. Vai pela escada.")
 			else:
-				feedback.emit("Mauro Portela: primeiro se identifique na Recepção.")
+				if GameState.has_flag("security_warned"): ContentFlow.open_action("reception_insist_security")
+				else:
+					GameState.set_flag("security_warned")
+					feedback.emit("Mauro Portela: primeiro se identifique. Insistir pode levar à retenção da pizza.")
 		"auditorium":
 			feedback.emit("Lúcia Pauta acha que você é o palestrante. Melhor não sustentar essa ideia por muito tempo.")
 		"reception_stairs":
 			if not GameState.has_flag("identified"):
-				feedback.emit("A segurança bloqueia a passagem. Identifique-se primeiro.")
+				if GameState.has_flag("stairs_warned"): ContentFlow.open_action("reception_insist_stairs")
+				else:
+					GameState.set_flag("stairs_warned")
+					feedback.emit("Identifique-se primeiro. Forçar a passagem pode encerrar a visita.")
 				return
 			if not GameState.has_flag("security_cleared"):
 				feedback.emit("A segurança bloqueia a passagem. Mostre o crachá ao Mauro Portela primeiro.")
@@ -61,7 +73,7 @@ func perform(action_id: String, selected_item := "") -> void:
 				AchievementManager.unlock("Logística Reversa")
 				_finish("ENTREGA POR ENCANAMENTO", "A logística reversa funcionou. A pizza não voltou.")
 			else:
-				feedback.emit("Placa: Só pode cagar no seu andar.")
+				feedback.emit("Placa: Use o banheiro do seu andar. Não coloque a pizza no encanamento.")
 		"innovation_exit":
 			if not GameState.has_item("vr_glasses") and not GameState.has_flag("boss_ti_done"):
 				feedback.emit("Ainda existe um Óculos VR brilhando de forma suspeita no cenário.")
@@ -94,6 +106,9 @@ func perform(action_id: String, selected_item := "") -> void:
 			GameState.learn("cc_0001")
 			feedback.emit("Informação adquirida: CC-0001 — Centro de custo da Diretoria.")
 		"communication_printer":
+			if not GameState.knows("cc_0001"):
+				feedback.emit("O carimbo exige o centro de custo. Consulte Planejamento.")
+				return
 			GameState.add_item("executive_priority_stamp")
 			GameState.set_flag("communication_stamp_collected")
 			feedback.emit("Carimbo — Prioridade Executiva obtido.")
@@ -130,7 +145,7 @@ func perform(action_id: String, selected_item := "") -> void:
 			SceneRouter.route_to("security")
 		"hall_map":
 			AchievementManager.unlock("Agora fiquei mais perdido")
-			feedback.emit("Continuo sem saber onde estou.")
+			feedback.emit("Financeiro fornece os documentos de terceiro e exceção fiscal. Engenharia fornece colete e OS. Depois, use as escadas.")
 		"hall_wait":
 			var visited := bool(GameState.flags.get("hall_waited", false))
 			if visited and (GameState.has_flag("finance_done") or GameState.has_flag("engineering_done")):
@@ -199,6 +214,9 @@ func perform(action_id: String, selected_item := "") -> void:
 		"security_back":
 			SceneRouter.route_to("hall")
 		"rh_helena":
+			if GameState.has_flag("poor_collaboration") and not GameState.has_flag("collaboration_resolved"):
+				ContentFlow.open_action("rh_collaboration")
+				return
 			if not GameState.has_item("third_party_proof"):
 				feedback.emit("Helena Folha: isso prova que você entrou, não que você existe para o RH.")
 				return
@@ -208,6 +226,9 @@ func perform(action_id: String, selected_item := "") -> void:
 				feedback.emit("Ficha de Validação de Terceiro emitida. Agora registre o ponto.")
 				return
 			if GameState.has_flag("point_digital") and GameState.has_flag("point_parallel") and GameState.has_flag("third_party_validated"):
+				if not GameState.has_flag("rh_heat_confirmed") and int(GameState.pizza.get("temperature",100)) < 50:
+					ContentFlow.open_action("rh_heat_exit")
+					return
 				GameState.add_item("rh_validation_signature")
 				GameState.set_flag("boss_rh_done")
 				feedback.emit("Helena assina. ASSINATURA DE VALIDAÇÃO DO RH obtida — PROCESSO CONTORNADO.")
@@ -242,12 +263,15 @@ func perform(action_id: String, selected_item := "") -> void:
 		"documentation_counter":
 			feedback.emit("Célia Viana: original, cópia, segunda via ou cópia da segunda via?")
 		"documentation_bolota":
+			if GameState.has_item("legal_bolota_approved"):
+				feedback.emit("Sua Bolota já está aprovada.")
+				return
 			GameState.add_item("legal_bolota_pending")
 			feedback.emit("Bolota do Jurídico — PENDENTE DE APROVAÇÃO.")
 		"documentation_printer":
 			feedback.emit("Domingos Hurley imprime o digital para digitalizar oficialmente.")
 		"documentation_exit":
-			if not GameState.has_item("legal_bolota_pending"):
+			if not GameState.has_item("legal_bolota_pending") and not GameState.has_item("legal_bolota_approved"):
 				feedback.emit("Você ainda precisa da Bolota do Jurídico.")
 				return
 			SceneRouter.route_to("legal")
@@ -257,7 +281,7 @@ func perform(action_id: String, selected_item := "") -> void:
 			if not GameState.has_flag("legal_ticket"):
 				GameState.set_flag("legal_ticket")
 				GameState.learn("ticket:48271")
-				feedback.emit("CHAMADO ABERTO — Nº 48271 — P1.")
+				feedback.emit("CHAMADO ABERTO — Nº 48271 — P1. Ligue novamente para receber a autorização externa.")
 			elif not GameState.has_flag("external_authorization"):
 				GameState.set_flag("external_authorization")
 				GameState.learn("external_authorization")
@@ -265,12 +289,15 @@ func perform(action_id: String, selected_item := "") -> void:
 			else:
 				feedback.emit("O telefone agora está estranhamente silencioso.")
 		"legal_analysis":
+			if GameState.has_flag("boss_legal_done"):
+				SceneRouter.route_to("directorate")
+				return
 			if selected_item != "legal_bolota_pending":
 				feedback.emit("Dr. Vítor Parecer: coloque a Bolota pendente na mesa de análise.")
 				return
 			var ready := GameState.has_flag("legal_ticket") and GameState.has_flag("external_authorization") and GameState.has_item("rh_validation_signature") and GameState.has_item("fiscal_exception_protocol")
 			if not ready:
-				feedback.emit("Pelo menos um dos cinco requisitos ainda está pendente.")
+				feedback.emit("Pendências: " + ContentFlow.missing_legal() + ".")
 				return
 			GameState.remove_item("legal_bolota_pending")
 			GameState.add_item("legal_bolota_approved")
@@ -300,6 +327,16 @@ func perform(action_id: String, selected_item := "") -> void:
 				feedback.emit("Carla Agenda ainda não liberou a entrada.")
 				return
 			_resolve_delivery()
+		"ti_systems_entry":
+			SceneRouter.route_to("ti_systems_room")
+		"rh_back":
+			SceneRouter.route_to("reception" if GameState.has_flag("temporary_rh_shortcut") and not GameState.has_flag("boss_security_done") else "security")
+		"documentation_back":
+			SceneRouter.route_to("rh")
+		"legal_back":
+			SceneRouter.route_to("documentation")
+		"directorate_back":
+			SceneRouter.route_to("legal")
 		"director_magazines":
 			feedback.emit("Revista interna: 'Simplificando processos — edição especial de 248 páginas'.")
 		_:
@@ -356,7 +393,7 @@ func _resolve_delivery() -> void:
 	var possession := str(GameState.pizza.get("possession", "player"))
 	var minutes := int(GameState.pizza.get("elapsed_minutes", 0))
 	var temperature := int(GameState.pizza.get("temperature", 100))
-	if possession != "player":
+	if possession != "player" or int(GameState.pizza.get("quantity",0)) <= 0 or int(GameState.pizza.get("integrity",0)) <= 0:
 		_finish("SEM PIZZA", "Você chegou ao diretor sem a pizza.")
 	elif minutes >= 150:
 		_finish("ENTREGA TARDE DEMAIS", "Ronaldo Gilberto já desistiu do pedido.")
@@ -367,6 +404,10 @@ func _resolve_delivery() -> void:
 		_finish("ENTREGA CONCLUÍDA", "Ronaldo Gilberto recebe a pizza. O celular toca: NOVO PEDIDO — PAPO SAPÃO — último andar. NOVO PROTOCOLO INICIADO.")
 
 func _finish(ending_name: String, message: String) -> void:
+	if ending_name in ["PIZZA APREENDIDA","PIZZA SOB CUSTÓDIA FISCAL","PIZZA EM QUARENTENA","INCIDENTE DE SEGURANÇA","MATERIAL RETIDO"]: GameState.pizza["possession"] = "confiscated"
+	if ending_name in ["PIZZA AS A SERVICE","FALHA ESTRUTURAL","FORNECEDOR HOMOLOGADO"]:
+		GameState.pizza["possession"] = "lost"
+		GameState.pizza["quantity"] = 0
 	EndingManager.register(ending_name)
 	GameState.run_active = false
 	finished.emit(ending_name, message)

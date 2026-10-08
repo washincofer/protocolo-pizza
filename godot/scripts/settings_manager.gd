@@ -7,7 +7,9 @@ var settings := {
 	"master_volume": 0.85,
 	"music_volume": 0.75,
 	"sfx_volume": 0.85,
-	"fullscreen": false
+	"fullscreen": false,
+	"font_scale": 1.0, "reading_time": 1.0, "manual_dialogue": false,
+	"high_contrast": false, "reduced_motion": false, "show_hotspots": false
 }
 
 func _ready() -> void:
@@ -15,6 +17,12 @@ func _ready() -> void:
 	apply()
 
 func set_value(key: String, value) -> void:
+	if not settings.has(key): return
+	if settings[key] is bool:
+		if not (value is bool): return
+	else:
+		if not (value is float or value is int) or not is_finite(float(value)): return
+		value = clampf(float(value), 0.8, 1.3) if key == "font_scale" else (clampf(float(value), 0.5, 2.0) if key == "reading_time" else clampf(float(value),0,1))
 	settings[key] = value
 	apply()
 	_save_data()
@@ -24,6 +32,7 @@ func get_value(key: String, fallback = null):
 	return settings.get(key, fallback)
 
 func apply() -> void:
+	AudioServer.set_bus_mute(0, float(settings["master_volume"]) <= 0.001)
 	AudioServer.set_bus_volume_db(0, linear_to_db(max(float(settings.get("master_volume", 0.85)), 0.001)))
 	var music_bus := AudioServer.get_bus_index("Music")
 	if music_bus >= 0:
@@ -49,4 +58,7 @@ func _load_data() -> void:
 	var parsed = JSON.parse_string(file.get_as_text())
 	if parsed is Dictionary:
 		for key in parsed.keys():
-			settings[key] = parsed[key]
+			set_value(str(key), parsed[key])
+
+func font_size(base: int) -> int:
+	return maxi(10, int(round(base * float(settings["font_scale"]))))

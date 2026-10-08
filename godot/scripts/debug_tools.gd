@@ -6,6 +6,8 @@ const SAFE_MARGIN: float = 28.0
 var hud_visible: bool = true
 var hotspot_debug_visible: bool = false
 var coords_visible: bool = false
+var navigation_visible: bool = false
+var navigation_overlay: Node2D = null
 
 var coord_layer: CanvasLayer
 var coord_panel: PanelContainer
@@ -41,7 +43,7 @@ func _build_coordinate_overlay() -> void:
 
 	coord_panel = PanelContainer.new()
 	coord_panel.position = Vector2(12, 78)
-	coord_panel.custom_minimum_size = Vector2(340, 82)
+	coord_panel.custom_minimum_size = Vector2(550, 82)
 	coord_panel.visible = false
 	coord_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	coord_layer.add_child(coord_panel)
@@ -57,8 +59,8 @@ func _build_coordinate_overlay() -> void:
 	coord_panel.add_theme_stylebox_override("panel", style)
 
 	coord_label = Label.new()
-	coord_label.text = "F1 HUD | F2 HOTSPOTS | F3 XY"
-	coord_label.add_theme_font_size_override("font_size", 16)
+	coord_label.text = "F1 HUD | F2 HOTSPOTS | F3 XY | F4 COLISÕES"
+	coord_label.add_theme_font_size_override("font_size", SettingsManager.font_size(16))
 	coord_label.add_theme_color_override("font_color", Color("d7f7ff"))
 	coord_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	coord_panel.add_child(coord_label)
@@ -83,15 +85,39 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			coords_visible = not coords_visible
 			coord_panel.visible = coords_visible
 			get_viewport().set_input_as_handled()
+		KEY_F4:
+			navigation_visible = not navigation_visible
+			get_viewport().set_input_as_handled()
 
 func _process(_delta: float) -> void:
 	_apply_safe_fit()
+	_update_navigation_overlay()
 	if GameState.run_active:
 		_snap_calibrated_hotspots()
 		_apply_hud_visibility()
 		_apply_hotspot_debug()
 	if coords_visible:
 		_update_coordinates()
+
+func _update_navigation_overlay() -> void:
+	if not navigation_visible or not GameState.run_active:
+		if is_instance_valid(navigation_overlay): navigation_overlay.hide()
+		return
+	var main: Control = _get_main()
+	if main == null: return
+	var bg: TextureRect = _find_background(main)
+	if bg == null or bg.texture == null: return
+	if not is_instance_valid(navigation_overlay):
+		navigation_overlay = Node2D.new()
+		navigation_overlay.set_script(preload("res://scripts/navigation_overlay.gd"))
+		navigation_overlay.name = "NavigationOverlay"
+		navigation_overlay.z_index = 70
+		main.add_child(navigation_overlay)
+	navigation_overlay.set("area", GameState.current_area)
+	navigation_overlay.position = bg.position
+	navigation_overlay.scale = bg.size / Vector2(bg.texture.get_size())
+	navigation_overlay.show()
+	navigation_overlay.queue_redraw()
 
 func _get_main() -> Control:
 	var current: Node = get_tree().current_scene
@@ -111,7 +137,7 @@ func _is_hotspot(node: Node) -> bool:
 	if not (node is Button):
 		return false
 	var button: Button = node as Button
-	return button.text == "" and button.tooltip_text != ""
+	return bool(button.get_meta("world_hotspot",false))
 
 func _apply_safe_fit() -> void:
 	var main: Control = _get_main()
@@ -240,17 +266,17 @@ func _apply_hotspot_debug() -> void:
 			var button: Button = child as Button
 			button.add_theme_stylebox_override(
 				"normal",
-				hotspot_style_visible if hotspot_debug_visible else hotspot_style_hidden
+				hotspot_style_visible if hotspot_debug_visible or bool(SettingsManager.get_value("show_hotspots",false)) else hotspot_style_hidden
 			)
 
 func _update_coordinates() -> void:
 	var main: Control = _get_main()
 	if main == null:
-		coord_label.text = "F1 HUD | F2 HOTSPOTS | F3 XY\nSem cena ativa"
+		coord_label.text = "F1 HUD | F2 HOTSPOTS | F3 XY | F4 COLISÕES\nSem cena ativa"
 		return
 	var bg: TextureRect = _find_background(main)
 	if bg == null or bg.texture == null:
-		coord_label.text = "F1 HUD | F2 HOTSPOTS | F3 XY\nSem imagem ativa"
+		coord_label.text = "F1 HUD | F2 HOTSPOTS | F3 XY | F4 COLISÕES\nSem imagem ativa"
 		return
 
 	var mouse: Vector2 = get_viewport().get_mouse_position()
@@ -269,13 +295,13 @@ func _update_coordinates() -> void:
 		"ON" if hotspot_debug_visible else "OFF"
 	]
 	if inside:
-		coord_label.text = "F1 HUD | F2 HOTSPOTS | F3 XY\n%s\nTela X:%d Y:%d | Imagem X:%d Y:%d" % [
+		coord_label.text = "F1 HUD | F2 HOTSPOTS | F3 XY | F4 COLISÕES\n%s\nTela X:%d Y:%d | Imagem X:%d Y:%d" % [
 			state_text,
 			int(round(mouse.x)), int(round(mouse.y)),
 			int(round(image_pos.x)), int(round(image_pos.y))
 		]
 	else:
-		coord_label.text = "F1 HUD | F2 HOTSPOTS | F3 XY\n%s\nTela X:%d Y:%d | fora da imagem" % [
+		coord_label.text = "F1 HUD | F2 HOTSPOTS | F3 XY | F4 COLISÕES\n%s\nTela X:%d Y:%d | fora da imagem" % [
 			state_text,
 			int(round(mouse.x)), int(round(mouse.y))
 		]

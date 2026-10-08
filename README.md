@@ -8,12 +8,12 @@ Cada departamento funciona como um fluxo burocrático. Os grandes bloqueios são
 
 ## Estado atual
 
-O projeto está em pré-produção e prototipação.
+A versão jogável usa **Godot 4.3**, com exportação Web. A campanha principal possui 30 finais e 22 conquistas com gatilhos implementados.
 
-- Protótipo de validação: HTML.
-- Motor planejado para a versão final: Godot.
-- Estrutura narrativa: independente de engine.
-- Campanha principal: em consolidação.
+- Abra `godot/project.godot` no Godot 4.3 para executar ou editar.
+- Exporte para Web com `scripts/build-render.sh` (build usado pelo Render).
+- [Melhorias de QA e validações](docs/08_MELHORIAS_QA.md).
+- [Colisões e navegação dos cenários](docs/30_COLISOES_CENARIOS.md).
 
 ## Espinha dorsal atual
 
@@ -72,7 +72,7 @@ Chegar ao diretor não garante vitória se a pizza estiver fria, incompleta ou p
 
 ## A Bolota do Jurídico
 
-Na área de Documentação o jogador coleta a **Bolota do Jurídico**. Ela só ganha validade quando recebe a aprovação/carimbo do Jurídico. A Diretoria só aceita a entrega se a Bolota estiver devidamente carimbada.
+Na área de Documentação o jogador coleta a **Bolota do Jurídico**. Ela só ganha validade quando recebe a aprovação/carimbo do Jurídico. A aprovação encerra o processo jurídico. A secretária da Diretoria pergunta somente o nome do diretor, sem conferir documentos novamente.
 
 ## Final canônico
 

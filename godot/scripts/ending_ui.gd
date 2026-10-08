@@ -66,7 +66,7 @@ func _show_ending(ending_name: String, message: String, ending_achievements: Arr
 	var eyebrow: Label = Label.new()
 	eyebrow.text = "MISSÃO CUMPRIDA" if canonical else "FINAL ABSURDO"
 	eyebrow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	eyebrow.add_theme_font_size_override("font_size", 18)
+	eyebrow.add_theme_font_size_override("font_size", SettingsManager.font_size(18))
 	eyebrow.add_theme_color_override("font_color", Color("ffd34e"))
 	outer.add_child(eyebrow)
 
@@ -87,7 +87,7 @@ func _show_ending(ending_name: String, message: String, ending_achievements: Arr
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	body.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	body.add_theme_font_size_override("font_size", 19)
+	body.add_theme_font_size_override("font_size", SettingsManager.font_size(19))
 	body.add_theme_color_override("font_color", Color("eaf0f5"))
 	outer.add_child(body)
 
@@ -99,7 +99,7 @@ func _show_ending(ending_name: String, message: String, ending_achievements: Arr
 		AchievementManager.CATALOG.size()
 	]
 	stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	stats.add_theme_font_size_override("font_size", 15)
+	stats.add_theme_font_size_override("font_size", SettingsManager.font_size(15))
 	stats.add_theme_color_override("font_color", Color("aeb9c4"))
 	outer.add_child(stats)
 
@@ -162,7 +162,7 @@ func _build_achievement_card(parent: VBoxContainer, achievements: Array[String])
 		trophy_fallback.custom_minimum_size = Vector2(78, 78)
 		trophy_fallback.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		trophy_fallback.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		trophy_fallback.add_theme_font_size_override("font_size", 44)
+		trophy_fallback.add_theme_font_size_override("font_size", SettingsManager.font_size(44))
 		row.add_child(trophy_fallback)
 
 	var text_box: VBoxContainer = VBoxContainer.new()
@@ -172,7 +172,7 @@ func _build_achievement_card(parent: VBoxContainer, achievements: Array[String])
 
 	var caption: Label = Label.new()
 	caption.text = "CONQUISTAS DESBLOQUEADAS" if achievements.size() > 1 else "CONQUISTA DESBLOQUEADA"
-	caption.add_theme_font_size_override("font_size", 15)
+	caption.add_theme_font_size_override("font_size", SettingsManager.font_size(15))
 	caption.add_theme_color_override("font_color", Color("ffd34e"))
 	text_box.add_child(caption)
 
@@ -193,7 +193,7 @@ func _build_registered_card(parent: VBoxContainer) -> void:
 	label.text = "FINAL REGISTRADO NO ARQUIVO DA PAPO SAPÃO"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 17)
+	label.add_theme_font_size_override("font_size", SettingsManager.font_size(17))
 	label.add_theme_color_override("font_color", Color("c7d1da"))
 	card.add_child(label)
 
@@ -201,9 +201,9 @@ func _ending_button(text_value: String, primary: bool) -> Button:
 	var button: Button = Button.new()
 	button.text = text_value
 	button.custom_minimum_size = Vector2(205, 52)
-	button.focus_mode = Control.FOCUS_NONE
+	button.focus_mode = Control.FOCUS_ALL
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	button.add_theme_font_size_override("font_size", 17)
+	button.add_theme_font_size_override("font_size", SettingsManager.font_size(17))
 	button.add_theme_stylebox_override("normal", _button_style(primary, false))
 	button.add_theme_stylebox_override("hover", _button_style(primary, true))
 	button.add_theme_stylebox_override("pressed", _button_style(primary, true))

@@ -10,6 +10,7 @@ const SOURCE_SIZES := {
 	"innovation_meeting_room": Vector2(1672, 941),
 	"ti": Vector2(1672, 941),
 	"ti_server_room": Vector2(1672, 941),
+	"ti_systems_room": Vector2(1672, 941),
 	"ti_service_desk": Vector2(1672, 941),
 	"communication": Vector2(1672, 941),
 	"supplies": Vector2(1672, 941),
@@ -35,6 +36,7 @@ const BACKGROUNDS := {
 	"innovation_meeting_room": "res://assets/subareas/innovation_meeting_room.webp",
 	"ti": "res://assets/scenarios/ti.png",
 	"ti_server_room": "res://assets/subareas/ti_server_room.webp",
+	"ti_systems_room": "res://assets/subareas/ti_server_room.webp",
 	"ti_service_desk": "res://assets/subareas/ti_service_desk.webp",
 	"communication": "res://assets/scenarios/communication.png",
 	"supplies": "res://assets/scenarios/supplies.png",
@@ -59,6 +61,7 @@ const TITLES := {
 	"innovation_meeting_room": "Inovação — Sala de Reunião",
 	"ti": "TI — Chefe 1",
 	"ti_server_room": "TI — Sala de Servidores",
+	"ti_systems_room": "TI — Sala de Sistemas",
 	"ti_service_desk": "TI — Service Desk",
 	"communication": "Comunicação",
 	"supplies": "Suprimentos — Chefe 2",
@@ -97,6 +100,7 @@ const HOTSPOTS := {
 		{"label":"Hall / saída para TI","rect":[0,90,170,520],"action":"innovation_exit"}
 	],
 	"ti": [
+		{"label":"Sala de Sistemas","rect":[538,337,98,100],"bounds":[538,437,636,337],"action":"ti_systems_entry"},
 		{"label":"Rogério Wilco","rect":[1259,286,157,134],"bounds":[1259,420,1416,286],"action":"rogerio"},
 		{"label":"Sala de Reunião / Weekly","rect":[998,66,180,496],"bounds":[998,562,1178,66],"action":"ti_weekly"},
 		{"label":"Sala de Servidores","rect":[660,182,230,138],"bounds":[660,320,890,182],"action":"ti_server_room_entry"},
@@ -133,7 +137,7 @@ const HOTSPOTS := {
 	],
 	"engineering": [
 		{"label":"Colete de Manutenção","rect":[1225,587,86,113],"bounds":[1225,700,1311,587],"action":"engineering_vest"},
-		{"label":"Ordem de Serviço","rect":[0,475,86,102],"bounds":[0,577,86,475],"action":"engineering_os"},
+		{"label":"Ordem de Serviço","rect":[1245,618,64,52],"bounds":[1245,670,1309,618],"action":"engineering_os"},
 		{"label":"Bento Tróti","rect":[616,384,191,208],"bounds":[616,592,807,384],"action":"engineering_bento"},
 		{"label":"Análise estrutural da pizza","rect":[392,436,76,77],"bounds":[392,513,468,436],"action":"engineering_analysis"},
 		{"label":"Voltar ao Hall","rect":[1413,212,157,472],"bounds":[1413,684,1570,212],"action":"engineering_back"}
@@ -146,6 +150,7 @@ const HOTSPOTS := {
 		{"label":"Voltar ao Hall","rect":[524,841,659,99],"bounds":[524,940,1183,841],"action":"security_back"}
 	],
 	"rh": [
+		{"label":"Voltar","rect":[40,780,150,100],"action":"rh_back"},
 		{"label":"Helena Folha","rect":[669,349,124,171],"bounds":[669,520,793,349],"action":"rh_helena"},
 		{"label":"Controle de Ponto","rect":[1146,332,137,117],"bounds":[1146,449,1283,332],"action":"rh_point"},
 		{"label":"Controle paralelo / Formulários","rect":[1132,460,161,188],"bounds":[1132,648,1293,460],"action":"rh_parallel"},
@@ -153,21 +158,24 @@ const HOTSPOTS := {
 		{"label":"Micro-ondas","rect":[1389,632,133,86],"bounds":[1389,718,1522,632],"action":"rh_microwave"}
 	],
 	"documentation": [
-		{"label":"Balcão de Atendimento","rect":[430,230,420,340],"action":"documentation_counter"},
-		{"label":"Bolota do Jurídico","rect":[1080,330,300,340],"action":"documentation_bolota"},
-		{"label":"Impressora / Cópias","rect":[900,620,400,420],"action":"documentation_printer"},
-		{"label":"Escadas / Jurídico","rect":[1270,650,170,360],"action":"documentation_exit"}
+		{"label":"Balcão de Atendimento","rect":[732,270,158,170],"bounds":[732,440,890,270],"action":"documentation_counter"},
+		{"label":"Bolota do Jurídico","rect":[1290,378,130,100],"bounds":[1290,478,1420,378],"action":"documentation_bolota"},
+		{"label":"Impressora / Cópias","rect":[1170,645,280,180],"bounds":[1170,825,1450,645],"action":"documentation_printer"},
+		{"label":"Escadas / Jurídico","rect":[1500,676,164,255],"bounds":[1500,931,1664,676],"action":"documentation_exit"},
+		{"label":"Voltar ao RH","rect":[50,650,180,110],"bounds":[50,760,230,650],"action":"documentation_back"}
 	],
 	"legal": [
-		{"label":"Laura Firma / Recepção","rect":[300,300,380,320],"action":"legal_secretary"},
-		{"label":"Telefone / chamado","rect":[590,300,190,220],"action":"legal_phone"},
-		{"label":"Dr. Vítor Parecer / Mesa de Análise","rect":[760,330,390,380],"action":"legal_analysis"},
-		{"label":"Termos e Condições","rect":[1100,120,320,350],"action":"legal_terms"}
+		{"label":"Laura Firma / Recepção","rect":[520,407,110,153],"bounds":[520,560,630,407],"action":"legal_secretary"},
+		{"label":"Telefone / chamado","rect":[642,496,90,60],"bounds":[642,556,732,496],"action":"legal_phone"},
+		{"label":"Dr. Vítor Parecer / Mesa de Análise","rect":[1055,460,270,175],"bounds":[1055,635,1325,460],"action":"legal_analysis"},
+		{"label":"Termos e Condições","rect":[1265,223,194,43],"bounds":[1265,266,1459,223],"action":"legal_terms"},
+		{"label":"Voltar à Documentação","rect":[101,882,104,50],"bounds":[101,932,205,882],"action":"legal_back"}
 	],
 	"directorate": [
-		{"label":"Carla Agenda / Secretaria","rect":[500,350,350,300],"action":"director_secretary"},
-		{"label":"Gabinete do Diretor","rect":[930,150,300,520],"action":"director_door"},
-		{"label":"Revistas","rect":[250,530,300,180],"action":"director_magazines"}
+		{"label":"Carla Agenda / Secretaria","rect":[812,350,128,154],"bounds":[812,504,940,350],"action":"director_secretary"},
+		{"label":"Gabinete do Diretor","rect":[1265,195,257,407],"bounds":[1265,602,1522,195],"action":"director_door"},
+		{"label":"Revistas","rect":[363,545,113,65],"bounds":[363,610,476,545],"action":"director_magazines"},
+		{"label":"Voltar ao Jurídico","rect":[101,881,85,50],"bounds":[101,931,186,881],"action":"directorate_back"}
 	]
 }
 
